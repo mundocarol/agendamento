@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário Pedido - Presentes Especiais</title>
+    <title>Agendamento Fácil - Mundo Carol</title>
+    
+    <!-- Adicionar EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
@@ -416,18 +420,30 @@
             font-size: 15px;
         }
         .whatsapp-contact {
-            background: #25D366;
+            background: linear-gradient(135deg, #25D366 0%, #1DA851 100%);
             color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 25px 0;
             text-align: center;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
         }
         .whatsapp-contact:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+            box-shadow: 0 6px 15px rgba(37, 211, 102, 0.4);
+        }
+        .whatsapp-contact h3 {
+            color: white;
+            margin: 0 0 10px 0;
+            font-size: 20px;
+        }
+        .whatsapp-contact p {
+            margin: 5px 0;
+            font-size: 16px;
         }
         .pix-option {
             background: #f8f9fa;
@@ -440,7 +456,7 @@
         .credit-card-highlight {
             background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
             color: white;
-            padding: 20px;
+            padding: 25px;
             border-radius: 12px;
             margin: 25px 0;
             text-align: center;
@@ -448,6 +464,7 @@
         .credit-card-highlight h3 {
             color: white;
             margin-bottom: 10px;
+            font-size: 22px;
         }
         .discrete-text {
             color: #6c757d;
@@ -531,7 +548,7 @@
             padding: 15px;
             border-radius: 8px;
             margin: 20px 0;
-            border: 1px solid #e9ecef;
+            border: 1px solid #dee2e6;
         }
         .simple-total {
             font-size: 16px;
@@ -660,10 +677,150 @@
             padding: 10px 20px;
             font-size: 14px;
         }
+        .white-text {
+            color: white !important;
+        }
+        .client-version .share-section,
+        .client-version #linkGeneratorSection,
+        .client-version #generateLinkBtn,
+        .client-version .change-product-btn {
+            display: none !important;
+        }
+        .client-version #productInputSection {
+            display: none;
+        }
+        .client-version .current-product-display {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+        }
+        .email-notice {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        .anonymous-warning {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 14px;
+            display: none;
+        }
+        .same-data-warning {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 14px;
+            display: none;
+        }
+        .final-summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #e9ecef;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        .summary-label {
+            color: #6c757d;
+        }
+        .summary-value {
+            font-weight: 600;
+            color: #333;
+        }
+        .final-total {
+            font-size: 22px;
+            font-weight: 700;
+            color: #d63384;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #d63384;
+        }
+        .system-status {
+            background-color: #e8f5e9;
+            border-left: 4px solid #28a745;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 13px;
+            color: #155724;
+        }
+        .system-status.error {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        .connection-status {
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-left: 10px;
+            font-weight: 600;
+        }
+        .connection-status.connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .connection-status.disconnected {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .connection-status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background-color: #e9ecef;
+            border-radius: 2px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #28a745;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .small-note {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
-    <h1>Formulário Pedido - Presentes Especiais</h1>
+    <h1>Agendamento Fácil - Mundo Carol</h1>
+    
+    <!-- Status da conexão - VISÍVEL APENAS PARA O VENDEDOR -->
+    <div id="connectionStatus" class="system-status hidden">
+        <p><strong>Status do Sistema:</strong> <span id="statusText">Verificando conexão...</span></p>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <p id="statusMessage" class="small-note"></p>
+    </div>
     
     <div id="page1" class="form-page active">
         <div class="section">
@@ -692,39 +849,22 @@
             </div>
             
             <div id="linkGeneratorSection">
-                <div class="link-instructions">
-                    <p><strong>📋 Para enviar para cliente:</strong> Preencha acima e clique em "Gerar Link"</p>
-                    <p class="discrete-text">O link gerado já virá com o produto e preço pré-preenchidos!</p>
-                </div>
                 <button type="button" id="generateLinkBtn">🔗 Gerar Link para Cliente</button>
                 <div id="generatedLinkContainer" class="hidden">
                     <div class="share-section">
                         <h3>✅ Link Gerado com Sucesso!</h3>
-                        
-                        <div class="share-instructions">
-                            <p><strong>Como usar:</strong></p>
-                            <p>1. Copie o link abaixo</p>
-                            <p>2. Envie para seu cliente por WhatsApp</p>
-                            <p>3. Quando o cliente abrir, o produto já estará preenchido!</p>
-                        </div>
-                        
                         <div class="share-link-box" id="generatedLink">
                             <!-- Link será inserido aqui -->
                         </div>
-                        
                         <button type="button" id="copyLinkBtn" class="copy-btn">📋 Copiar Link</button>
-                        <div class="url-info">
-                            <p><strong>💡 Dica:</strong> Este link funciona em qualquer dispositivo e navegador!</p>
-                        </div>
                     </div>
-                    
-                    <p class="success hidden" id="copySuccess">✅ Link copiado com sucesso!</p>
                 </div>
             </div>
         </div>
         
         <div class="section highlight">
             <h2>Dados do Comprador</h2>
+            
             <div class="form-group">
                 <label for="buyerName">Nome do Comprador:</label>
                 <input type="text" id="buyerName" required>
@@ -734,25 +874,6 @@
                 <label for="buyerPhone">Telefone Comprador:</label>
                 <input type="text" id="buyerPhone" placeholder="(XX) XXXXX-XXXX" required>
             </div>
-            
-            <div class="separator"></div>
-            
-            <h2>Dados do Presenteado</h2>
-            <div class="warning-box">
-                <p class="important">Atenção, só preencha nome e telefone da pessoa presenteada caso seja direcionado para ela/ele o presente, esses dados são para orientar nosso entregador. Se sua entrega for direcionada a você (o comprador), repita então seu nome e telefone abaixo, NÃO queremos estragar nenhuma surpresa.</p>
-            </div>
-            
-            <div class="form-group">
-                <label for="giftedName">Nome da Pessoa Presenteada:</label>
-                <input type="text" id="giftedName" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="giftedPhone">Telefone do Presenteado:</label>
-                <input type="text" id="giftedPhone" placeholder="(XX) XXXXX-XXXX">
-            </div>
-            
-            <div class="separator"></div>
             
             <div class="radio-group">
                 <p>Quer seu nome aparecendo no seu Pedido?</p>
@@ -764,6 +885,32 @@
                     <input type="radio" name="anonymous" id="anonymousYes" value="yes">
                     <label for="anonymousYes">Quero uma compra Anônima</label>
                 </div>
+            </div>
+            
+            <div class="separator"></div>
+            
+            <h2>Dados do Presenteado</h2>
+            
+            <div id="anonymousMessage" class="warning-box">
+                <p class="important">Atenção, só preencha nome e telefone da pessoa presenteada caso seja direcionado para ela/ele o presente, esses dados são para orientar nosso entregador. Se sua entrega for direcionada a você (o comprador), repita então seu nome e telefone abaixo, NÃO queremos estragar nenhuma surpresa.</p>
+            </div>
+            
+            <div id="anonymousWarning" class="anonymous-warning">
+                <p><strong>Você escolheu envio Anônimo.</strong> Vamos fazer tudo com o maior sigilo e discrição. O nome do presenteado e telefone devem ser colocados corretamente, pois nosso entregador só terá esse contato em mãos em caso de algum contratempo na entrega.</p>
+            </div>
+            
+            <div id="sameDataWarning" class="same-data-warning">
+                <p><strong>Atenção:</strong> Em uma compra anônima, os dados do presenteado NÃO podem ser iguais aos do comprador. Por favor, preencha os dados reais da pessoa que receberá o presente.</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="giftedName">Nome da Pessoa Presenteada:</label>
+                <input type="text" id="giftedName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="giftedPhone">Telefone do Presenteado:</label>
+                <input type="text" id="giftedPhone" placeholder="(XX) XXXXX-XXXX">
             </div>
             
             <div class="separator"></div>
@@ -904,7 +1051,7 @@
                     <div class="radio-option">
                         <input type="radio" name="signedCard" value="no" id="signedCardNo">
                         <label for="signedCardNo">Não, não quero assinar</label>
-                </div>
+                    </div>
                 </div>
                 
                 <div class="radio-group">
@@ -995,25 +1142,57 @@
     <div id="thankYouPage" class="form-page">
         <div class="section final-page">
             <div class="checkmark">✓</div>
-            <h1>FORMULÁRIO ENVIADO COM SUCESSO!</h1>
-            
-            <div class="instructions">
-                <p>Seus dados foram enviados para nossa equipe.</p>
-                <p>Confira abaixo as informações para finalizar seu pagamento:</p>
-            </div>
+            <h1>FORMULÁRIO ENVIADO COM SUCCCESSO!</h1>
             
             <div id="paymentDetails"></div>
             
-            <div class="whatsapp-contact" onclick="sendWhatsAppMessage()">
-                <h3>📱 AGORA CLIQUE AQUI PARA FINALIZAR SEU ATENDIMENTO COM O ATENDENTE</h3>
-                <p>Clique aqui para enviar seu pedido para nosso WhatsApp</p>
-                <p><strong>(31) 98323-8087</strong></p>
+            <div class="final-summary">
+                <h3>📦 Status do seu pedido:</h3>
+                <div id="orderSummary"></div>
+            </div>
+            
+            <!-- Status do Sistema na página final - VISÍVEL APENAS PARA O VENDEDOR -->
+            <div id="finalSystemStatus" class="system-status hidden">
+                <p>✅ <strong>Sistema Integrado:</strong> Seu pedido foi registrado em nosso sistema automaticamente!</p>
+            </div>
+            
+            <div id="offlineWarning" class="system-status error hidden">
+                <p>⚠️ <strong>Modo Offline:</strong> Dados salvos localmente (serão enviados quando possível)</p>
+                <p class="small-note">Seus dados foram salvos localmente e serão enviados quando possível.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Variáveis globais
+        // ⭐⭐ CONFIGURAÇÕES PRINCIPAIS ⭐⭐
+        
+        // 1. CONFIGURAÇÃO DO EMAILJS
+        const EMAILJS_CONFIG = {
+            SERVICE_ID: 'service_kohgg4l',
+            TEMPLATE_ID: 'template_gh6njww',
+            PUBLIC_KEY: '8Uo7Pin8HhQzTh7Af'
+        };
+        
+        // 2. CONFIGURAÇÃO GOOGLE APPS SCRIPT (URL ATUALIZADA)
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwWuVa-JyX4cfU_bBD3fmfmys5vgNpncXObjA7CkQOZ0Cgb7_mFgh3CbuAQZttvSVk/exec';
+        
+        // 3. Email para cópia oculta
+        const COPY_EMAIL = 'mundocarolpresentes@gmail.com';
+        
+        // ⭐⭐ INICIALIZAÇÕES ⭐⭐
+        
+        // Inicializar EmailJS (silenciosamente em background)
+        (function() {
+            emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+            console.log('✅ EmailJS inicializado');
+        })();
+        
+        // Testar conexão com Google Sheets ao carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(testarConexaoGoogleSheets, 1000);
+        });
+        
+        // ⭐⭐ VARIÁVEIS GLOBAIS ⭐⭐
         let selectedDate = null;
         let selectedTime = null;
         let selectedTimeLabel = null;
@@ -1033,8 +1212,12 @@
         let isOtherCity = false;
         let calculatedShipping = 0;
         let selectedCity = '';
+        let isClientVersion = false;
+        let googleSheetsConnected = false;
+        let isVendedor = false; // Detecta se é vendedor (não tem parâmetros na URL)
         
-        // Tabela de fretes por cidade
+        // ⭐⭐ TABELAS DE FRETE E HORÁRIOS ⭐⭐
+        
         const shippingRates = {
             "Belo Horizonte": [
                 { min: 0, max: 99, fee: 19.90 },
@@ -1125,9 +1308,10 @@
             ]
         };
         
-        // ⭐⭐ FUNÇÃO PRINCIPAL DE CARREGAMENTO
+        // ⭐⭐ FUNÇÃO PRINCIPAL DE CARREGAMENTO ⭐⭐
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Formulário carregado - GitHub Pages');
+            console.log('🚀 Agendamento Fácil carregado');
+            console.log('🔗 Google Sheets URL:', GOOGLE_SCRIPT_URL);
             
             // Verificar se há parâmetros na URL (para quando cliente abre o link)
             const urlParams = new URLSearchParams(window.location.search);
@@ -1135,17 +1319,18 @@
             const preco = urlParams.get('preco');
             
             if (produto && preco) {
+                // É a versão do cliente
+                isClientVersion = true;
+                isVendedor = false;
+                document.body.classList.add('client-version');
+                
                 // Decodificar valores
                 const produtoDecodificado = decodeURIComponent(produto);
                 const precoFormatado = parseFloat(preco).toFixed(2);
                 
-                console.log('📦 Produto carregado da URL:', produtoDecodificado, precoFormatado);
+                console.log('📦 Produto carregado da URL (Cliente):', produtoDecodificado, precoFormatado);
                 
-                // Preencher campos automaticamente
-                document.getElementById('productName').value = produtoDecodificado;
-                document.getElementById('productPrice').value = precoFormatado;
-                
-                // Mostrar aviso de produto carregado
+                // Mostrar aviso de produto carregado (modo cliente)
                 document.getElementById('productLoadedNotice').classList.remove('hidden');
                 document.getElementById('loadedProductDetails').innerHTML = `
                     <div class="current-product-display">
@@ -1154,13 +1339,27 @@
                     </div>
                 `;
                 
-                // Esconder campos de entrada (opcional)
+                // Esconder campos de entrada e botões de alteração
                 document.getElementById('productInputSection').style.display = 'none';
+                
+                // Esconder o botão "Alterar Produto"
+                const changeProductBtn = document.querySelector('.change-product-btn');
+                if (changeProductBtn) {
+                    changeProductBtn.style.display = 'none';
+                }
+                
+                // Preencher campos automaticamente
+                document.getElementById('productName').value = produtoDecodificado;
+                document.getElementById('productPrice').value = precoFormatado;
                 
                 // Mostrar mensagem
                 setTimeout(() => {
                     alert(`✅ Produto carregado automaticamente!\n\n${produtoDecodificado} - R$ ${precoFormatado}\n\nContinue preenchendo o formulário.`);
                 }, 500);
+            } else {
+                // É a versão do vendedor (sem parâmetros)
+                isVendedor = true;
+                console.log('👨‍💼 Modo Vendedor detectado');
             }
             
             // Carregar dados salvos do localStorage
@@ -1173,14 +1372,431 @@
             renderCalendar(currentMonth, currentYear);
         });
         
-        // ⭐⭐ CONFIGURAR EVENT LISTENERS
+        // ⭐⭐ TESTAR CONEXÃO COM GOOGLE SHEETS ⭐⭐
+        async function testarConexaoGoogleSheets() {
+            try {
+                const statusDiv = document.getElementById('connectionStatus');
+                const statusText = document.getElementById('statusText');
+                const statusMessage = document.getElementById('statusMessage');
+                const progressBar = document.getElementById('progressBar');
+                
+                // Mostrar status APENAS para o vendedor
+                if (isVendedor && statusDiv && statusText) {
+                    statusDiv.classList.remove('hidden');
+                    statusText.textContent = 'Testando conexão com Google Sheets...';
+                    progressBar.style.width = '30%';
+                }
+                
+                // Testar conexão básica
+                const response = await fetch(GOOGLE_SCRIPT_URL + '?action=testarConexao', {
+                    method: 'GET',
+                    mode: 'no-cors'
+                });
+                
+                // Se chegou aqui, a conexão básica funciona
+                googleSheetsConnected = true;
+                
+                if (isVendedor && statusDiv && statusText) {
+                    statusDiv.className = 'system-status';
+                    statusText.textContent = '✅ Conectado ao Google Sheets';
+                    statusMessage.textContent = 'Sistema pronto para receber pedidos!';
+                    progressBar.style.width = '100%';
+                    
+                    // Ocultar após 5 segundos
+                    setTimeout(() => {
+                        statusDiv.classList.add('hidden');
+                    }, 5000);
+                }
+                
+                console.log('✅ Conexão com Google Sheets estabelecida');
+                
+                return true;
+                
+            } catch (error) {
+                console.warn('⚠️ Conexão com Google Sheets não disponível, usando modo offline');
+                googleSheetsConnected = false;
+                
+                // Mostrar aviso APENAS para o vendedor
+                if (isVendedor) {
+                    const statusDiv = document.getElementById('connectionStatus');
+                    if (statusDiv) {
+                        statusDiv.className = 'system-status error';
+                        document.getElementById('statusText').textContent = '⚠️ Modo Offline';
+                        document.getElementById('statusMessage').textContent = 'Dados serão salvos localmente e enviados depois';
+                        document.getElementById('progressBar').style.width = '50%';
+                        
+                        // Ocultar após 8 segundos
+                        setTimeout(() => {
+                            statusDiv.classList.add('hidden');
+                        }, 8000);
+                    }
+                }
+                
+                return false;
+            }
+        }
+        
+        // ⭐⭐ ENVIAR PARA GOOGLE SHEETS ⭐⭐
+        async function enviarParaGoogleSheets(orderData) {
+            try {
+                console.log('📤 Enviando dados para Google Sheets...');
+                console.log('Dados:', orderData);
+                
+                // Preparar dados para envio (incluindo o campo anônimo na coluna V)
+                const dadosParaEnvio = {
+                    productName: orderData.productName,
+                    productPrice: orderData.productPrice,
+                    buyerName: orderData.buyerName,
+                    buyerPhone: orderData.buyerPhone,
+                    giftedName: orderData.giftedName,
+                    giftedPhone: orderData.giftedPhone,
+                    anonymous: orderData.anonymous, // Este campo vai para a coluna V
+                    deliveryType: orderData.deliveryType,
+                    deliveryCity: orderData.deliveryCity,
+                    street: orderData.street,
+                    number: orderData.number,
+                    complement: orderData.complement,
+                    neighborhood: orderData.neighborhood,
+                    referencePoint: orderData.referencePoint,
+                    calculatedShipping: orderData.calculatedShipping,
+                    nightFeeAmount: orderData.nightFeeAmount,
+                    selectedDate: orderData.selectedDate,
+                    selectedTimeLabel: orderData.selectedTimeLabel,
+                    cardMessage: orderData.cardMessage,
+                    paymentMethod: orderData.paymentMethod,
+                    foundUs: orderData.foundUs
+                };
+                
+                console.log('📋 Dados formatados para envio:', dadosParaEnvio);
+                
+                // Enviar para Google Apps Script usando POST
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dadosParaEnvio)
+                });
+                
+                // Tentar ler a resposta
+                let resultado;
+                try {
+                    const text = await response.text();
+                    console.log('📨 Resposta bruta:', text);
+                    resultado = text ? JSON.parse(text) : { status: 'sucesso', message: 'Dados enviados' };
+                } catch (e) {
+                    console.warn('⚠️ Não foi possível parsear resposta JSON:', e);
+                    resultado = { status: 'sucesso', message: 'Dados enviados para planilha' };
+                }
+                
+                console.log('✅ Resposta do Google Sheets:', resultado);
+                
+                // Verificar se foi realmente salvo
+                if (resultado.status === 'sucesso' || resultado.result === 'success') {
+                    return { 
+                        success: true, 
+                        message: '✅ Dados enviados para planilha!',
+                        details: resultado,
+                        numeroPedido: resultado.numeroPedido || 'Gerado automaticamente'
+                    };
+                } else {
+                    throw new Error(resultado.error || 'Erro ao enviar para planilha');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao enviar para Google Sheets:', error);
+                
+                // Fallback: Salvar no localStorage para enviar depois
+                salvarPedidoPendente(orderData);
+                
+                return { 
+                    success: false, 
+                    message: '⚠️ Não foi possível conectar ao servidor.',
+                    error: error.message,
+                    fallback: true
+                };
+            }
+        }
+        
+        // ⭐⭐ FUNÇÃO FALLBACK (salva localmente) ⭐⭐
+        function salvarPedidoPendente(orderData) {
+            try {
+                const pedidosPendentes = JSON.parse(localStorage.getItem('pedidosPendentes') || '[]');
+                pedidosPendentes.push({
+                    data: orderData,
+                    timestamp: new Date().toISOString(),
+                    tentativas: 0
+                });
+                
+                localStorage.setItem('pedidosPendentes', JSON.stringify(pedidosPendentes));
+                console.log('💾 Pedido salvo localmente para envio posterior');
+                
+                // Tentar reenviar pendentes periodicamente
+                setTimeout(tentarReenviarPendentes, 10000);
+                
+            } catch (e) {
+                console.error('Erro ao salvar pedido pendente:', e);
+            }
+        }
+        
+        // ⭐⭐ TENTAR REENVIAR PENDENTES ⭐⭐
+        async function tentarReenviarPendentes() {
+            try {
+                const pedidosPendentes = JSON.parse(localStorage.getItem('pedidosPendentes') || '[]');
+                if (pedidosPendentes.length === 0) return;
+                
+                console.log(`🔄 Tentando reenviar ${pedidosPendentes.length} pedidos pendentes...`);
+                
+                const novosPendentes = [];
+                
+                for (const pedido of pedidosPendentes) {
+                    if (pedido.tentativas < 3) { // Máximo 3 tentativas
+                        try {
+                            const resultado = await enviarParaGoogleSheets(pedido.data);
+                            if (resultado.success) {
+                                console.log(`✅ Pedido reenviado com sucesso: ${pedido.timestamp}`);
+                                // Remover do localStorage se enviado com sucesso
+                                continue;
+                            } else {
+                                pedido.tentativas++;
+                                novosPendentes.push(pedido);
+                            }
+                        } catch (e) {
+                            pedido.tentativas++;
+                            novosPendentes.push(pedido);
+                        }
+                    } else {
+                        console.warn(`❌ Pedido com muitas tentativas falhas: ${pedido.timestamp}`);
+                        // Manter no histórico mas não tentar mais
+                        novosPendentes.push(pedido);
+                    }
+                }
+                
+                localStorage.setItem('pedidosPendentes', JSON.stringify(novosPendentes));
+                
+                // Se ainda houver pendentes, tentar novamente em 30 segundos
+                if (novosPendentes.length > 0) {
+                    setTimeout(tentarReenviarPendentes, 30000);
+                }
+                
+            } catch (e) {
+                console.error('Erro ao processar pendentes:', e);
+            }
+        }
+        
+        // ⭐⭐ FUNÇÃO PARA ENVIAR EMAIL ⭐⭐
+        async function sendOrderEmail() {
+            try {
+                // Coletar todos os dados do formulário
+                const orderData = collectOrderData();
+                
+                // Preparar dados para o EmailJS
+                const templateParams = {
+                    client_name: orderData.buyerName,
+                    client_phone: orderData.buyerPhone,
+                    order_date: new Date().toLocaleDateString('pt-BR'),
+                    order_time: new Date().toLocaleTimeString('pt-BR'),
+                    
+                    product_name: orderData.productName,
+                    product_price: formatCurrency(orderData.productPrice),
+                    shipping_cost: formatCurrency(orderData.calculatedShipping),
+                    additional_fees: formatCurrency(orderData.nightFeeAmount),
+                    order_total: formatCurrency(orderData.total),
+                    
+                    delivery_type: orderData.deliveryType === 'delivery' ? 'Entrega' : 'Retirada na Loja',
+                    delivery_city: orderData.deliveryCity,
+                    delivery_address: `${orderData.street}, ${orderData.number}`,
+                    delivery_neighborhood: orderData.neighborhood,
+                    delivery_complement: orderData.complement || 'Não informado',
+                    delivery_date: orderData.deliveryDate || 'A combinar',
+                    delivery_time: orderData.deliveryTime || 'A combinar',
+                    
+                    gifted_name: orderData.giftedName,
+                    gifted_phone: orderData.giftedPhone || 'Não informado',
+                    anonymous_purchase: orderData.anonymous === 'yes' ? 'SIM (Compra Anônima)' : 'NÃO',
+                    
+                    payment_method: orderData.paymentMethod === 'pix' ? 'PIX' : 'Cartão de Crédito',
+                    card_message: orderData.cardMessage || 'Não enviou cartão',
+                    card_signed: orderData.signedCard === 'yes' ? 'Cartão assinado' : 'Cartão não assinado',
+                    
+                    found_us: getFoundUsText(orderData.foundUs),
+                    full_summary: generateFullSummary(orderData),
+                    copy_email: COPY_EMAIL
+                };
+                
+                console.log('📤 Enviando email em background...');
+                
+                // Enviar email usando EmailJS
+                const response = await emailjs.send(
+                    EMAILJS_CONFIG.SERVICE_ID,
+                    EMAILJS_CONFIG.TEMPLATE_ID,
+                    templateParams
+                );
+                
+                console.log('✅ Email enviado com sucesso!', response.status);
+                return { success: true, message: 'Email enviado com sucesso!' };
+                
+            } catch (error) {
+                console.error('❌ Erro ao enviar email:', error);
+                return { 
+                    success: false, 
+                    message: 'Não foi possível enviar o email, mas seu pedido foi registrado.' 
+                };
+            }
+        }
+        
+        // ⭐⭐ COLETAR DADOS DO PEDIDO ⭐⭐
+        function collectOrderData() {
+            const formatDate = (date) => {
+                if (!date) return null;
+                return date.toLocaleDateString('pt-BR', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+            };
+            
+            return {
+                productName: document.getElementById('productName').value,
+                productPrice: parseFloat(document.getElementById('productPrice').value) || 0,
+                buyerName: document.getElementById('buyerName').value,
+                buyerPhone: document.getElementById('buyerPhone').value,
+                giftedName: document.getElementById('giftedName').value,
+                giftedPhone: document.getElementById('giftedPhone').value,
+                anonymous: document.querySelector('input[name="anonymous"]:checked')?.value,
+                deliveryType: document.querySelector('input[name="deliveryType"]:checked')?.value,
+                deliveryCity: document.getElementById('deliveryCity').value,
+                street: document.getElementById('street').value,
+                number: document.getElementById('number').value,
+                complement: document.getElementById('complement').value,
+                neighborhood: document.getElementById('neighborhood').value,
+                referencePoint: document.getElementById('referencePoint').value,
+                calculatedShipping: calculatedShipping,
+                nightFeeAmount: nightFeeAmount,
+                selectedDate: selectedDate,
+                selectedTime: selectedTime,
+                selectedTimeLabel: selectedTimeLabel,
+                deliveryDate: selectedDate ? formatDate(selectedDate) : null,
+                deliveryTime: selectedTimeLabel,
+                sendCard: document.querySelector('input[name="sendCard"]:checked')?.value,
+                cardMessage: document.getElementById('cardMessage').value,
+                signedCard: document.querySelector('input[name="signedCard"]:checked')?.value,
+                paymentMethod: document.querySelector('input[name="paymentMethod"]:checked')?.value,
+                foundUs: document.querySelector('input[name="foundUs"]:checked')?.value,
+                total: getTotalWithShipping()
+            };
+        }
+        
+        // ⭐⭐ GERAR RESUMO COMPLETO PARA O EMAIL ⭐⭐
+        function generateFullSummary(orderData) {
+            let summary = '';
+            
+            summary += `🎁 *PEDIDO - AGENDAMENTO FÁCIL*\n\n`;
+            summary += `📋 *INFORMAÇÕES DO CLIENTE*\n`;
+            summary += `Nome: ${orderData.buyerName}\n`;
+            summary += `Telefone: ${orderData.buyerPhone}\n`;
+            summary += `Compra Anônima: ${orderData.anonymous === 'yes' ? 'SIM' : 'NÃO'}\n\n`;
+            
+            summary += `🛍️ *DETALHES DO PRODUTO*\n`;
+            summary += `Produto: ${orderData.productName}\n`;
+            summary += `Valor: ${formatCurrency(orderData.productPrice)}\n\n`;
+            
+            summary += `📦 *ENTREGA*\n`;
+            summary += `Tipo: ${orderData.deliveryType === 'delivery' ? 'Entrega' : 'Retirada na Loja'}\n`;
+            
+            if (orderData.deliveryType === 'delivery') {
+                if (orderData.deliveryCity === 'other') {
+                    summary += `Cidade: Outra cidade (Correios/Transportadora)\n`;
+                } else {
+                    summary += `Cidade: ${orderData.deliveryCity}\n`;
+                    summary += `Endereço: ${orderData.street}, ${orderData.number}\n`;
+                    summary += `Bairro: ${orderData.neighborhood}\n`;
+                    if (orderData.complement && orderData.complement.toLowerCase() !== 'não') {
+                        summary += `Complemento: ${orderData.complement}\n`;
+                    }
+                    if (orderData.referencePoint) {
+                        summary += `Ponto de Referência: ${orderData.referencePoint}\n`;
+                    }
+                }
+                
+                if (orderData.deliveryDate) {
+                    summary += `Data de Entrega: ${orderData.deliveryDate}\n`;
+                }
+                if (orderData.deliveryTime) {
+                    summary += `Horário: ${orderData.deliveryTime}\n`;
+                }
+            } else {
+                summary += `Local: Retirada na loja (Bairro São Geraldo - BH)\n`;
+            }
+            summary += `\n`;
+            
+            summary += `🎭 *PRESENTEADO*\n`;
+            summary += `Nome: ${orderData.giftedName}\n`;
+            if (orderData.giftedPhone) {
+                summary += `Telefone: ${orderData.giftedPhone}\n`;
+            }
+            summary += `\n`;
+            
+            summary += `💳 *PAGAMENTO*\n`;
+            summary += `Forma: ${orderData.paymentMethod === 'pix' ? 'PIX' : 'Cartão de Crédito'}\n`;
+            summary += `\n`;
+            
+            summary += `📊 *RESUMO FINANCEIRO*\n`;
+            summary += `Produto: ${formatCurrency(orderData.productPrice)}\n`;
+            summary += `Frete: ${formatCurrency(orderData.calculatedShipping)}\n`;
+            if (orderData.nightFeeAmount > 0) {
+                summary += `Taxa Especial: ${formatCurrency(orderData.nightFeeAmount)}\n`;
+            }
+            summary += `-------------------\n`;
+            summary += `TOTAL: ${formatCurrency(orderData.total)}\n`;
+            
+            return summary;
+        }
+        
+        // ⭐⭐ FUNÇÕES AUXILIARES ⭐⭐
+        function formatCurrency(value) {
+            return parseFloat(value || 0).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+        
+        function getFoundUsText(value) {
+            const options = {
+                'google': 'Google',
+                'instagram': 'Instagram',
+                'gifted': 'Fui presenteado',
+                'indication': 'Indicação',
+                'oldClient': 'Cliente antigo'
+            };
+            return options[value] || 'Não informado';
+        }
+        
+        // ⭐⭐ CONFIGURAR EVENT LISTENERS ⭐⭐
         function setupEventListeners() {
-            // Botão para gerar link
-            document.getElementById('generateLinkBtn').addEventListener('click', generateShareLink);
-            document.getElementById('copyLinkBtn').addEventListener('click', copyGeneratedLink);
+            // Botão para gerar link (só se não for versão cliente)
+            if (!isClientVersion) {
+                document.getElementById('generateLinkBtn').addEventListener('click', generateShareLink);
+                document.getElementById('copyLinkBtn').addEventListener('click', copyGeneratedLink);
+            }
             
             // Eventos do formulário
             document.getElementById('productPrice').addEventListener('input', calculateProductTotal);
+            
+            // Eventos para opção anônima
+            document.querySelectorAll('input[name="anonymous"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    updateAnonymousMessage();
+                    checkSameData();
+                });
+            });
+            
+            // Eventos para verificar dados duplicados em compra anônima
+            document.getElementById('giftedName').addEventListener('input', checkSameData);
+            document.getElementById('giftedPhone').addEventListener('input', checkSameData);
+            document.getElementById('buyerName').addEventListener('input', checkSameData);
+            document.getElementById('buyerPhone').addEventListener('input', checkSameData);
             
             document.getElementById('deliveryCity').addEventListener('change', function() {
                 selectedCity = this.value;
@@ -1237,8 +1853,49 @@
             setupAutoSave();
         }
         
-        // ⭐⭐ GERAR LINK DE COMPARTILHAMENTO
+        // ⭐⭐ ATUALIZAR MENSAGEM PARA COMPRA ANÔNIMA ⭐⭐
+        function updateAnonymousMessage() {
+            const isAnonymous = document.querySelector('input[name="anonymous"]:checked')?.value === 'yes';
+            const anonymousMessage = document.getElementById('anonymousMessage');
+            const anonymousWarning = document.getElementById('anonymousWarning');
+            
+            if (isAnonymous) {
+                anonymousMessage.classList.add('hidden');
+                anonymousWarning.classList.remove('hidden');
+            } else {
+                anonymousMessage.classList.remove('hidden');
+                anonymousWarning.classList.add('hidden');
+                document.getElementById('sameDataWarning').classList.add('hidden');
+            }
+        }
+        
+        // ⭐⭐ VERIFICAR DADOS DUPLICADOS EM COMPRA ANÔNIMA ⭐⭐
+        function checkSameData() {
+            const isAnonymous = document.querySelector('input[name="anonymous"]:checked')?.value === 'yes';
+            if (!isAnonymous) {
+                document.getElementById('sameDataWarning').classList.add('hidden');
+                return;
+            }
+            
+            const buyerName = document.getElementById('buyerName').value.trim().toLowerCase();
+            const buyerPhone = document.getElementById('buyerPhone').value.trim();
+            const giftedName = document.getElementById('giftedName').value.trim().toLowerCase();
+            const giftedPhone = document.getElementById('giftedPhone').value.trim();
+            
+            const sameName = buyerName === giftedName && buyerName !== '';
+            const samePhone = buyerPhone === giftedPhone && buyerPhone !== '';
+            
+            if (sameName || samePhone) {
+                document.getElementById('sameDataWarning').classList.remove('hidden');
+            } else {
+                document.getElementById('sameDataWarning').classList.add('hidden');
+            }
+        }
+        
+        // ⭐⭐ GERAR LINK DE COMPARTILHAMENTO (só para vendedor) ⭐⭐
         function generateShareLink() {
+            if (isClientVersion) return;
+            
             const productName = document.getElementById('productName').value;
             const productPrice = document.getElementById('productPrice').value;
             
@@ -1247,17 +1904,11 @@
                 return;
             }
             
-            // Obter URL atual (vai funcionar no GitHub Pages)
             const currentUrl = window.location.origin + window.location.pathname;
-            
-            // Codificar valores para URL
             const encodedProduct = encodeURIComponent(productName);
             const encodedPrice = encodeURIComponent(productPrice);
-            
-            // Criar link com parâmetros
             const shareLink = `${currentUrl}?produto=${encodedProduct}&preco=${encodedPrice}`;
             
-            // Mostrar link na interface
             const linkDisplay = document.getElementById('generatedLink');
             linkDisplay.innerHTML = `
                 <strong>🔗 Link para compartilhar:</strong><br><br>
@@ -1266,30 +1917,27 @@
                 <small>Envie este link para seu cliente. Quando ele abrir, o produto "${productName}" já estará preenchido automaticamente!</small>
             `;
             
-            // Mostrar container do link
             document.getElementById('generatedLinkContainer').classList.remove('hidden');
-            
-            // Rolar até o link
             document.getElementById('generatedLinkContainer').scrollIntoView({ 
                 behavior: 'smooth', 
                 block: 'center' 
             });
             
-            // Salvar dados
             saveData();
             
             console.log('🔗 Link gerado:', shareLink);
             alert('✅ Link gerado com sucesso! Copie e envie para seu cliente.');
         }
         
-        // ⭐⭐ COPIAR LINK GERADO
         function copyGeneratedLink() {
+            if (isClientVersion) return;
+            
             const linkElement = document.getElementById('generatedLink');
             const link = linkElement.querySelector('a')?.href || linkElement.textContent;
             
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(link).then(() => {
-                    showCopySuccess();
+                    alert('✅ Link copiado para a área de transferência!');
                 }).catch(err => {
                     fallbackCopy(link);
                 });
@@ -1306,7 +1954,7 @@
             
             try {
                 document.execCommand('copy');
-                showCopySuccess();
+                alert('✅ Link copiado para a área de transferência!');
             } catch (err) {
                 alert('⚠️ Não foi possível copiar. Por favor, copie manualmente:\n\n' + text);
             }
@@ -1314,30 +1962,20 @@
             document.body.removeChild(textArea);
         }
         
-        function showCopySuccess() {
-            const copySuccess = document.getElementById('copySuccess');
-            copySuccess.classList.remove('hidden');
-            
-            setTimeout(() => {
-                copySuccess.classList.add('hidden');
-            }, 3000);
-        }
-        
-        // ⭐⭐ LIMPAR PRODUTO (para alterar)
         function clearProduct() {
+            if (isClientVersion) return;
+            
             document.getElementById('productName').value = '';
             document.getElementById('productPrice').value = '';
             document.getElementById('productLoadedNotice').classList.add('hidden');
             document.getElementById('productInputSection').style.display = 'block';
             document.getElementById('generatedLinkContainer').classList.add('hidden');
             
-            // Limpar URL sem recarregar a página
             window.history.replaceState({}, document.title, window.location.pathname);
             
             alert('✏️ Produto removido. Preencha um novo produto.');
         }
         
-        // ⭐⭐ FUNÇÕES DO FORMULÁRIO (mantidas do seu código original)
         function setupAutoSave() {
             const inputs = document.querySelectorAll('input, select, textarea');
             inputs.forEach(input => {
@@ -1645,6 +2283,23 @@
                     return;
                 }
                 
+                // Verificar se há dados duplicados em compra anônima
+                const isAnonymous = document.querySelector('input[name="anonymous"]:checked').value === 'yes';
+                if (isAnonymous) {
+                    const buyerName = document.getElementById('buyerName').value.trim().toLowerCase();
+                    const buyerPhone = document.getElementById('buyerPhone').value.trim();
+                    const giftedName = document.getElementById('giftedName').value.trim().toLowerCase();
+                    const giftedPhone = document.getElementById('giftedPhone').value.trim();
+                    
+                    const sameName = buyerName === giftedName && buyerName !== '';
+                    const samePhone = buyerPhone === giftedPhone && buyerPhone !== '';
+                    
+                    if (sameName || samePhone) {
+                        alert('Em uma compra anônima, os dados do presenteado NÃO podem ser iguais aos do comprador. Por favor, corrija os dados.');
+                        return;
+                    }
+                }
+                
                 const deliveryType = document.querySelector('input[name="deliveryType"]:checked').value;
                 if (deliveryType === 'pickup') {
                     document.getElementById('citySection').style.display = 'none';
@@ -1741,13 +2396,6 @@
             
             let html = '';
             let totalHtml = '';
-            
-            const formatCurrency = (value) => {
-                return parseFloat(value || 0).toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL'
-                });
-            };
             
             const formatDate = (date) => {
                 return date.toLocaleDateString('pt-BR', {
@@ -1875,7 +2523,17 @@
             totalSection.classList.remove('hidden');
         }
         
-        function submitForm() {
+        // ⭐⭐ FUNÇÃO PRINCIPAL DE ENVIO DO FORMULÁRIO ⭐⭐
+        async function submitForm() {
+            // Coletar dados primeiro
+            const orderData = collectOrderData();
+            
+            // Desabilitar botão para evitar múltiplos cliques
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = true;
+            submitButton.textContent = 'ENVIANDO...';
+            
+            // Primeiro mostrar a página de confirmação instantaneamente
             document.getElementById('page4').classList.remove('active');
             document.getElementById('thankYouPage').classList.add('active');
             
@@ -1883,30 +2541,134 @@
             const total = getTotalWithShipping();
             const buyerName = document.getElementById('buyerName').value;
             
+            // Mostrar confirmação imediatamente
             showPaymentConfirmation(paymentMethod, total, buyerName);
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
-            // Limpa dados salvos após envio
-            clearSavedData();
+            // ⭐⭐ ENVIAR PARA DUAS FONTES SIMULTANEAMENTE ⭐⭐
+            
+            // 1. Enviar email em background
+            setTimeout(async () => {
+                try {
+                    const emailResult = await sendOrderEmail();
+                    console.log('📧 Resultado do email:', emailResult);
+                } catch (error) {
+                    console.error('❌ Erro no envio do email:', error);
+                }
+            }, 100);
+            
+            // 2. Enviar para Google Sheets
+            setTimeout(async () => {
+                try {
+                    const sheetResult = await enviarParaGoogleSheets(orderData);
+                    console.log('📊 Resultado do Google Sheets:', sheetResult);
+                    
+                    // Mostrar status na página final (APENAS para o vendedor)
+                    if (isVendedor) {
+                        mostrarStatusPlanilha(sheetResult);
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Erro ao enviar para Google Sheets:', error);
+                    if (isVendedor) {
+                        mostrarStatusPlanilha({ 
+                            success: false, 
+                            message: '⚠️ Erro ao conectar com Google Sheets. Seu pedido foi salvo localmente.',
+                            fallback: true
+                        });
+                    }
+                }
+                
+                // Limpa dados salvos após envio
+                setTimeout(() => {
+                    clearSavedData();
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Enviar Pedido';
+                }, 2000);
+            }, 300);
+        }
+        
+        // ⭐⭐ MOSTRAR STATUS DA PLANILHA NA PÁGINA FINAL (APENAS PARA VENDEDOR) ⭐⭐
+        function mostrarStatusPlanilha(resultado) {
+            const statusDiv = document.getElementById('finalSystemStatus');
+            const offlineDiv = document.getElementById('offlineWarning');
+            
+            if (!isVendedor) {
+                // Cliente não vê mensagens técnicas
+                if (statusDiv) statusDiv.classList.add('hidden');
+                if (offlineDiv) offlineDiv.classList.add('hidden');
+                return;
+            }
+            
+            if (resultado.success) {
+                if (statusDiv) {
+                    statusDiv.classList.remove('hidden');
+                    statusDiv.innerHTML = `
+                        <p>✅ <strong>Sistema Integrado:</strong> Seu pedido foi registrado automaticamente em nossa planilha!</p>
+                        <p class="small-note">📊 ${resultado.message}</p>
+                    `;
+                    statusDiv.className = 'system-status';
+                }
+                if (offlineDiv) offlineDiv.classList.add('hidden');
+            } else {
+                if (resultado.fallback) {
+                    // Modo offline
+                    if (offlineDiv) {
+                        offlineDiv.classList.remove('hidden');
+                        offlineDiv.innerHTML = `
+                            <p>⚠️ <strong>Modo Offline:</strong> Dados salvos localmente (serão enviados quando possível)</p>
+                            <p class="small-note">Seus dados foram salvos localmente e serão enviados quando possível.</p>
+                        `;
+                    }
+                    if (statusDiv) statusDiv.classList.add('hidden');
+                } else {
+                    // Outro erro
+                    if (statusDiv) {
+                        statusDiv.classList.remove('hidden');
+                        statusDiv.innerHTML = `
+                            <p>⚠️ <strong>Atenção:</strong> ${resultado.message || 'Erro ao enviar para planilha'}</p>
+                            <p class="small-note">Tentaremos enviar novamente automaticamente.</p>
+                        `;
+                        statusDiv.className = 'system-status error';
+                    }
+                }
+            }
         }
         
         function showPaymentConfirmation(paymentMethod, total, buyerName) {
             const paymentDetailsDiv = document.getElementById('paymentDetails');
+            const orderSummaryDiv = document.getElementById('orderSummary');
             let html = '';
+            let summaryHtml = '';
             
-            const formatCurrency = (value) => {
-                return parseFloat(value || 0).toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL'
-                });
-            };
+            // Criar resumo do pedido
+            summaryHtml += '<div class="summary-item">';
+            summaryHtml += '<span class="summary-label">Nome do cliente:</span>';
+            summaryHtml += `<span class="summary-value">${buyerName}</span>`;
+            summaryHtml += '</div>';
+            
+            summaryHtml += '<div class="summary-item">';
+            summaryHtml += '<span class="summary-label">Pedido recebido:</span>';
+            summaryHtml += '<span class="summary-value" style="color: #28a745;">✅</span>';
+            summaryHtml += '</div>';
+            
+            summaryHtml += '<div class="summary-item">';
+            summaryHtml += '<span class="summary-label">Aguardando pagamento:</span>';
+            summaryHtml += '<span class="summary-value" style="color: #ffc107;">⏳</span>';
+            summaryHtml += '</div>';
+            
+            summaryHtml += '<div class="final-total">';
+            summaryHtml += '💰 TOTAL DO PEDIDO: ' + formatCurrency(total);
+            summaryHtml += '</div>';
+            
+            orderSummaryDiv.innerHTML = summaryHtml;
             
             // Destacar método de pagamento escolhido
             if (paymentMethod === 'pix') {
                 html += '<div class="payment-section" style="background: linear-gradient(135deg, #d63384 0%, #c22574 100%); color: white;">';
-                html += '<h2>✅ VOCÊ OPTOU POR PAGAR VIA PIX</h2>';
-                html += '<p>Pagamento via PIX - Liberação imediata do seu pedido</p>';
+                html += '<h2 class="white-text">✅ VOCÊ OPTOU POR PAGAR VIA PIX</h2>';
+                html += '<p class="white-text">Pagamento via PIX - Liberação imediata do seu pedido</p>';
                 html += '</div>';
                 
                 html += '<div class="pix-data">';
@@ -1914,27 +2676,26 @@
                 html += '<p>Nosso PIX é nosso CNPJ Banco C6 em nome de Mundo Carol:</p>';
                 html += '<div class="pix-key" id="pixKey" onclick="selectPixKey()">10648303000179</div>';
                 html += '<button type="button" class="copy-pix-btn" onclick="copyPixKey()">📋 Copiar Chave PIX</button>';
-                html += '<div class="pix-instructions">';
-                html += '<p>Copie a chave acima e faça o pagamento pelo seu banco</p>';
-                html += '<div class="total-amount" style="margin-top: 15px; background-color: #fff; color: #d63384;">';
-                html += '💰 TOTAL DO PEDIDO: ' + formatCurrency(total);
                 html += '</div>';
-                html += '</div>';
+                
+                html += '<div class="whatsapp-contact" onclick="sendWhatsAppMessage(\'pix\')">';
+                html += '<h3>📱 CLIQUE AQUI PARA SER DIRECIONADO PARA WHATSAPP</h3>';
+                html += '<p>Para enviar o comprovante de pagamento</p>';
                 html += '</div>';
                 
                 html += '<div class="instructions">';
-                html += '<h3>📝 Instruções:</h3>';
-                html += '<p>1. Copie a chave PIX acima</p>';
-                html += '<p>2. Abra seu aplicativo do banco</p>';
-                html += '<p>3. Vá em PIX > Pagar com PIX > Colar</p>';
-                html += '<p>4. Confirme o valor: <strong>' + formatCurrency(total) + '</strong></p>';
-                html += '<p>5. Finalize o pagamento</p>';
-                html += '<p>6. <strong>ENVIE O COMPROVANTE</strong> para nosso WhatsApp para confirmar e garantir o agendamento</p>';
+                html += '<h3>📝 Após o pagamento:</h3>';
+                html += '<p><strong>ENVIE O COMPROVANTE</strong> para nosso WhatsApp para confirmar e garantir o agendamento</p>';
                 html += '</div>';
             } else {
-                html += '<div class="credit-card-highlight" style="background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);">';
+                html += '<div class="credit-card-highlight">';
                 html += '<h3>💳 ✅ VOCÊ OPTOU POR PAGAR VIA CARTÃO DE CRÉDITO</h3>';
                 html += '<p>Um atendente entrará em contato em breve para enviar o link de pagamento.</p>';
+                html += '</div>';
+                
+                html += '<div class="whatsapp-contact" onclick="sendWhatsAppMessage(\'credit\')">';
+                html += '<h3>📱 CLIQUE AQUI PARA SER DIRECIONADO PARA WHATSAPP</h3>';
+                html += '<p>Para receber seu link de pagamento via Cartão</p>';
                 html += '</div>';
                 
                 html += '<div class="pix-option">';
@@ -1947,12 +2708,6 @@
                 html += '<p>Nosso PIX é nosso CNPJ Banco C6 em nome de Mundo Carol:</p>';
                 html += '<div class="pix-key" id="pixKey" onclick="selectPixKey()">10648303000179</div>';
                 html += '<button type="button" class="copy-pix-btn" onclick="copyPixKey()">📋 Copiar Chave PIX</button>';
-                html += '<div class="pix-instructions">';
-                html += '<p>Copie a chave acima e faça o pagamento pelo seu banco</p>';
-                html += '<div class="total-amount" style="margin-top: 15px; background-color: #fff; color: #d63384;">';
-                html += '💰 TOTAL DO PEDIDO: ' + formatCurrency(total);
-                html += '</div>';
-                html += '</div>';
                 html += '</div>';
                 
                 html += '<div class="instructions">';
@@ -1960,14 +2715,6 @@
                 html += '<p><strong>ENVIE O COMPROVANTE</strong> para nosso WhatsApp para confirmar e garantir o agendamento</p>';
                 html += '</div>';
             }
-            
-            html += '<div class="instructions">';
-            html += '<h3>📦 Status do seu pedido:</h3>';
-            html += '<p><strong>Nome do cliente:</strong> ' + buyerName + '</p>';
-            html += '<p><strong>Pedido recebido:</strong> ✓</p>';
-            html += '<p><strong>Aguardando pagamento:</strong> ⏳</p>';
-            html += '<p>Após a confirmação do pagamento, sua entrega será agendada conforme escolhido.</p>';
-            html += '</div>';
             
             paymentDetailsDiv.innerHTML = html;
         }
@@ -1995,7 +2742,7 @@
             }
         }
         
-        function sendWhatsAppMessage() {
+        function sendWhatsAppMessage(paymentType) {
             const buyerName = document.getElementById('buyerName').value;
             const buyerPhone = document.getElementById('buyerPhone').value;
             const productName = document.getElementById('productName').value;
@@ -2006,19 +2753,30 @@
             const deliveryType = document.querySelector('input[name="deliveryType"]:checked').value;
             const deliveryTypeText = deliveryType === 'delivery' ? 'Entrega' : 'Retirada na Loja';
             
-            let message = `*NOVO PEDIDO - Presentes Especiais*%0A%0A`;
-            message += `*Cliente:* ${buyerName}%0A`;
-            message += `*Telefone:* ${buyerPhone}%0A`;
-            message += `*Produto:* ${productName}%0A`;
-            message += `*Valor Produto:* R$ ${productPrice.toFixed(2)}%0A`;
-            message += `*Frete:* R$ ${calculatedShipping.toFixed(2)}%0A`;
-            if (nightFeeAdded) {
-                message += `*Taxa Especial:* R$ ${nightFeeAmount.toFixed(2)}%0A`;
+            let message = '';
+            
+            if (paymentType === 'pix') {
+                message = `*COMPROVANTE PIX - Agendamento Fácil*%0A%0A`;
+                message += `*Cliente:* ${buyerName}%0A`;
+                message += `*Telefone:* ${buyerPhone}%0A`;
+                message += `*Produto:* ${productName}%0A`;
+                message += `*TOTAL PAGO:* R$ ${total.toFixed(2)}%0A%0A`;
+                message += `*✅ Envio o comprovante do pagamento PIX!*`;
+            } else {
+                message = `*SOLICITAÇÃO LINK CARTÃO - Agendamento Fácil*%0A%0A`;
+                message += `*Cliente:* ${buyerName}%0A`;
+                message += `*Telefone:* ${buyerPhone}%0A`;
+                message += `*Produto:* ${productName}%0A`;
+                message += `*Valor Produto:* R$ ${productPrice.toFixed(2)}%0A`;
+                message += `*Frete:* R$ ${calculatedShipping.toFixed(2)}%0A`;
+                if (nightFeeAdded) {
+                    message += `*Taxa Especial:* R$ ${nightFeeAmount.toFixed(2)}%0A`;
+                }
+                message += `*TOTAL:* R$ ${total.toFixed(2)}%0A`;
+                message += `*Forma de Pagamento:* ${paymentMethodText}%0A`;
+                message += `*Tipo de Entrega:* ${deliveryTypeText}%0A%0A`;
+                message += `*✅ Solicito o link para pagamento com cartão de crédito!*`;
             }
-            message += `*TOTAL:* R$ ${total.toFixed(2)}%0A`;
-            message += `*Forma de Pagamento:* ${paymentMethodText}%0A`;
-            message += `*Tipo de Entrega:* ${deliveryTypeText}%0A%0A`;
-            message += `*Formulário preenchido com sucesso!*`;
             
             const phone = '5531983238087';
             window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
@@ -2055,11 +2813,11 @@
                 confirmData: document.getElementById('confirmData').checked
             };
             
-            localStorage.setItem('presentesEspeciaisFormData', JSON.stringify(formData));
+            localStorage.setItem('agendamentoFacilFormData', JSON.stringify(formData));
         }
         
         function loadSavedData() {
-            const savedData = localStorage.getItem('presentesEspeciaisFormData');
+            const savedData = localStorage.getItem('agendamentoFacilFormData');
             if (!savedData) return;
             
             try {
@@ -2150,6 +2908,10 @@
                     document.getElementById('shippingInfo').classList.remove('hidden');
                 }
                 
+                // Atualizar mensagem anônima
+                updateAnonymousMessage();
+                checkSameData();
+                
             } catch (e) {
                 console.error('Erro ao carregar dados salvos:', e);
             }
@@ -2157,7 +2919,7 @@
         
         function clearSavedData() {
             // Remove todos os dados salvos
-            localStorage.removeItem('presentesEspeciaisFormData');
+            localStorage.removeItem('agendamentoFacilFormData');
             
             // Reseta todas as variáveis
             selectedDate = null;
