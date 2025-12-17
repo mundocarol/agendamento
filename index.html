@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário de Pedido - Mundo Carol</title>
+    <title>Agendamento - Mundo Carol</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -54,7 +54,7 @@
         
         .header h1 {
             color: var(--primary);
-            font-size: 22px;
+            font-size: 18px;
             margin-bottom: 8px;
             display: flex;
             align-items: center;
@@ -1009,6 +1009,20 @@
             box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
         }
         
+        .copy-success {
+            color: var(--success);
+            font-weight: 600;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .copy-success.show {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        
         /* Taxa separada na revisão */
         .taxa-item {
             color: #dc3545;
@@ -1022,7 +1036,7 @@
         /* Ajustes para mobile */
         @media (max-width: 480px) {
             .header h1 {
-                font-size: 20px;
+                font-size: 16px;
             }
             
             .form-page {
@@ -1087,6 +1101,10 @@
                 flex-direction: column;
                 gap: 0;
             }
+            
+            .section-title {
+                font-size: 16px;
+            }
         }
         
         @media (min-width: 768px) {
@@ -1124,7 +1142,7 @@
         
         <!-- Cabeçalho (só aparece na página 1) -->
         <div id="mainHeader" class="header">
-            <h1><i class="fas fa-gift"></i> Formulário de Pedido - Mundo Carol</h1>
+            <h1><i class="fas fa-calendar-alt"></i> Agendamento - Mundo Carol</h1>
             <p>Preencha os dados abaixo para realizar seu pedido</p>
         </div>
         
@@ -1154,7 +1172,7 @@
             <div class="section" id="productSection">
                 <div class="section-title">
                     <span><i class="fas fa-box"></i> Produto Escolhido</span>
-                    <button type="button" class="btn btn-danger btn-small" onclick="clearProduct()">
+                    <button type="button" class="btn btn-danger btn-small" id="clearProductBtn" onclick="clearProduct()">
                         <i class="fas fa-trash"></i> Limpar
                     </button>
                 </div>
@@ -1169,22 +1187,25 @@
                         <input type="text" id="productName" class="form-control" placeholder="Digite o nome do produto" required>
                     </div>
                     
-                    <div class="form-group">
+                    <div id="itemsFieldContainer" class="form-group">
                         <label for="itemsList">Itens (opcional):</label>
-                        <div class="items-collapsible">
-                            <div class="items-collapsible-header" onclick="toggleItemsList()">
-                                <span>Veja os Itens <i class="fas fa-chevron-down"></i></span>
-                            </div>
-                            <div class="items-collapsible-content hidden" id="itemsListContent">
-                                <textarea id="itemsList" class="form-control" rows="10" placeholder="Cole aqui a lista de itens, um por linha. Exemplo:
+                        <textarea id="itemsList" class="form-control" rows="5" placeholder="Cole aqui a lista de itens, um por linha. Exemplo:
 1    Ferrero Rocher pacote 3 unidades
 1    Salgadinho Torcida
 1    Azeitona Verde (pacotinho)
 1    Palmito em conserva pote 180g"></textarea>
-                                <small style="display: block; margin-top: 8px; color: #666;">
-                                    Cole sua lista de itens acima (um por linha)
-                                </small>
-                            </div>
+                        <small style="display: block; margin-top: 8px; color: #666;">
+                            Cole sua lista de itens acima (um por linha)
+                        </small>
+                    </div>
+                    
+                    <!-- Lista suspensa para cliente (visível apenas quando vem de link) -->
+                    <div id="itemsCollapsibleContainer" class="items-collapsible hidden">
+                        <div class="items-collapsible-header" onclick="toggleItemsList()">
+                            <span>Veja os Itens <i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="items-collapsible-content hidden" id="itemsListContent">
+                            <div id="lockedItemsList"></div>
                         </div>
                     </div>
                     
@@ -1220,7 +1241,7 @@
                                 <p>5. Ele só precisará completar seus dados e endereço</p>
                             </div>
                             
-                            <p class="success hidden" id="copySuccess" style="color: var(--success); font-weight: 600; text-align: center; margin-top: 10px;">✅ Link copiado com sucesso!</p>
+                            <p class="copy-success" id="copySuccess">✅ Link copiado com sucesso!</p>
                         </div>
                     </div>
                 </div>
@@ -1236,7 +1257,8 @@
                 
                 <div class="form-group">
                     <label for="buyerPhone">Telefone:</label>
-                    <input type="text" id="buyerPhone" class="form-control" placeholder="(XX) XXXXX-XXXX" required>
+                    <input type="text" id="buyerPhone" class="form-control" placeholder="Ex: (31) 98323-8087 ou 31983238087" required>
+                    <small style="color: #666; font-size: 12px;">Qualquer formato de telefone é aceito</small>
                 </div>
             </div>
             
@@ -1254,7 +1276,8 @@
                 
                 <div class="form-group">
                     <label for="giftedPhone">Telefone do Presenteado:</label>
-                    <input type="text" id="giftedPhone" class="form-control" placeholder="(XX) XXXXX-XXXX">
+                    <input type="text" id="giftedPhone" class="form-control" placeholder="Ex: (31) 98323-8087 ou 31983238087">
+                    <small style="color: #666; font-size: 12px;">Qualquer formato de telefone é aceito</small>
                 </div>
             </div>
             
@@ -1287,6 +1310,9 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Mensagem de erro da página 1 -->
+            <div id="page1Error" class="error-message hidden"></div>
             
             <div class="nav-buttons">
                 <button type="button" class="btn btn-secondary" onclick="prevPage(1, 1)" disabled><i class="fas fa-arrow-left"></i> Anterior</button>
@@ -1381,6 +1407,9 @@
                 </div>
             </div>
             
+            <!-- Mensagem de erro da página 2 -->
+            <div id="page2Error" class="error-message hidden"></div>
+            
             <div class="nav-buttons">
                 <button type="button" class="btn btn-secondary" onclick="prevPage(2, 1)"><i class="fas fa-arrow-left"></i> Anterior</button>
                 <button type="button" class="btn btn-primary" onclick="nextPage(2, 3)" id="nextPage2Button" disabled>Próxima <i class="fas fa-arrow-right"></i></button>
@@ -1431,6 +1460,9 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Mensagem de erro da página 3 -->
+            <div id="page3Error" class="error-message hidden"></div>
             
             <div class="nav-buttons">
                 <button type="button" class="btn btn-secondary" onclick="prevPage(3, 2)"><i class="fas fa-arrow-left"></i> Anterior</button>
@@ -1518,6 +1550,9 @@
                 <div id="statusBox" class="status-box"></div>
             </div>
             
+            <!-- Mensagem de erro da página 4 -->
+            <div id="page4Error" class="error-message hidden"></div>
+            
             <div class="nav-buttons">
                 <button type="button" class="btn btn-secondary" onclick="prevPage(4, 3)"><i class="fas fa-arrow-left"></i> Anterior</button>
                 <button type="button" class="btn btn-primary" onclick="submitForm()" id="submitButton" disabled>Enviar Pedido <i class="fas fa-paper-plane"></i></button>
@@ -1543,6 +1578,7 @@
                         <button type="button" class="btn btn-primary" onclick="copyPixKey()">
                             <i class="fas fa-copy"></i> Copiar Chave PIX
                         </button>
+                        <p class="copy-success" id="pixCopySuccess"></p>
                     </div>
                     
                     <div class="instructions">
@@ -1620,6 +1656,7 @@
                         <button type="button" class="btn btn-primary" onclick="copyPixKey()">
                             <i class="fas fa-copy"></i> Copiar Chave PIX
                         </button>
+                        <p class="copy-success" id="pixCopySuccess2"></p>
                     </div>
                     
                     <div class="instructions">
@@ -1700,6 +1737,7 @@
         let isFromLink = false;
         let lockedProductName = '';
         let lockedProductPrice = '';
+        let lockedItemsList = '';
         let linkExpiration = null;
         let linkUsed = false;
         
@@ -1907,7 +1945,7 @@
             document.getElementById('generatedLinkContainer').classList.add('hidden');
             
             // Mostrar mensagem de confirmação
-            mostrarStatus('✅ Produto limpo com sucesso!', 'success');
+            showPageError('page1', '✅ Produto limpo com sucesso!', 'success');
         }
         
         // ============================================
@@ -1917,6 +1955,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const product = urlParams.get('product');
             const price = urlParams.get('price');
+            const items = urlParams.get('items');
             const timestamp = urlParams.get('t');
             const used = urlParams.get('used');
             
@@ -1945,6 +1984,7 @@
                 isFromLink = true;
                 lockedProductName = decodeURIComponent(product);
                 lockedProductPrice = decodeURIComponent(price);
+                lockedItemsList = items ? decodeURIComponent(items) : '';
                 linkExpiration = timestamp ? parseInt(timestamp) + (24 * 60 * 60 * 1000) : null;
                 
                 // Marcar como usado no localStorage
@@ -1955,9 +1995,21 @@
                 // Mostrar seção de produto selecionado
                 showLockedProduct();
                 
+                // Ocultar botão limpar
+                document.getElementById('clearProductBtn').style.display = 'none';
+                
                 // Ocultar campos de produto e gerador de link
                 document.getElementById('normalProductFields').style.display = 'none';
                 document.getElementById('linkGeneratorSection').style.display = 'none';
+                document.getElementById('itemsFieldContainer').style.display = 'none';
+                
+                // Mostrar lista suspensa para cliente
+                if (lockedItemsList) {
+                    document.getElementById('itemsCollapsibleContainer').classList.remove('hidden');
+                    document.getElementById('lockedItemsList').innerHTML = '<ul>' + 
+                        lockedItemsList.split('\n').map(item => `<li>${item.trim()}</li>`).join('') + 
+                        '</ul>';
+                }
                 
                 // Preencher campos (readonly)
                 document.getElementById('productName').value = lockedProductName;
@@ -2002,38 +2054,49 @@
         function generateClientLink() {
             const productName = document.getElementById('productName').value;
             const productPrice = document.getElementById('productPrice').value;
+            const itemsList = document.getElementById('itemsList').value;
             
             if (!productName || !productPrice) {
-                mostrarStatus('❌ Por favor, preencha todos os campos do produto antes de gerar o link.', 'error');
+                showPageError('page1', '❌ Por favor, preencha todos os campos do produto antes de gerar o link.', 'error');
                 return;
             }
             
             // Codificar os valores para URL
             const encodedProductName = encodeURIComponent(productName);
             const encodedProductPrice = encodeURIComponent(productPrice);
+            const encodedItemsList = encodeURIComponent(itemsList);
             const timestamp = Date.now();
             
             // Criar URL com parâmetros (incluindo timestamp para validade)
             const baseUrl = window.location.origin + window.location.pathname;
-            const clientLink = `${baseUrl}?product=${encodedProductName}&price=${encodedProductPrice}&t=${timestamp}`;
+            let clientLink = `${baseUrl}?product=${encodedProductName}&price=${encodedProductPrice}&t=${timestamp}`;
+            
+            if (itemsList) {
+                clientLink += `&items=${encodedItemsList}`;
+            }
             
             // Mostrar link
             document.getElementById('generatedLink').textContent = clientLink;
             document.getElementById('generatedLinkContainer').classList.remove('hidden');
-            document.getElementById('copySuccess').classList.add('hidden');
+            document.getElementById('copySuccess').classList.remove('show');
             
             // Scroll para mostrar o link
             document.getElementById('generatedLinkContainer').scrollIntoView({ behavior: 'smooth' });
             
             // Mostrar instruções
-            mostrarStatus('✅ Link gerado com sucesso! Válido por 24 horas ou até ser usado.', 'success');
+            showPageError('page1', '✅ Link gerado com sucesso! Válido por 24 horas ou até ser usado.', 'success');
         }
         
         // Função para copiar para clipboard
         function copyToClipboard(text, type) {
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text).then(() => {
-                    showCopySuccess(type);
+                    if (type === 'link') {
+                        document.getElementById('copySuccess').classList.add('show');
+                        setTimeout(() => {
+                            document.getElementById('copySuccess').classList.remove('show');
+                        }, 3000);
+                    }
                 }).catch(err => {
                     copyUsingExecCommand(text, type);
                 });
@@ -2054,21 +2117,17 @@
             
             try {
                 document.execCommand('copy');
-                showCopySuccess(type);
+                if (type === 'link') {
+                    document.getElementById('copySuccess').classList.add('show');
+                    setTimeout(() => {
+                        document.getElementById('copySuccess').classList.remove('show');
+                    }, 3000);
+                }
             } catch (err) {
                 alert('⚠️ Não foi possível copiar. Por favor, anote: ' + text);
             } finally {
                 document.body.removeChild(textArea);
             }
-        }
-        
-        function showCopySuccess(type) {
-            const copySuccess = document.getElementById('copySuccess');
-            copySuccess.classList.remove('hidden');
-            
-            setTimeout(() => {
-                copySuccess.classList.add('hidden');
-            }, 3000);
         }
         
         // ============================================
@@ -2083,16 +2142,28 @@
             
             if (current === 1) {
                 validationResult = validatePage1();
+                if (!validationResult) {
+                    showPageError('page1', '❌ Por favor, preencha todos os campos obrigatórios antes de avançar.', 'error');
+                    return;
+                }
             } else if (current === 2) {
                 validationResult = validatePage2();
+                if (!validationResult) {
+                    showPageError('page2', '❌ Por favor, preencha todos os campos obrigatórios antes de avançar.', 'error');
+                    return;
+                }
             } else if (current === 3) {
                 validationResult = validatePage3();
+                if (!validationResult) {
+                    showPageError('page3', '❌ Por favor, preencha todos os campos obrigatórios antes de avançar.', 'error');
+                    return;
+                }
             } else if (current === 4) {
                 validationResult = validatePage4();
-            }
-            
-            if (!validationResult) {
-                return; // Não avança se houver erro
+                if (!validationResult) {
+                    showPageError('page4', '❌ Por favor, preencha todos os campos obrigatórios antes de avançar.', 'error');
+                    return;
+                }
             }
             
             if (next === 4) {
@@ -2118,40 +2189,32 @@
         
         function clearErrorMessages() {
             document.querySelectorAll('.error-message').forEach(el => {
-                el.remove();
+                el.classList.add('hidden');
             });
         }
         
-        function showError(elementId, message) {
-            const element = document.getElementById(elementId);
-            if (!element) return;
+        function showPageError(pageId, message, type = 'error') {
+            const errorDiv = document.getElementById(`${pageId}Error`);
+            if (!errorDiv) return;
             
-            // Remover erro anterior
-            const existingError = element.parentNode.querySelector('.error-message');
-            if (existingError) {
-                existingError.remove();
+            errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+            errorDiv.classList.remove('hidden');
+            
+            if (type === 'success') {
+                errorDiv.style.background = '#d4edda';
+                errorDiv.style.color = '#155724';
+                errorDiv.style.border = '1px solid #c3e6cb';
             }
             
-            // Criar nova mensagem de erro
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
-            errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+            // Scroll para a mensagem de erro
+            errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            // Inserir após o elemento
-            element.parentNode.insertBefore(errorDiv, element.nextSibling);
-            
-            // Destacar o campo
-            element.style.borderColor = '#dc3545';
-            element.style.boxShadow = '0 0 0 2px rgba(220, 53, 69, 0.1)';
-            
-            // Remover destaque após 3 segundos
-            setTimeout(() => {
-                element.style.borderColor = '';
-                element.style.boxShadow = '';
-            }, 3000);
-            
-            // Focar no elemento
-            element.focus();
+            // Se for mensagem de sucesso, remover após 3 segundos
+            if (type === 'success') {
+                setTimeout(() => {
+                    errorDiv.classList.add('hidden');
+                }, 3000);
+            }
         }
         
         // ============================================
@@ -2169,25 +2232,17 @@
             for (const field of required) {
                 const element = document.getElementById(field.id);
                 if (!element || !element.value.trim()) {
-                    showError(field.id, `Por favor, preencha: ${field.name}`);
                     return false;
                 }
             }
             
-            // Validar telefone
-            const phone = document.getElementById('buyerPhone').value.replace(/\D/g, '');
-            if (phone.length < 10 || phone.length > 11) {
-                showError('buyerPhone', 'Telefone inválido. Use (XX) XXXXX-XXXX');
-                return false;
-            }
+            // Telefone agora aceita QUALQUER formato (sem validação)
             
             if (!document.querySelector('input[name="anonymous"]:checked')) {
-                mostrarStatus('❌ Por favor, informe se deseja compra anônima.', 'error');
                 return false;
             }
             
             if (!document.querySelector('input[name="deliveryType"]:checked')) {
-                mostrarStatus('❌ Por favor, selecione o tipo de entrega.', 'error');
                 return false;
             }
             
@@ -2200,7 +2255,6 @@
             if (deliveryType === 'delivery') {
                 const city = document.getElementById('deliveryCity').value;
                 if (!city) {
-                    showError('deliveryCity', 'Por favor, selecione uma cidade.');
                     return false;
                 }
                 
@@ -2214,7 +2268,6 @@
                     for (const field of required) {
                         const element = document.getElementById(field.id);
                         if (!element || !element.value.trim()) {
-                            showError(field.id, `Por favor, preencha: ${field.name}`);
                             return false;
                         }
                     }
@@ -2222,12 +2275,10 @@
                 
                 if (!isOtherCity && deliveryType === 'delivery') {
                     if (!selectedDate) {
-                        mostrarStatus('❌ Por favor, selecione uma data de entrega.', 'error');
                         return false;
                     }
                     
                     if (!document.querySelector('input[name="deliveryTime"]:checked')) {
-                        mostrarStatus('❌ Por favor, selecione um horário de entrega.', 'error');
                         return false;
                     }
                 }
@@ -2235,12 +2286,10 @@
             
             if (deliveryType === 'pickup') {
                 if (!selectedDate) {
-                    mostrarStatus('❌ Por favor, selecione uma data para retirada.', 'error');
                     return false;
                 }
                 
                 if (!document.querySelector('input[name="deliveryTime"]:checked')) {
-                    mostrarStatus('❌ Por favor, selecione um horário para retirada.', 'error');
                     return false;
                 }
             }
@@ -2250,25 +2299,21 @@
         
         function validatePage3() {
             if (!document.querySelector('input[name="sendCard"]:checked')) {
-                mostrarStatus('❌ Por favor, selecione se deseja enviar um cartão.', 'error');
                 return false;
             }
             
             const sendCard = document.querySelector('input[name="sendCard"]:checked').value;
             if (sendCard === 'yes') {
                 if (!document.getElementById('cardMessage').value.trim()) {
-                    showError('cardMessage', 'Por favor, escreva a mensagem do cartão.');
                     return false;
                 }
                 
                 if (!document.querySelector('input[name="signedCard"]:checked')) {
-                    mostrarStatus('❌ Por favor, informe se assinou o cartão.', 'error');
                     return false;
                 }
             }
             
             if (!document.querySelector('input[name="acknowledgeTerms"]:checked')) {
-                mostrarStatus('❌ Por favor, confirme o termo de ciência.', 'error');
                 return false;
             }
             
@@ -2277,17 +2322,14 @@
         
         function validatePage4() {
             if (!document.querySelector('input[name="paymentMethod"]:checked')) {
-                mostrarStatus('❌ Por favor, selecione a forma de pagamento.', 'error');
                 return false;
             }
             
             if (!document.querySelector('input[name="foundUs"]:checked')) {
-                mostrarStatus('❌ Por favor, nos informe como nos encontrou.', 'error');
                 return false;
             }
             
             if (!document.getElementById('confirmData').checked) {
-                mostrarStatus('❌ Por favor, confirme que revisou todos os dados.', 'error');
                 return false;
             }
             
@@ -2971,7 +3013,7 @@
             if (isSubmitting) return;
             
             if (!validateForm()) {
-                mostrarStatus('❌ Por favor, corrija os erros no formulário.', 'error');
+                showPageError('page4', '❌ Por favor, corrija os erros no formulário.', 'error');
                 return;
             }
             
@@ -2982,7 +3024,7 @@
             isSubmitting = true;
             loadingSection.style.display = 'block';
             
-            mostrarStatus('⏳ Preparando envio dos dados...', 'info');
+            showPageError('page4', '⏳ Preparando envio dos dados...', 'info');
             
             try {
                 const excelData = prepareExcelData();
@@ -2991,7 +3033,7 @@
                 const result = await enviarDadosParaPlanilha(excelData);
                 
                 if (result.success) {
-                    mostrarStatus(`✅ ${result.message}`, 'success');
+                    showPageError('page4', `✅ ${result.message}`, 'success');
                     
                     submitBtn.innerHTML = '✅ ENVIADO';
                     submitBtn.classList.add('btn-success');
@@ -3022,7 +3064,7 @@
                 
             } catch (error) {
                 console.error('❌ Erro no envio:', error);
-                mostrarStatus(`❌ Erro: ${error.message || 'Falha na conexão'}`, 'error');
+                showPageError('page4', `❌ Erro: ${error.message || 'Falha na conexão'}`, 'error');
                 submitBtn.disabled = false;
                 isSubmitting = false;
             } finally {
@@ -3081,33 +3123,6 @@
                     });
                 }, 1500);
             });
-        }
-        
-        function mostrarStatus(message, type = 'info') {
-            const statusBox = document.getElementById('statusBox');
-            const sendStatus = document.getElementById('sendStatus');
-            
-            statusBox.className = 'status-box';
-            sendStatus.className = 'status-box hidden';
-            
-            let statusClass = 'status-info';
-            if (type === 'success') statusClass = 'status-success';
-            if (type === 'error') statusClass = 'status-error';
-            
-            statusBox.classList.add(statusClass);
-            statusBox.innerHTML = message;
-            statusBox.style.display = 'block';
-            
-            sendStatus.classList.add(statusClass);
-            sendStatus.innerHTML = message;
-            sendStatus.classList.remove('hidden');
-            
-            if (type !== 'error') {
-                setTimeout(() => {
-                    statusBox.style.display = 'none';
-                    sendStatus.classList.add('hidden');
-                }, type === 'success' ? 5000 : 3000);
-            }
         }
         
         // ============================================
@@ -3174,7 +3189,19 @@
             
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(pixKey).then(() => {
-                    mostrarStatus('✅ Chave PIX copiada!', 'success');
+                    document.getElementById('pixCopySuccess').textContent = '✅ Chave PIX copiada com sucesso!';
+                    document.getElementById('pixCopySuccess').classList.add('show');
+                    if (document.getElementById('pixCopySuccess2')) {
+                        document.getElementById('pixCopySuccess2').textContent = '✅ Chave PIX copiada com sucesso!';
+                        document.getElementById('pixCopySuccess2').classList.add('show');
+                    }
+                    
+                    setTimeout(() => {
+                        document.getElementById('pixCopySuccess').classList.remove('show');
+                        if (document.getElementById('pixCopySuccess2')) {
+                            document.getElementById('pixCopySuccess2').classList.remove('show');
+                        }
+                    }, 3000);
                 });
             } else {
                 const textArea = document.createElement('textarea');
@@ -3183,7 +3210,20 @@
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-                mostrarStatus('✅ Chave PIX copiada!', 'success');
+                
+                document.getElementById('pixCopySuccess').textContent = '✅ Chave PIX copiada com sucesso!';
+                document.getElementById('pixCopySuccess').classList.add('show');
+                if (document.getElementById('pixCopySuccess2')) {
+                    document.getElementById('pixCopySuccess2').textContent = '✅ Chave PIX copiada com sucesso!';
+                    document.getElementById('pixCopySuccess2').classList.add('show');
+                }
+                
+                setTimeout(() => {
+                    document.getElementById('pixCopySuccess').classList.remove('show');
+                    if (document.getElementById('pixCopySuccess2')) {
+                        document.getElementById('pixCopySuccess2').classList.remove('show');
+                    }
+                }, 3000);
             }
         }
         
