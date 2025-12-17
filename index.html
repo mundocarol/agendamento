@@ -104,6 +104,7 @@
             margin-bottom: 15px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 8px;
             padding-bottom: 8px;
             border-bottom: 1px solid #f0f0f0;
@@ -140,6 +141,15 @@
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 2px rgba(214, 51, 132, 0.1);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
         }
         
         .radio-group {
@@ -204,6 +214,12 @@
             color: #0c5460;
         }
         
+        .alert-danger {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
         .btn {
             display: inline-block;
             padding: 14px 20px;
@@ -248,6 +264,16 @@
             transform: translateY(-2px);
         }
         
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
         .btn-whatsapp {
             background: var(--whatsapp);
             color: white;
@@ -274,6 +300,12 @@
         .btn-disabled:hover {
             transform: none;
             box-shadow: none;
+        }
+        
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 14px;
+            width: auto;
         }
         
         .nav-buttons {
@@ -842,16 +874,113 @@
             color: #333;
         }
         
-        .lock-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #28a745;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
+        .expired-message {
+            background-color: #f8d7da;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .expired-message h2 {
+            color: #721c24;
+            margin-bottom: 15px;
+        }
+        
+        .expired-message p {
+            color: #721c24;
+            margin-bottom: 15px;
+        }
+        
+        .items-collapsible {
+            margin: 15px 0;
+        }
+        
+        .items-collapsible-header {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--primary);
+            transition: all 0.3s;
+        }
+        
+        .items-collapsible-header:hover {
+            background: #e9ecef;
+        }
+        
+        .items-collapsible-header i {
+            transition: transform 0.3s;
+        }
+        
+        .items-collapsible-header.open i {
+            transform: rotate(180deg);
+        }
+        
+        .items-collapsible-content {
+            background: white;
+            padding: 15px;
+            border-radius: 0 0 8px 8px;
+            border: 2px solid var(--border);
+            border-top: none;
+            margin-top: -2px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        .items-collapsible-content ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .items-collapsible-content li {
+            padding: 4px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .items-collapsible-content li:last-child {
+            border-bottom: none;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .payment-option-header {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+            text-align: center;
+        }
+        
+        .payment-option-header h3 {
+            color: #0d47a1;
+            margin-bottom: 10px;
         }
         
         /* Botão WhatsApp discreto */
@@ -931,7 +1060,12 @@
             }
             
             .nav-buttons {
-                flex-direction: column;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .nav-buttons .btn {
+                min-width: 120px;
             }
             
             .review-item {
@@ -948,6 +1082,11 @@
                 flex-direction: column;
                 gap: 10px;
             }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
         }
         
         @media (min-width: 768px) {
@@ -959,12 +1098,32 @@
                 flex-direction: row;
             }
         }
+        
+        @media (max-width: 360px) {
+            .nav-buttons {
+                flex-direction: column;
+            }
+            
+            .nav-buttons .btn {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Cabeçalho -->
-        <div class="header">
+        <!-- Mensagem de Link Expirado -->
+        <div id="expiredMessage" class="expired-message hidden">
+            <h2><i class="fas fa-exclamation-triangle"></i> Link Expirado</h2>
+            <p>Este link de pedido expirou ou já foi utilizado.</p>
+            <p>Entre em contato com o atendente para receber um novo link.</p>
+            <button class="whatsapp-discreto" onclick="contactWhatsApp()">
+                <i class="fab fa-whatsapp"></i> WhatsApp: (31) 98323-8087
+            </button>
+        </div>
+        
+        <!-- Cabeçalho (só aparece na página 1) -->
+        <div id="mainHeader" class="header">
             <h1><i class="fas fa-gift"></i> Formulário de Pedido - Mundo Carol</h1>
             <p>Preencha os dados abaixo para realizar seu pedido</p>
         </div>
@@ -974,8 +1133,7 @@
         
         <!-- SEÇÃO DE PRODUTO PRÉ-SELECIONADO (aparece quando vem de link) -->
         <div id="productLockedSection" class="product-locked hidden">
-            <div class="lock-badge">BLOQUEADO</div>
-            <h3><i class="fas fa-lock lock-icon"></i> Produto Selecionado</h3>
+            <h3><i class="fas fa-box lock-icon"></i> Produto Selecionado</h3>
             <div class="product-locked-content">
                 <div class="product-locked-item">
                     <strong>Produto:</strong>
@@ -994,7 +1152,12 @@
         <!-- Página 1: Produto e Dados Básicos -->
         <div id="page1" class="form-page active">
             <div class="section" id="productSection">
-                <h2 class="section-title"><i class="fas fa-box"></i> Produto Escolhido</h2>
+                <div class="section-title">
+                    <span><i class="fas fa-box"></i> Produto Escolhido</span>
+                    <button type="button" class="btn btn-danger btn-small" onclick="clearProduct()">
+                        <i class="fas fa-trash"></i> Limpar
+                    </button>
+                </div>
                 
                 <div class="alert alert-info">
                     <p><strong>Frete será calculado após escolha do seu endereço e aparecerá ao final para conferência.</strong></p>
@@ -1004,6 +1167,25 @@
                     <div class="form-group">
                         <label for="productName">Nome do Produto:</label>
                         <input type="text" id="productName" class="form-control" placeholder="Digite o nome do produto" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="itemsList">Itens (opcional):</label>
+                        <div class="items-collapsible">
+                            <div class="items-collapsible-header" onclick="toggleItemsList()">
+                                <span>Veja os Itens <i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="items-collapsible-content hidden" id="itemsListContent">
+                                <textarea id="itemsList" class="form-control" rows="10" placeholder="Cole aqui a lista de itens, um por linha. Exemplo:
+1    Ferrero Rocher pacote 3 unidades
+1    Salgadinho Torcida
+1    Azeitona Verde (pacotinho)
+1    Palmito em conserva pote 180g"></textarea>
+                                <small style="display: block; margin-top: 8px; color: #666;">
+                                    Cole sua lista de itens acima (um por linha)
+                                </small>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -1022,6 +1204,7 @@
                             <div class="multi-method-notice">
                                 <p><strong>🎯 Link para enviar ao cliente:</strong></p>
                                 <p>O cliente receberá o produto e valor já pré-selecionados e não poderá alterá-los.</p>
+                                <p><strong>Validade:</strong> 24 horas ou até ser usado</p>
                             </div>
                             
                             <h3 class="section-title">Link Gerado:</h3>
@@ -1032,8 +1215,9 @@
                                 <p><strong>Instruções:</strong></p>
                                 <p>1. Copie o link acima</p>
                                 <p>2. Envie para seu cliente via WhatsApp ou outro app</p>
-                                <p>3. O cliente verá o produto e valor já preenchidos</p>
-                                <p>4. Ele só precisará completar seus dados e endereço</p>
+                                <p>3. O link é válido por 24 horas ou até ser usado</p>
+                                <p>4. O cliente verá produto/valor já preenchidos</p>
+                                <p>5. Ele só precisará completar seus dados e endereço</p>
                             </div>
                             
                             <p class="success hidden" id="copySuccess" style="color: var(--success); font-weight: 600; text-align: center; margin-top: 10px;">✅ Link copiado com sucesso!</p>
@@ -1105,7 +1289,8 @@
             </div>
             
             <div class="nav-buttons">
-                <button type="button" class="btn btn-primary" onclick="nextPage(1, 2)">Próxima Página <i class="fas fa-arrow-right"></i></button>
+                <button type="button" class="btn btn-secondary" onclick="prevPage(1, 1)" disabled><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button type="button" class="btn btn-primary" onclick="nextPage(1, 2)">Próxima <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
         
@@ -1136,10 +1321,16 @@
                 </div>
                 
                 <div id="addressFields">
-                    <div class="form-group">
-                        <label for="streetNumber">Rua e Número:</label>
-                        <input type="text" id="streetNumber" class="form-control" placeholder="Ex: Rua das Flores, 123" required>
-                        <small>Informe a rua e número juntos</small>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="street">Rua:</label>
+                            <input type="text" id="street" class="form-control" placeholder="Ex: Rua das Flores" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="number">Número:</label>
+                            <input type="text" id="number" class="form-control" placeholder="Ex: 123" required>
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -1154,8 +1345,8 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="referencePoint">Ponto de referência (opcional):</label>
-                        <input type="text" id="referencePoint" class="form-control">
+                        <label for="referencePoint">Ponto de referência ou CEP (não é obrigatório):</label>
+                        <input type="text" id="referencePoint" class="form-control" placeholder="Ex: Próximo ao supermercado X ou 30130-000">
                     </div>
                 </div>
             </div>
@@ -1191,8 +1382,8 @@
             </div>
             
             <div class="nav-buttons">
-                <button type="button" class="btn btn-secondary" onclick="prevPage(2, 1)"><i class="fas fa-arrow-left"></i> Página Anterior</button>
-                <button type="button" class="btn btn-primary" onclick="nextPage(2, 3)" id="nextPage2Button" disabled>Próxima Página <i class="fas fa-arrow-right"></i></button>
+                <button type="button" class="btn btn-secondary" onclick="prevPage(2, 1)"><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button type="button" class="btn btn-primary" onclick="nextPage(2, 3)" id="nextPage2Button" disabled>Próxima <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
         
@@ -1242,8 +1433,8 @@
             </div>
             
             <div class="nav-buttons">
-                <button type="button" class="btn btn-secondary" onclick="prevPage(3, 2)"><i class="fas fa-arrow-left"></i> Página Anterior</button>
-                <button type="button" class="btn btn-primary" onclick="nextPage(3, 4)">Próxima Página <i class="fas fa-arrow-right"></i></button>
+                <button type="button" class="btn btn-secondary" onclick="prevPage(3, 2)"><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button type="button" class="btn btn-primary" onclick="nextPage(3, 4)">Próxima <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
         
@@ -1328,13 +1519,13 @@
             </div>
             
             <div class="nav-buttons">
-                <button type="button" class="btn btn-secondary" onclick="prevPage(4, 3)"><i class="fas fa-arrow-left"></i> Página Anterior</button>
+                <button type="button" class="btn btn-secondary" onclick="prevPage(4, 3)"><i class="fas fa-arrow-left"></i> Anterior</button>
                 <button type="button" class="btn btn-primary" onclick="submitForm()" id="submitButton" disabled>Enviar Pedido <i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
         
-        <!-- Página de Sucesso -->
-        <div id="thankYouPage" class="form-page">
+        <!-- Página de Sucesso para PIX -->
+        <div id="thankYouPagePix" class="form-page">
             <div class="success-page">
                 <div class="success-icon">
                     <i class="fas fa-check-circle"></i>
@@ -1372,7 +1563,7 @@
                     
                     <div class="info-card">
                         <h3><i class="fas fa-info-circle"></i> Próximos passos:</h3>
-                        <p>1. Realize o pagamento via PIX ou aguarde o link do cartão</p>
+                        <p>1. Realize o pagamento via PIX</p>
                         <p>2. Envie o comprovante para nosso WhatsApp</p>
                         <p>3. Sua entrega será agendada conforme selecionado</p>
                         <p>4. Acompanhe o status pelo WhatsApp</p>
@@ -1382,6 +1573,78 @@
                     <button class="whatsapp-discreto" onclick="sendWhatsAppMessage()">
                         <i class="fab fa-whatsapp"></i> WhatsApp: (31) 98323-8087
                     </button>
+                    
+                    <div class="schedule-info">
+                        <h3><i class="fas fa-clock"></i> Horário de Atendimento</h3>
+                        <div class="schedule-item">
+                            <span class="schedule-day">Segunda a Sexta:</span>
+                            <span class="schedule-time">07:30 às 17:30</span>
+                        </div>
+                        <div class="schedule-item">
+                            <span class="schedule-day">Sábado e Feriados:</span>
+                            <span class="schedule-time">07:30 às 12:00</span>
+                        </div>
+                        <div class="schedule-item">
+                            <span class="schedule-day">Domingo:</span>
+                            <span class="schedule-time">Não temos atendimentos aos domingos, apenas entregas das cestas encomendadas até sábado 12 horas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Página de Sucesso para Cartão -->
+        <div id="thankYouPageCard" class="form-page">
+            <div class="success-page">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                
+                <h1 class="success-title">PEDIDO ENVIADO COM SUCESSO!</h1>
+                <p class="success-subtitle">Seus dados foram registrados e enviados para nossa equipe. Agora é só solicitar o link de pagamento!</p>
+                
+                <div class="payment-details">
+                    <!-- Mensagem para pagamento via cartão -->
+                    <div class="payment-option-header">
+                        <h3><i class="fas fa-credit-card"></i> Você escolheu pagamento via Link de Cartão</h3>
+                        <p>Para receber seu link, clique abaixo e já solicite ao seu atendente</p>
+                        <button class="whatsapp-discreto" onclick="requestCardLink()" style="margin-top: 15px;">
+                            <i class="fab fa-whatsapp"></i> Solicitar Link de Cartão
+                        </button>
+                    </div>
+                    
+                    <div class="pix-key-container" style="margin-top: 30px;">
+                        <h3><i class="fas fa-qrcode"></i> Ou prefira pagar via PIX agora mesmo:</h3>
+                        <p>Para pagamento imediato, utilize nossa chave PIX (CNPJ):</p>
+                        <div class="pix-key" id="pixKey2" onclick="selectPixKey()">10648303000179</div>
+                        <button type="button" class="btn btn-primary" onclick="copyPixKey()">
+                            <i class="fas fa-copy"></i> Copiar Chave PIX
+                        </button>
+                    </div>
+                    
+                    <div class="instructions">
+                        <h3><i class="fas fa-list-ol"></i> Instruções para pagamento PIX:</h3>
+                        <ol>
+                            <li>Copie a chave PIX acima</li>
+                            <li>Abra seu aplicativo de banco ou carteira digital</li>
+                            <li>Vá na opção "Pagar com PIX" ou "PIX Copia e Cola"</li>
+                            <li>Cole a chave e confirme o valor total</li>
+                            <li>Finalize o pagamento</li>
+                        </ol>
+                    </div>
+                    
+                    <div id="paymentSummaryCard" class="info-card">
+                        <h3><i class="fas fa-file-invoice-dollar"></i> Resumo do Pedido</h3>
+                        <div id="paymentDetailsCard"></div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3><i class="fas fa-info-circle"></i> Próximos passos:</h3>
+                        <p>1. Solicite o link de cartão via WhatsApp OU pague via PIX</p>
+                        <p>2. Envie o comprovante para nosso WhatsApp</p>
+                        <p>3. Sua entrega será agendada conforme selecionado</p>
+                        <p>4. Acompanhe o status pelo WhatsApp</p>
+                    </div>
                     
                     <div class="schedule-info">
                         <h3><i class="fas fa-clock"></i> Horário de Atendimento</h3>
@@ -1437,6 +1700,8 @@
         let isFromLink = false;
         let lockedProductName = '';
         let lockedProductPrice = '';
+        let linkExpiration = null;
+        let linkUsed = false;
         
         // ============================================
         // TABELA DE FRETES ATUALIZADA
@@ -1598,7 +1863,52 @@
                 currentDeliveryType = deliveryTypeRadio.value;
                 updateDeliveryTypeDisplay();
             }
+            
+            // Esconder cabeçalho nas outras páginas
+            hideHeaderOnOtherPages();
         });
+        
+        // ============================================
+        // FUNÇÕES AUXILIARES
+        // ============================================
+        function hideHeaderOnOtherPages() {
+            // Observar mudanças nas páginas
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        const currentPage = document.querySelector('.form-page.active');
+                        if (currentPage && currentPage.id !== 'page1') {
+                            document.getElementById('mainHeader').style.display = 'none';
+                        } else if (currentPage && currentPage.id === 'page1') {
+                            document.getElementById('mainHeader').style.display = 'block';
+                        }
+                    }
+                });
+            });
+            
+            // Observar todas as páginas
+            document.querySelectorAll('.form-page').forEach(page => {
+                observer.observe(page, { attributes: true });
+            });
+        }
+        
+        function toggleItemsList() {
+            const header = document.querySelector('.items-collapsible-header');
+            const content = document.getElementById('itemsListContent');
+            
+            header.classList.toggle('open');
+            content.classList.toggle('hidden');
+        }
+        
+        function clearProduct() {
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('itemsList').value = '';
+            document.getElementById('generatedLinkContainer').classList.add('hidden');
+            
+            // Mostrar mensagem de confirmação
+            mostrarStatus('✅ Produto limpo com sucesso!', 'success');
+        }
         
         // ============================================
         // VERIFICAR SE VEIO DE LINK COMPARTILHADO
@@ -1607,16 +1917,42 @@
             const urlParams = new URLSearchParams(window.location.search);
             const product = urlParams.get('product');
             const price = urlParams.get('price');
+            const timestamp = urlParams.get('t');
+            const used = urlParams.get('used');
             
             if (product && price) {
-                // Veio de link - bloquear produto
+                // Verificar se o link expirou
+                if (timestamp) {
+                    const linkTime = parseInt(timestamp);
+                    const now = Date.now();
+                    const hoursDiff = (now - linkTime) / (1000 * 60 * 60);
+                    
+                    if (hoursDiff > 24 || used === 'true') {
+                        // Link expirado ou já usado
+                        showExpiredMessage();
+                        return;
+                    }
+                }
+                
+                // Verificar se já foi usado (marcado no localStorage)
+                const linkKey = `link_used_${product}_${price}_${timestamp}`;
+                if (localStorage.getItem(linkKey) === 'true') {
+                    showExpiredMessage();
+                    return;
+                }
+                
+                // Veio de link válido - bloquear produto
                 isFromLink = true;
                 lockedProductName = decodeURIComponent(product);
                 lockedProductPrice = decodeURIComponent(price);
+                linkExpiration = timestamp ? parseInt(timestamp) + (24 * 60 * 60 * 1000) : null;
                 
-                console.log('📌 Carregado de link:', lockedProductName, lockedProductPrice);
+                // Marcar como usado no localStorage
+                localStorage.setItem(linkKey, 'true');
                 
-                // Mostrar seção de produto bloqueado
+                console.log('📌 Carregado de link válido:', lockedProductName, lockedProductPrice);
+                
+                // Mostrar seção de produto selecionado
                 showLockedProduct();
                 
                 // Ocultar campos de produto e gerador de link
@@ -1642,6 +1978,18 @@
             }
         }
         
+        function showExpiredMessage() {
+            document.getElementById('expiredMessage').classList.remove('hidden');
+            document.querySelectorAll('.form-page').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById('mainHeader').style.display = 'none';
+        }
+        
+        function contactWhatsApp() {
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Olá! Recebi um link expirado e preciso de um novo link para fazer um pedido.`, '_blank');
+        }
+        
         function showLockedProduct() {
             document.getElementById('productLockedSection').classList.remove('hidden');
             document.getElementById('lockedProductName').textContent = lockedProductName;
@@ -1649,24 +1997,25 @@
         }
         
         // ============================================
-        // GERADOR DE LINKS SIMPLIFICADO
+        // GERADOR DE LINKS COM VALIDADE
         // ============================================
         function generateClientLink() {
             const productName = document.getElementById('productName').value;
             const productPrice = document.getElementById('productPrice').value;
             
             if (!productName || !productPrice) {
-                alert('Por favor, preencha todos os campos do produto antes de gerar o link.');
+                mostrarStatus('❌ Por favor, preencha todos os campos do produto antes de gerar o link.', 'error');
                 return;
             }
             
             // Codificar os valores para URL
             const encodedProductName = encodeURIComponent(productName);
             const encodedProductPrice = encodeURIComponent(productPrice);
+            const timestamp = Date.now();
             
-            // Criar URL com parâmetros
+            // Criar URL com parâmetros (incluindo timestamp para validade)
             const baseUrl = window.location.origin + window.location.pathname;
-            const clientLink = `${baseUrl}?product=${encodedProductName}&price=${encodedProductPrice}`;
+            const clientLink = `${baseUrl}?product=${encodedProductName}&price=${encodedProductPrice}&t=${timestamp}`;
             
             // Mostrar link
             document.getElementById('generatedLink').textContent = clientLink;
@@ -1677,17 +2026,7 @@
             document.getElementById('generatedLinkContainer').scrollIntoView({ behavior: 'smooth' });
             
             // Mostrar instruções
-            alert(`✅ Link gerado com sucesso!
-
-Copie o link e envie para seu cliente.
-
-Quando o cliente abrir o link:
-• O produto estará pré-selecionado
-• O valor estará pré-definido
-• O cliente NÃO poderá alterar produto/valor
-• Ele só precisará completar seus dados
-
-⚠️ IMPORTANTE: O link não expira, mas use em até 30 dias.`);
+            mostrarStatus('✅ Link gerado com sucesso! Válido por 24 horas ou até ser usado.', 'success');
         }
         
         // Função para copiar para clipboard
@@ -1733,17 +2072,27 @@ Quando o cliente abrir o link:
         }
         
         // ============================================
-        // FUNÇÕES DE NAVEGAÇÃO
+        // FUNÇÕES DE NAVEGAÇÃO COM VALIDAÇÃO
         // ============================================
         function nextPage(current, next) {
+            // Limpar mensagens de erro anteriores
+            clearErrorMessages();
+            
+            let validationResult = true;
+            let errorMessage = '';
+            
             if (current === 1) {
-                if (!validatePage1()) return;
+                validationResult = validatePage1();
             } else if (current === 2) {
-                if (!validatePage2()) return;
+                validationResult = validatePage2();
             } else if (current === 3) {
-                if (!validatePage3()) return;
+                validationResult = validatePage3();
             } else if (current === 4) {
-                if (!validatePage4()) return;
+                validationResult = validatePage4();
+            }
+            
+            if (!validationResult) {
+                return; // Não avança se houver erro
             }
             
             if (next === 4) {
@@ -1767,8 +2116,46 @@ Quando o cliente abrir o link:
             saveData();
         }
         
+        function clearErrorMessages() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.remove();
+            });
+        }
+        
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            // Remover erro anterior
+            const existingError = element.parentNode.querySelector('.error-message');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            // Criar nova mensagem de erro
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+            
+            // Inserir após o elemento
+            element.parentNode.insertBefore(errorDiv, element.nextSibling);
+            
+            // Destacar o campo
+            element.style.borderColor = '#dc3545';
+            element.style.boxShadow = '0 0 0 2px rgba(220, 53, 69, 0.1)';
+            
+            // Remover destaque após 3 segundos
+            setTimeout(() => {
+                element.style.borderColor = '';
+                element.style.boxShadow = '';
+            }, 3000);
+            
+            // Focar no elemento
+            element.focus();
+        }
+        
         // ============================================
-        // FUNÇÕES DE VALIDAÇÃO
+        // FUNÇÕES DE VALIDAÇÃO DETALHADA
         // ============================================
         function validatePage1() {
             const required = [
@@ -1782,19 +2169,25 @@ Quando o cliente abrir o link:
             for (const field of required) {
                 const element = document.getElementById(field.id);
                 if (!element || !element.value.trim()) {
-                    alert(`Por favor, preencha: ${field.name}`);
-                    element?.focus();
+                    showError(field.id, `Por favor, preencha: ${field.name}`);
                     return false;
                 }
             }
             
+            // Validar telefone
+            const phone = document.getElementById('buyerPhone').value.replace(/\D/g, '');
+            if (phone.length < 10 || phone.length > 11) {
+                showError('buyerPhone', 'Telefone inválido. Use (XX) XXXXX-XXXX');
+                return false;
+            }
+            
             if (!document.querySelector('input[name="anonymous"]:checked')) {
-                alert('Por favor, informe se deseja compra anônima.');
+                mostrarStatus('❌ Por favor, informe se deseja compra anônima.', 'error');
                 return false;
             }
             
             if (!document.querySelector('input[name="deliveryType"]:checked')) {
-                alert('Por favor, selecione o tipo de entrega.');
+                mostrarStatus('❌ Por favor, selecione o tipo de entrega.', 'error');
                 return false;
             }
             
@@ -1807,17 +2200,21 @@ Quando o cliente abrir o link:
             if (deliveryType === 'delivery') {
                 const city = document.getElementById('deliveryCity').value;
                 if (!city) {
-                    alert('Por favor, selecione uma cidade.');
+                    showError('deliveryCity', 'Por favor, selecione uma cidade.');
                     return false;
                 }
                 
                 if (city !== 'other') {
-                    const required = ['streetNumber', 'neighborhood'];
+                    const required = [
+                        { id: 'street', name: 'Rua' },
+                        { id: 'number', name: 'Número' },
+                        { id: 'neighborhood', name: 'Bairro' }
+                    ];
+                    
                     for (const field of required) {
-                        const element = document.getElementById(field);
+                        const element = document.getElementById(field.id);
                         if (!element || !element.value.trim()) {
-                            alert(`Por favor, preencha o campo: ${field === 'streetNumber' ? 'Rua e Número' : 'Bairro'}`);
-                            element?.focus();
+                            showError(field.id, `Por favor, preencha: ${field.name}`);
                             return false;
                         }
                     }
@@ -1825,12 +2222,12 @@ Quando o cliente abrir o link:
                 
                 if (!isOtherCity && deliveryType === 'delivery') {
                     if (!selectedDate) {
-                        alert('Por favor, selecione uma data de entrega.');
+                        mostrarStatus('❌ Por favor, selecione uma data de entrega.', 'error');
                         return false;
                     }
                     
                     if (!document.querySelector('input[name="deliveryTime"]:checked')) {
-                        alert('Por favor, selecione um horário de entrega.');
+                        mostrarStatus('❌ Por favor, selecione um horário de entrega.', 'error');
                         return false;
                     }
                 }
@@ -1838,12 +2235,12 @@ Quando o cliente abrir o link:
             
             if (deliveryType === 'pickup') {
                 if (!selectedDate) {
-                    alert('Por favor, selecione uma data para retirada.');
+                    mostrarStatus('❌ Por favor, selecione uma data para retirada.', 'error');
                     return false;
                 }
                 
                 if (!document.querySelector('input[name="deliveryTime"]:checked')) {
-                    alert('Por favor, selecione um horário para retirada.');
+                    mostrarStatus('❌ Por favor, selecione um horário para retirada.', 'error');
                     return false;
                 }
             }
@@ -1853,26 +2250,25 @@ Quando o cliente abrir o link:
         
         function validatePage3() {
             if (!document.querySelector('input[name="sendCard"]:checked')) {
-                alert('Por favor, selecione se deseja enviar um cartão.');
+                mostrarStatus('❌ Por favor, selecione se deseja enviar um cartão.', 'error');
                 return false;
             }
             
             const sendCard = document.querySelector('input[name="sendCard"]:checked').value;
             if (sendCard === 'yes') {
                 if (!document.getElementById('cardMessage').value.trim()) {
-                    alert('Por favor, escreva a mensagem do cartão.');
-                    document.getElementById('cardMessage').focus();
+                    showError('cardMessage', 'Por favor, escreva a mensagem do cartão.');
                     return false;
                 }
                 
                 if (!document.querySelector('input[name="signedCard"]:checked')) {
-                    alert('Por favor, informe se assinou o cartão.');
+                    mostrarStatus('❌ Por favor, informe se assinou o cartão.', 'error');
                     return false;
                 }
             }
             
             if (!document.querySelector('input[name="acknowledgeTerms"]:checked')) {
-                alert('Por favor, confirme o termo de ciência.');
+                mostrarStatus('❌ Por favor, confirme o termo de ciência.', 'error');
                 return false;
             }
             
@@ -1881,17 +2277,17 @@ Quando o cliente abrir o link:
         
         function validatePage4() {
             if (!document.querySelector('input[name="paymentMethod"]:checked')) {
-                alert('Por favor, selecione a forma de pagamento.');
+                mostrarStatus('❌ Por favor, selecione a forma de pagamento.', 'error');
                 return false;
             }
             
             if (!document.querySelector('input[name="foundUs"]:checked')) {
-                alert('Por favor, nos informe como nos encontrou.');
+                mostrarStatus('❌ Por favor, nos informe como nos encontrou.', 'error');
                 return false;
             }
             
             if (!document.getElementById('confirmData').checked) {
-                alert('Por favor, confirme que revisou todos os dados.');
+                mostrarStatus('❌ Por favor, confirme que revisou todos os dados.', 'error');
                 return false;
             }
             
@@ -2011,17 +2407,41 @@ Quando o cliente abrir o link:
         function addNightFee(amount) {
             nightFeeAmount = amount;
             nightFeeAdded = true;
+            
+            // CORREÇÃO: Atualizar o botão de próxima página
+            updateNextButtonState();
             saveData();
         }
         
         function removeNightFee() {
             nightFeeAmount = 0;
             nightFeeAdded = false;
+            
+            // CORREÇÃO: Atualizar o botão de próxima página
+            updateNextButtonState();
             saveData();
         }
         
+        // CORREÇÃO: Função para atualizar estado do botão de próxima página
+        function updateNextButtonState() {
+            const nextButton = document.getElementById('nextPage2Button');
+            const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
+            
+            if (deliveryType === 'pickup') {
+                nextButton.disabled = !(selectedDate && document.querySelector('input[name="deliveryTime"]:checked'));
+            } else if (deliveryType === 'delivery' && isOtherCity) {
+                nextButton.disabled = false;
+            } else if (deliveryType === 'delivery') {
+                const street = document.getElementById('street').value.trim();
+                const number = document.getElementById('number').value.trim();
+                const neighborhood = document.getElementById('neighborhood').value.trim();
+                
+                nextButton.disabled = !(street && number && neighborhood && selectedDate && selectedTime);
+            }
+        }
+        
         // ============================================
-        // CALENDÁRIO E HORÁRIOS
+        // CALENDÁRIO E HORÁRIOS (COM CORREÇÃO)
         // ============================================
         function renderCalendar(month, year) {
             const calendar = document.getElementById('calendar');
@@ -2216,6 +2636,7 @@ Quando o cliente abrir o link:
                 input.dataset.nightfee = route.nightFee || false;
                 input.dataset.fee = route.fee || 0;
                 input.dataset.avulsonightfee = route.avulsoNightFee || false;
+                input.dataset.sundayfee = route.sundayFee || false;
                 
                 const label = document.createElement('label');
                 label.htmlFor = routeId;
@@ -2237,25 +2658,17 @@ Quando o cliente abrir o link:
                     
                     const hasNightFee = this.getAttribute('data-nightfee') === 'true';
                     const hasAvulsoNightFee = this.getAttribute('data-avulsonightfee') === 'true';
+                    const hasSundayFee = this.getAttribute('data-sundayfee') === 'true';
                     const feeAmount = parseFloat(this.getAttribute('data-fee')) || 0;
                     
                     removeNightFee();
                     
-                    if (hasNightFee || hasAvulsoNightFee) {
+                    if (hasNightFee || hasAvulsoNightFee || hasSundayFee) {
                         addNightFee(feeAmount);
                     }
                     
-                    if (currentDeliveryType === 'pickup') {
-                        document.getElementById('nextPage2Button').disabled = false;
-                    } else if (currentDeliveryType === 'delivery' && !isOtherCity) {
-                        const streetNumber = document.getElementById('streetNumber').value.trim();
-                        const neighborhood = document.getElementById('neighborhood').value.trim();
-                        
-                        if (streetNumber && neighborhood && selectedDate && selectedTime) {
-                            document.getElementById('nextPage2Button').disabled = false;
-                        }
-                    }
-                    
+                    // CORREÇÃO: Chamar função de atualização de estado
+                    updateNextButtonState();
                     saveData();
                 });
                 
@@ -2314,6 +2727,27 @@ Quando o cliente abrir o link:
             html += `<div class="review-value">${document.getElementById('productName').value}</div>`;
             html += '</div>';
             
+            // Itens (se houver)
+            const itemsList = document.getElementById('itemsList').value;
+            if (itemsList.trim()) {
+                html += '<div class="review-item">';
+                html += '<div class="review-label">Itens incluídos</div>';
+                html += '<div class="review-value">';
+                html += '<div style="font-size: 12px; color: #666; text-align: left;">';
+                const items = itemsList.split('\n').slice(0, 3);
+                items.forEach(item => {
+                    if (item.trim()) {
+                        html += `<div>${item.trim()}</div>`;
+                    }
+                });
+                if (itemsList.split('\n').length > 3) {
+                    html += '<div>...</div>';
+                }
+                html += '</div>';
+                html += '</div>';
+                html += '</div>';
+            }
+            
             // Valores
             const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
             const finalTotal = getTotalWithShipping();
@@ -2371,7 +2805,9 @@ Quando o cliente abrir o link:
             } else if (isOtherCity) {
                 html += '<div class="review-value">Outra cidade (prazo a confirmar)</div>';
             } else {
-                html += `<div class="review-value">${document.getElementById('streetNumber').value}`;
+                const street = document.getElementById('street').value;
+                const number = document.getElementById('number').value;
+                html += `<div class="review-value">${street}, ${number}`;
                 if (document.getElementById('complement').value) {
                     html += ` - ${document.getElementById('complement').value}`;
                 }
@@ -2444,6 +2880,7 @@ Quando o cliente abrir o link:
             
             const productName = document.getElementById('productName').value;
             const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
+            const itemsList = document.getElementById('itemsList').value || '';
             const buyerName = document.getElementById('buyerName').value;
             const buyerPhone = document.getElementById('buyerPhone').value;
             const giftedName = document.getElementById('giftedName').value;
@@ -2468,7 +2905,9 @@ Quando o cliente abrir o link:
             let reference = '';
             
             if (deliveryType === 'delivery' && !isOtherCity) {
-                streetNumber = document.getElementById('streetNumber').value;
+                const street = document.getElementById('street').value;
+                const number = document.getElementById('number').value;
+                streetNumber = `${street}, ${number}`; // Juntos na planilha
                 complement = document.getElementById('complement').value || '';
                 neighborhood = document.getElementById('neighborhood').value;
                 city = selectedCity;
@@ -2506,7 +2945,7 @@ Quando o cliente abrir o link:
             data[7] = '';
             data[8] = giftedName;
             data[9] = giftedPhone;
-            data[10] = streetNumber;
+            data[10] = streetNumber; // Rua e número juntos
             data[11] = complement;
             data[12] = neighborhood;
             data[13] = city;
@@ -2518,6 +2957,8 @@ Quando o cliente abrir o link:
             if (sendCard === 'yes') {
                 data[18] = cardMessage.replace(/\n/g, ' ');
             }
+            
+            data[19] = itemsList.replace(/\n/g, '; '); // Itens em uma célula, separados por ;
             
             data[46] = foundUs || '';
             data[48] = anonymousText;
@@ -2557,8 +2998,17 @@ Quando o cliente abrir o link:
                     
                     setTimeout(() => {
                         document.getElementById('page4').classList.remove('active');
-                        document.getElementById('thankYouPage').classList.add('active');
-                        showPaymentConfirmation();
+                        
+                        // Mostrar página correta baseada no método de pagamento
+                        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+                        if (paymentMethod === 'pix') {
+                            document.getElementById('thankYouPagePix').classList.add('active');
+                            showPaymentConfirmation('pix');
+                        } else {
+                            document.getElementById('thankYouPageCard').classList.add('active');
+                            showPaymentConfirmation('card');
+                        }
+                        
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }, 1000);
                     
@@ -2661,13 +3111,13 @@ Quando o cliente abrir o link:
         }
         
         // ============================================
-        // PÁGINA DE SUCESSO E PAGAMENTO
+        // PÁGINAS DE SUCESSO E PAGAMENTO
         // ============================================
-        function showPaymentConfirmation() {
-            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+        function showPaymentConfirmation(type) {
+            const paymentMethod = type;
             const total = getTotalWithShipping();
             const buyerName = document.getElementById('buyerName').value;
-            const paymentDetailsDiv = document.getElementById('paymentDetails');
+            const paymentDetailsDiv = type === 'pix' ? document.getElementById('paymentDetails') : document.getElementById('paymentDetailsCard');
             
             const formatCurrency = (value) => {
                 return parseFloat(value || 0).toLocaleString('pt-BR', {
@@ -2766,6 +3216,21 @@ Quando o cliente abrir o link:
             window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
         }
         
+        function requestCardLink() {
+            const buyerName = document.getElementById('buyerName').value;
+            const productName = document.getElementById('productName').value;
+            const total = getTotalWithShipping();
+            
+            let message = `*SOLICITAÇÃO DE LINK DE CARTÃO*%0A%0A`;
+            message += `*Cliente:* ${buyerName}%0A`;
+            message += `*Produto:* ${productName}%0A`;
+            message += `*Valor Total:* R$ ${total.toFixed(2)}%0A%0A`;
+            message += `Preciso do link de pagamento por cartão de crédito para este pedido.`;
+            
+            const phone = WHATSAPP_NUMBER;
+            window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+        }
+        
         // ============================================
         // SALVAR E CARREGAR DADOS
         // ============================================
@@ -2773,6 +3238,7 @@ Quando o cliente abrir o link:
             const formData = {
                 productName: document.getElementById('productName').value,
                 productPrice: document.getElementById('productPrice').value,
+                itemsList: document.getElementById('itemsList').value,
                 buyerName: document.getElementById('buyerName').value,
                 buyerPhone: document.getElementById('buyerPhone').value,
                 giftedName: document.getElementById('giftedName').value,
@@ -2780,7 +3246,8 @@ Quando o cliente abrir o link:
                 anonymous: document.querySelector('input[name="anonymous"]:checked')?.value,
                 deliveryType: document.querySelector('input[name="deliveryType"]:checked')?.value,
                 deliveryCity: document.getElementById('deliveryCity').value,
-                streetNumber: document.getElementById('streetNumber').value,
+                street: document.getElementById('street').value,
+                number: document.getElementById('number').value,
                 complement: document.getElementById('complement').value,
                 neighborhood: document.getElementById('neighborhood').value,
                 referencePoint: document.getElementById('referencePoint').value,
@@ -2813,6 +3280,7 @@ Quando o cliente abrir o link:
                 if (!isFromLink) {
                     document.getElementById('productName').value = data.productName || '';
                     document.getElementById('productPrice').value = data.productPrice || '';
+                    document.getElementById('itemsList').value = data.itemsList || '';
                 }
                 
                 document.getElementById('buyerName').value = data.buyerName || '';
@@ -2820,7 +3288,8 @@ Quando o cliente abrir o link:
                 document.getElementById('giftedName').value = data.giftedName || '';
                 document.getElementById('giftedPhone').value = data.giftedPhone || '';
                 document.getElementById('deliveryCity').value = data.deliveryCity || '';
-                document.getElementById('streetNumber').value = data.streetNumber || '';
+                document.getElementById('street').value = data.street || '';
+                document.getElementById('number').value = data.number || '';
                 document.getElementById('complement').value = data.complement || '';
                 document.getElementById('neighborhood').value = data.neighborhood || '';
                 document.getElementById('referencePoint').value = data.referencePoint || '';
