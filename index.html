@@ -180,36 +180,6 @@
             margin: 15px 0;
         }
         
-/* Estilo para horário personalizado */
-.custom-time-container {
-    background: #f8f9fa;
-    border: 2px dashed #007bff;
-    border-radius: 8px;
-    padding: 12px;
-    margin: 8px 0;
-}
-
-.custom-time-input-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-    padding-left: 28px;
-}
-
-.custom-time-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-}
-
-.custom-time-display {
-    font-size: 14px;
-    font-weight: 600;
-    color: #d63384;
-    margin-left: 10px;
-}
-        
         .radio-group p {
             font-weight: 600;
             margin-bottom: 12px;
@@ -1835,6 +1805,11 @@
                 { min: 1, max: 119.99, cost: 69.90 },
                 { min: 120, max: 179.99, cost: 59.90 },
                 { min: 179, max: 99999, cost: 49.90 }
+            ],
+              'Vila da Serra (Nova Lima)': [
+                { min: 1, max: 119.99, cost: 39.90 },
+                { min: 120, max: 179.99, cost: 29.90 },
+                { min: 179, max: 99999, cost: 19.90 }
             ]
         };
         
@@ -1868,151 +1843,6 @@
                 { start: '18:00', end: '21:00', label: '18:00 às 21:00 (taxa adicional 29,90)', avulsoNightFee: true, fee: 29.90 }
             ]
         };
-
-        // ============================================
-// FUNÇÃO PARA CRIAR OPÇÃO DE HORÁRIO ESPECÍFICO
-// ============================================
-function createCustomTimeOption() {
-    const optionsContainer = document.getElementById('deliveryOptionsContainer');
-    
-    // Criar container para horário personalizado
-    const customContainer = document.createElement('div');
-    customContainer.className = 'time-option';
-    customContainer.style.border = '2px dashed #007bff';
-    customContainer.style.background = '#f8f9fa';
-    
-    // Criar elementos
-    const container = document.createElement('div');
-    container.style.display = 'flex';
-    container.style.alignItems = 'center';
-    container.style.flexWrap = 'wrap';
-    container.style.gap = '10px';
-    
-    // Radio button
-    const input = document.createElement('input');
-    input.type = 'radio';
-    input.name = 'deliveryTime';
-    input.id = 'customTimeOption';
-    input.value = 'custom';
-    input.dataset.label = 'Horário Específico';
-    input.dataset.fee = '29.90';
-    input.dataset.custom = 'true';
-    
-    // Label
-    const label = document.createElement('label');
-    label.htmlFor = 'customTimeOption';
-    label.innerHTML = '<strong>Horário Específico (taxa exclusividade R$ 29,90)</strong>';
-    label.style.cursor = 'pointer';
-    label.style.flex = '1';
-    
-    // Container para o input de horário
-    const timeInputContainer = document.createElement('div');
-    timeInputContainer.style.display = 'flex';
-    timeInputContainer.style.alignItems = 'center';
-    timeInputContainer.style.gap = '8px';
-    timeInputContainer.style.marginTop = '8px';
-    timeInputContainer.style.width = '100%';
-    timeInputContainer.style.paddingLeft = '28px'; // Alinhar com o radio button
-    
-    // Label do input
-    const timeLabel = document.createElement('label');
-    timeLabel.htmlFor = 'customTimeInput';
-    timeLabel.textContent = 'Digite o horário:';
-    timeLabel.style.fontSize = '14px';
-    timeLabel.style.fontWeight = '600';
-    
-    // Input de horário
-    const timeInput = document.createElement('input');
-    timeInput.type = 'time';
-    timeInput.id = 'customTimeInput';
-    timeInput.className = 'form-control';
-    timeInput.style.width = '120px';
-    timeInput.style.padding = '8px';
-    timeInput.style.fontSize = '14px';
-    
-    // Span para mostrar o horário formatado
-    const timeDisplay = document.createElement('span');
-    timeDisplay.id = 'customTimeDisplay';
-    timeDisplay.style.fontSize = '14px';
-    timeDisplay.style.fontWeight = '600';
-    timeDisplay.style.color = '#d63384';
-    
-    // Adicionar elementos ao container
-    timeInputContainer.appendChild(timeLabel);
-    timeInputContainer.appendChild(timeInput);
-    timeInputContainer.appendChild(timeDisplay);
-    
-    container.appendChild(input);
-    container.appendChild(label);
-    
-    customContainer.appendChild(container);
-    customContainer.appendChild(timeInputContainer);
-    
-    // Adicionar evento ao radio button
-    input.addEventListener('change', function() {
-        if (this.checked) {
-            // Forçar seleção do horário personalizado
-            selectedTime = 'custom';
-            selectedTimeLabel = 'Horário Específico (taxa exclusividade R$ 29,90)';
-            
-            // Adicionar taxa de exclusividade
-            removeNightFee(); // Remover outras taxas
-            addNightFee(29.90);
-            
-            // Atualizar estado do botão
-            updateNextButtonState();
-            saveData();
-        }
-    });
-    
-    // Adicionar evento ao input de horário
-    timeInput.addEventListener('change', function() {
-        if (timeInput.value) {
-            // Formatar o horário para exibição
-            const [hours, minutes] = timeInput.value.split(':');
-            const hour = parseInt(hours);
-            const minute = parseInt(minutes);
-            
-            // Calcular 30 minutos antes
-            let earlierHour = hour;
-            let earlierMinute = minute - 30;
-            
-            if (earlierMinute < 0) {
-                earlierHour -= 1;
-                earlierMinute += 60;
-            }
-            
-            // Formatar para 2 dígitos
-            const formattedEarlierHour = earlierHour.toString().padStart(2, '0');
-            const formattedEarlierMinute = earlierMinute.toString().padStart(2, '0');
-            const formattedHour = hour.toString().padStart(2, '0');
-            const formattedMinute = minute.toString().padStart(2, '0');
-            
-            // Atualizar display
-            timeDisplay.textContent = ` (${formattedEarlierHour}:${formattedEarlierMinute} até ${formattedHour}:${formattedMinute})`;
-            
-            // Atualizar label do radio button
-            const customLabel = `Horário Específico: ${formattedEarlierHour}:${formattedEarlierMinute} até ${formattedHour}:${formattedMinute} (taxa exclusividade R$ 29,90)`;
-            
-            // Encontrar e atualizar o radio button
-            const customRadio = document.getElementById('customTimeOption');
-            if (customRadio) {
-                customRadio.dataset.label = customLabel;
-                
-                // Se estiver selecionado, atualizar selectedTimeLabel
-                if (customRadio.checked) {
-                    selectedTimeLabel = customLabel;
-                    saveData();
-                }
-            }
-            
-            // Atualizar label visível
-            label.innerHTML = `<strong>${customLabel}</strong>`;
-        }
-    });
-    
-    return customContainer;
-}
         
         // ============================================
         // INICIALIZAÇÃO - VERIFICA SE VEIO DE LINK
@@ -2498,18 +2328,9 @@ function createCustomTimeOption() {
                         errors.push('Data de entrega');
                     }
                     
-                    // ATUALIZE ESTA PARTE ↓
-            const selectedTimeOption = document.querySelector('input[name="deliveryTime"]:checked');
-            if (!selectedTimeOption) {
-                errors.push('Horário de entrega');
-            } else if (selectedTimeOption.id === 'customTimeOption') {
-                // Validar horário personalizado
-                const customTimeInput = document.getElementById('customTimeInput');
-                if (!customTimeInput || !customTimeInput.value) {
-                    errors.push('Digite o horário específico');
-                }
-            }
-            // ATÉ AQUI ↑
+                    if (!document.querySelector('input[name="deliveryTime"]:checked')) {
+                        errors.push('Horário de entrega');
+                    }
                 }
             }
             
@@ -2959,10 +2780,7 @@ function createCustomTimeOption() {
                     saveData();
                 });
                 
-                // ADICIONE AQUI ↓
-// Adicionar opção de horário personalizado (sempre disponível)
-const customOption = createCustomTimeOption();
-optionsContainer.appendChild(customOption);
+                optionsContainer.appendChild(routeElement);
             });
             
             saveData();
@@ -2976,17 +2794,6 @@ optionsContainer.appendChild(customOption);
             selectedTimeLabel = null;
             removeNightFee();
             
- // LIMPAR HORÁRIO PERSONALIZADO (ADICIONE ESTAS LINHAS)
-    const customInput = document.getElementById('customTimeInput');
-    if (customInput) {
-        customInput.value = '';
-    }
-    const customDisplay = document.getElementById('customTimeDisplay');
-    if (customDisplay) {
-        customDisplay.textContent = '';
-    }
-    // ATÉ AQUI
-
             document.querySelectorAll('.calendar-day').forEach(day => {
                 day.classList.remove('selected');
             });
