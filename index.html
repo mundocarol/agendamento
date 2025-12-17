@@ -142,13 +142,6 @@
             box-shadow: 0 0 0 2px rgba(214, 51, 132, 0.1);
         }
         
-        .form-control:disabled {
-            background-color: #f8f9fa;
-            color: #6c757d;
-            cursor: not-allowed;
-            border-color: #e9ecef;
-        }
-        
         .radio-group {
             margin: 15px 0;
         }
@@ -222,6 +215,7 @@
             transition: all 0.3s;
             text-align: center;
             text-decoration: none;
+            width: 100%;
         }
         
         .btn-primary {
@@ -286,12 +280,10 @@
             display: flex;
             gap: 10px;
             margin-top: 25px;
-            justify-content: space-between;
         }
         
         .nav-buttons .btn {
             flex: 1;
-            max-width: 48%;
         }
         
         .hidden {
@@ -757,6 +749,40 @@
             color: #0d47a1;
         }
         
+        .multi-method-notice {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 13px;
+            color: #856404;
+        }
+        
+        .method-tag {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+        
+        .method-fragment {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .method-localstorage {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .method-url {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
         .generated-link-container {
             margin-top: 15px;
         }
@@ -772,6 +798,7 @@
             margin-bottom: 10px;
         }
         
+        /* Botão WhatsApp discreto */
         .whatsapp-discreto {
             background: white;
             border: 2px solid var(--whatsapp);
@@ -797,6 +824,7 @@
             box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
         }
         
+        /* Taxa separada na revisão */
         .taxa-item {
             color: #dc3545;
             font-weight: 600;
@@ -806,75 +834,7 @@
             color: #dc3545;
         }
         
-        .admin-mode-badge {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 10px;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .expired-message {
-            background: #f8d7da;
-            border-left: 4px solid #dc3545;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            text-align: center;
-        }
-        
-        .expired-message h3 {
-            color: #721c24;
-            margin-bottom: 10px;
-        }
-        
-        .payment-option-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-            border-left: 4px solid var(--primary);
-        }
-        
-        .payment-option-card h3 {
-            color: var(--primary);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 16px;
-        }
-        
-        .discount-field {
-            background: #e8f5e9;
-            border-left: 4px solid #28a745;
-            padding: 12px;
-            border-radius: 8px;
-            margin: 12px 0;
-        }
-        
-        .discount-field label {
-            color: #155724;
-            font-weight: 600;
-        }
-        
-        .discount-info {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
-        
+        /* Ajustes para mobile */
         @media (max-width: 480px) {
             .header h1 {
                 font-size: 20px;
@@ -916,11 +876,6 @@
             
             .nav-buttons {
                 flex-direction: column;
-                gap: 8px;
-            }
-            
-            .nav-buttons .btn {
-                max-width: 100%;
             }
             
             .review-item {
@@ -938,6 +893,10 @@
             .container {
                 max-width: 700px;
             }
+            
+            .nav-buttons {
+                flex-direction: row;
+            }
         }
     </style>
 </head>
@@ -947,21 +906,6 @@
         <div class="header">
             <h1><i class="fas fa-gift"></i> Formulário de Pedido</h1>
             <p>Preencha os dados abaixo para realizar seu pedido</p>
-        </div>
-        
-        <!-- Modo Administrador -->
-        <div id="adminModeBadge" class="admin-mode-badge hidden">
-            <i class="fas fa-user-shield"></i> MODO VENDEDOR
-        </div>
-        
-        <!-- Mensagem de Link Expirado -->
-        <div id="expiredMessage" class="expired-message hidden">
-            <h3><i class="fas fa-exclamation-triangle"></i> LINK EXPIRADO</h3>
-            <p>Este link de pedido expirou ou já foi utilizado.</p>
-            <p>Entre em contato com o vendedor para receber um novo link.</p>
-            <button class="btn btn-primary" onclick="resetToAdminMode()">
-                <i class="fas fa-redo"></i> Voltar para Modo Vendedor
-            </button>
         </div>
         
         <!-- Status de Envio -->
@@ -982,26 +926,17 @@
                     <input type="number" id="productPrice" class="form-control" min="0" step="0.01" placeholder="0,00" required>
                 </div>
                 
-                <!-- Campo de Desconto (SOMENTE PARA VENDEDOR) -->
-                <div id="discountField" class="discount-field">
-                    <label for="productDiscount">Desconto (R$):</label>
-                    <input type="number" id="productDiscount" class="form-control" min="0" step="0.01" placeholder="0,00" value="0">
-                    <div class="discount-info">Digite o valor do desconto que será aplicado ao gerar o link para o cliente.</div>
-                </div>
-                
-                <!-- Seção de pré-visualização (SOMENTE PARA CLIENTE) -->
+                <!-- Seção de pré-visualização -->
                 <div id="previewNotice" class="preview-notice hidden">
-                    <p><strong>✓ Produto pré-selecionado:</strong> O produto já foi escolhido pelo vendedor.</p>
-                    <p style="font-size: 11px; margin-top: 3px;">
-                        <i class="fas fa-lock"></i> Produto bloqueado para edição
-                    </p>
+                    <p><strong>✓ Produto pré-selecionado:</strong> Seu pedido já está configurado. Continue preenchendo os dados abaixo.</p>
+                    <p id="methodUsed" style="font-size: 11px; margin-top: 3px;"></p>
                 </div>
                 
                 <div class="alert alert-info">
                     <p><strong>Frete será calculado após escolha do seu endereço e aparecerá ao final para conferência.</strong></p>
                 </div>
                 
-                <!-- Gerador de Link (SOMENTE PARA VENDEDOR) -->
+                <!-- Gerador de Link -->
                 <div id="linkGeneratorSection">
                     <div class="link-instructions">
                         <p><strong>📋 Para enviar para cliente:</strong> Preencha acima e clique em "Gerar Link"</p>
@@ -1009,23 +944,29 @@
                     <button type="button" class="btn btn-primary" id="generateLinkBtn">Gerar Link para Cliente</button>
                     
                     <div id="generatedLinkContainer" class="generated-link-container hidden">
-                        <h3 class="section-title">Link para Compartilhar:</h3>
-                        <div id="generatedLink" class="generated-link"></div>
-                        <button type="button" id="copyLinkBtn" class="btn copy-btn">
-                            <i class="fas fa-copy"></i> Copiar Link
-                        </button>
-                        
-                        <div class="alert alert-info" style="margin-top: 10px;">
-                            <p><strong>📝 Instruções:</strong></p>
-                            <p>1. Copie o link acima</p>
-                            <p>2. Envie para o cliente via WhatsApp</p>
-                            <p>3. O link expira automaticamente após 24 horas ou após ser usado</p>
-                            <p>4. Para novo pedido, gere sempre um novo link</p>
+                        <div class="multi-method-notice">
+                            <p><strong>🎯 Três métodos de compartilhamento:</strong></p>
+                            <p><span class="method-tag method-fragment">Fragmento (#)</span> Link completo com dados na URL</p>
+                            <p><span class="method-tag method-localstorage">LocalStorage</span> Link simples (mesmo navegador)</p>
+                            <p><span class="method-tag method-url">URL Simples</span> Para copiar manualmente os dados</p>
                         </div>
                         
-                        <p class="success hidden" id="copySuccess" style="color: var(--success); font-weight: 600; text-align: center; margin-top: 10px;">
-                            ✅ Link copiado com sucesso!
-                        </p>
+                        <h3 class="section-title">1. Link com Fragmento (Recomendado):</h3>
+                        <div id="generatedLinkFragment" class="generated-link"></div>
+                        <button type="button" id="copyFragmentBtn" class="btn copy-btn">Copiar Link Fragmento</button>
+                        
+                        <h3 class="section-title" style="margin-top: 15px;">2. Link Simples (LocalStorage):</h3>
+                        <div id="generatedLinkSimple" class="generated-link"></div>
+                        <button type="button" id="copySimpleBtn" class="btn copy-btn">Copiar Link Simples</button>
+                        
+                        <h3 class="section-title" style="margin-top: 15px;">3. Dados para Copiar Manualmente:</h3>
+                        <div class="alert alert-warning">
+                            <p><strong>Produto:</strong> <span id="manualProduct"></span></p>
+                            <p><strong>Preço:</strong> R$ <span id="manualPrice"></span></p>
+                            <p><strong>Instrução:</strong> Copie estes dados e envie para o cliente colar manualmente.</p>
+                        </div>
+                        
+                        <p class="success hidden" id="copySuccess" style="color: var(--success); font-weight: 600; text-align: center; margin-top: 10px;">✅ Link copiado com sucesso!</p>
                     </div>
                 </div>
             </div>
@@ -1093,7 +1034,6 @@
             </div>
             
             <div class="nav-buttons">
-                <button type="button" class="btn btn-secondary" onclick="prevPage(1, 1)" style="display: none;"><i class="fas fa-arrow-left"></i> Voltar</button>
                 <button type="button" class="btn btn-primary" onclick="nextPage(1, 2)">Próxima Página <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
@@ -1322,8 +1262,8 @@
             </div>
         </div>
         
-        <!-- Página de Sucesso PIX -->
-        <div id="thankYouPagePix" class="form-page">
+        <!-- Página de Sucesso -->
+        <div id="thankYouPage" class="form-page">
             <div class="success-page">
                 <div class="success-icon">
                     <i class="fas fa-check-circle"></i>
@@ -1343,67 +1283,28 @@
                         </button>
                     </div>
                     
+                    <div class="instructions">
+                        <h3><i class="fas fa-list-ol"></i> Instruções para pagamento:</h3>
+                        <ol>
+                            <li>Copie a chave PIX acima</li>
+                            <li>Abra seu aplicativo de banco ou carteira digital</li>
+                            <li>Vá na opção "Pagar com PIX" ou "PIX Copia e Cola"</li>
+                            <li>Cole a chave e confirme o valor total</li>
+                            <li>Finalize o pagamento</li>
+                        </ol>
+                    </div>
+                    
                     <div id="paymentSummary" class="info-card">
                         <h3><i class="fas fa-file-invoice-dollar"></i> Resumo do Pedido</h3>
-                        <div id="paymentDetailsPix"></div>
+                        <div id="paymentDetails"></div>
                     </div>
                     
-                    <!-- Botão WhatsApp discreto -->
-                    <button class="whatsapp-discreto" onclick="sendWhatsAppMessage()">
-                        <i class="fab fa-whatsapp"></i> WhatsApp: (31) 98323-8087
-                    </button>
-                    
-                    <div class="schedule-info">
-                        <h3><i class="fas fa-clock"></i> Horário de Atendimento</h3>
-                        <div class="schedule-item">
-                            <span class="schedule-day">Segunda a Sexta:</span>
-                            <span class="schedule-time">07:30 às 17:30</span>
-                        </div>
-                        <div class="schedule-item">
-                            <span class="schedule-day">Sábado e Feriados:</span>
-                            <span class="schedule-time">07:30 às 12:00</span>
-                        </div>
-                        <div class="schedule-item">
-                            <span class="schedule-day">Domingo:</span>
-                            <span class="schedule-time">Não temos atendimentos aos domingos, apenas entregas das cestas encomendadas até sábado 12 horas</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Página de Sucesso CARTÃO -->
-        <div id="thankYouPageCard" class="form-page">
-            <div class="success-page">
-                <div class="success-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                
-                <h1 class="success-title">PEDIDO ENVIADO COM SUCESSO!</h1>
-                <p class="success-subtitle">Seus dados foram registrados e enviados para nossa equipe. Em breve você receberá o link de pagamento!</p>
-                
-                <div class="payment-details">
-                    <div class="payment-option-card">
-                        <h3><i class="fas fa-credit-card"></i> Pagamento via Cartão de Crédito</h3>
-                        <div class="alert alert-info" style="margin: 15px 0;">
-                            <p><strong>Você escolheu pagar via Cartão de Crédito.</strong></p>
-                            <p>Nosso atendente enviará para você um link seguro de pagamento via WhatsApp em breve.</p>
-                            <p>Fique atento(a) às mensagens do WhatsApp!</p>
-                        </div>
-                        
-                        <div class="info-card" style="background: #f8f9fa; margin-top: 20px;">
-                            <h3><i class="fas fa-file-invoice-dollar"></i> Resumo do Pedido</h3>
-                            <div id="paymentDetailsCard"></div>
-                        </div>
-                        
-                        <div class="alert alert-warning" style="margin-top: 20px;">
-                            <p><strong>Alternativa: Pagamento via PIX</strong></p>
-                            <p>Se preferir pagar agora via PIX, utilize nossa chave abaixo:</p>
-                            <div class="pix-key" style="font-size: 16px; padding: 10px; margin: 10px 0;" onclick="selectPixKey()">10648303000179</div>
-                            <button type="button" class="btn btn-secondary" onclick="copyPixKey()" style="width: 100%;">
-                                <i class="fas fa-copy"></i> Copiar Chave PIX
-                            </button>
-                        </div>
+                    <div class="info-card">
+                        <h3><i class="fas fa-info-circle"></i> Próximos passos:</h3>
+                        <p>1. Realize o pagamento via PIX ou aguarde o link do cartão</p>
+                        <p>2. Envie o comprovante para nosso WhatsApp</p>
+                        <p>3. Sua entrega será agendada conforme selecionado</p>
+                        <p>4. Acompanhe o status pelo WhatsApp</p>
                     </div>
                     
                     <!-- Botão WhatsApp discreto -->
@@ -1448,7 +1349,7 @@
         let selectedTimeLabel = null;
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
-        let specialDates = ['03-08', '06-12', '12-25'];
+        let specialDates = ['03-08', '06-12', '12-25']; // Datas especiais
         let holidays = [];
         let avulsoDates = [];
         let noDeliveryDates = [];
@@ -1460,12 +1361,10 @@
         let selectedCity = '';
         let isSubmitting = false;
         let currentDeliveryType = '';
-        let isAdminMode = true; // Sempre começa em modo administrador
-        let linkExpirationTime = 24 * 60 * 60 * 1000; // 24 horas em milissegundos
-        let clientDiscount = 0; // Desconto para cliente
+        let currentOrderId = null;
         
         // ============================================
-        // TABELA DE FRETES
+        // TABELA DE FRETES ATUALIZADA
         // ============================================
         const shippingRates = {
             'Belo Horizonte': [
@@ -1521,7 +1420,7 @@
         };
         
         // ============================================
-        // HORÁRIOS
+        // HORÁRIOS ATUALIZADOS
         // ============================================
         const routeTimes = {
             weekday: [
@@ -1551,298 +1450,124 @@
             ]
         };
         
-    // ============================================
-// INICIALIZAÇÃO
-// ============================================
-document.addEventListener('readystatechange', function() {
-    if (document.readyState === 'complete') {
-        console.log('🚀 Sistema de Pedidos inicializado');
-        
-        // Verificar se veio de um link compartilhado
-        checkSharedLink();
-        
-        // Configurar modo administrador (sempre começa assim)
-        setupAdminMode();
-        
-        // Configurar eventos
-        setupEventListeners();
-        
-        // Carregar dados salvos (apenas para modo admin)
-        loadSavedData();
-        
-        // Renderizar calendário inicial
-        renderCalendar(currentMonth, currentYear);
-        
-        // Limpar pedidos expirados
-        cleanupExpiredLinks();
-    }
-});
         // ============================================
-        // VERIFICAÇÃO DE LINK COMPARTILHADO
+        // INICIALIZAÇÃO COM 3 MÉTODOS DE CARREGAMENTO
         // ============================================
-        function checkSharedLink() {
-            const hash = window.location.hash.substring(1);
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Sistema de Pedidos inicializado com gerador de links');
             
-            if (!hash) {
-                // Sem hash = modo administrador
-                isAdminMode = true;
-                return;
+            let loadedByMethod = null;
+            let productName = '';
+            let productPrice = '';
+            
+            // ⭐⭐ MÉTODO 1: Fragmentos na URL (#)
+            const hash = window.location.hash.substring(1);
+            if (hash) {
+                console.log('📌 Tentando Método 1 (Fragmentos):', hash);
+                try {
+                    const params = new URLSearchParams(hash);
+                    productName = params.get('product');
+                    productPrice = params.get('price');
+                    const preview = params.get('preview');
+                    
+                    if (productName && productPrice && preview === 'true') {
+                        productName = decodeURIComponent(productName);
+                        productPrice = decodeURIComponent(productPrice);
+                        loadedByMethod = 'Fragmento na URL (#)';
+                        console.log('✅ Carregado por Fragmentos:', productName, productPrice);
+                    }
+                } catch (e) {
+                    console.log('❌ Falha no Método 1 (Fragmentos):', e);
+                }
             }
             
-            try {
-                const params = new URLSearchParams(hash);
-                const product = params.get('product');
-                const price = params.get('price');
-                const discount = params.get('discount');
-                const timestamp = params.get('t');
-                const orderId = params.get('id');
+            // ⭐⭐ MÉTODO 2: LocalStorage (ID na URL ?order=)
+            if (!loadedByMethod) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const orderId = urlParams.get('order');
                 
-                // Verificar se é um link válido
-                if (product && price && timestamp && orderId) {
-                    // Verificar se o link expirou (24 horas)
-                    const linkTime = parseInt(timestamp);
-                    const currentTime = Date.now();
-                    
-                    if (currentTime - linkTime > linkExpirationTime) {
-                        // Link expirado
-                        showExpiredMessage();
-                        isAdminMode = false;
-                        return;
+                if (orderId) {
+                    console.log('📌 Tentando Método 2 (LocalStorage):', orderId);
+                    try {
+                        const orderData = localStorage.getItem(orderId);
+                        if (orderData) {
+                            const data = JSON.parse(orderData);
+                            if (data.productName && data.productPrice && (Date.now() - data.timestamp) < 86400000) {
+                                productName = data.productName;
+                                productPrice = data.productPrice;
+                                loadedByMethod = 'LocalStorage (ID compartilhado)';
+                                currentOrderId = orderId;
+                                console.log('✅ Carregado por LocalStorage:', productName, productPrice);
+                            } else {
+                                console.log('❌ Dados do LocalStorage expirados ou inválidos');
+                                localStorage.removeItem(orderId);
+                            }
+                        }
+                    } catch (e) {
+                        console.log('❌ Falha no Método 2 (LocalStorage):', e);
                     }
-                    
-                    // Verificar se já foi usado (armazenado no localStorage)
-                    const usedLinks = JSON.parse(localStorage.getItem('usedLinks') || '[]');
-                    if (usedLinks.includes(orderId)) {
-                        // Link já usado
-                        showExpiredMessage();
-                        isAdminMode = false;
-                        return;
+                }
+            }
+            
+            // ⭐⭐ MÉTODO 3: LocalStorage direto (mesmo navegador)
+            if (!loadedByMethod) {
+                console.log('📌 Tentando Método 3 (LocalStorage direto)');
+                const allKeys = Object.keys(localStorage);
+                let latestOrder = null;
+                let latestTime = 0;
+                
+                for (const key of allKeys) {
+                    if (key.startsWith('order_')) {
+                        try {
+                            const data = JSON.parse(localStorage.getItem(key));
+                            if (data && data.timestamp && data.timestamp > latestTime && 
+                                (Date.now() - data.timestamp) < 3600000) {
+                                latestTime = data.timestamp;
+                                latestOrder = data;
+                                currentOrderId = key;
+                            }
+                        } catch (e) {
+                            // Ignorar chaves inválidas
+                        }
                     }
-                    
-                    // É um link válido! Mudar para modo cliente
-                    isAdminMode = false;
-                    setupClientMode(product, price, discount, orderId, linkTime);
-                    
-                } else {
-                    // Hash inválido, voltar para modo admin
-                    isAdminMode = true;
                 }
                 
-            } catch (e) {
-                console.error('Erro ao processar link:', e);
-                isAdminMode = true;
-            }
-        }
-        
-        function showExpiredMessage() {
-            document.getElementById('expiredMessage').classList.remove('hidden');
-            document.getElementById('page1').classList.add('hidden');
-            document.getElementById('adminModeBadge').classList.add('hidden');
-        }
-        
-        function resetToAdminMode() {
-            // Limpar URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-            
-            // Resetar formulário
-            clearSavedData();
-            
-            // Mostrar modo admin
-            document.getElementById('expiredMessage').classList.add('hidden');
-            document.getElementById('page1').classList.remove('hidden');
-            setupAdminMode();
-            
-            // Recarregar página para garantir estado limpo
-            window.location.reload();
-        }
-        
-        // ============================================
-        // CONFIGURAÇÃO DOS MODOS
-        // ============================================
-        function setupAdminMode() {
-            console.log('🔧 Configurando modo Vendedor');
-            
-            // Mostrar badge
-            document.getElementById('adminModeBadge').classList.remove('hidden');
-            
-            // Habilitar edição dos campos de produto
-            document.getElementById('productName').disabled = false;
-            document.getElementById('productPrice').disabled = false;
-            document.getElementById('productDiscount').disabled = false;
-            document.getElementById('discountField').style.display = 'block';
-            
-            // Mostrar seção de gerar link
-            document.getElementById('linkGeneratorSection').style.display = 'block';
-            document.getElementById('previewNotice').classList.add('hidden');
-            
-            // Limpar formulário
-            document.getElementById('productName').value = '';
-            document.getElementById('productPrice').value = '';
-            document.getElementById('productDiscount').value = '0';
-            document.getElementById('buyerName').value = '';
-            document.getElementById('buyerPhone').value = '';
-            document.getElementById('giftedName').value = '';
-            document.getElementById('giftedPhone').value = '';
-            
-            // Garantir que página 1 esteja ativa
-            document.querySelectorAll('.form-page').forEach(page => {
-                page.classList.remove('active');
-            });
-            document.getElementById('page1').classList.add('active');
-        }
-        
-        function setupClientMode(product, price, discount, orderId, timestamp) {
-            console.log('👤 Configurando modo Cliente');
-            
-            // Esconder badge
-            document.getElementById('adminModeBadge').classList.add('hidden');
-            
-            // Preencher produto (bloqueado para edição)
-            document.getElementById('productName').value = decodeURIComponent(product);
-            document.getElementById('productPrice').value = decodeURIComponent(price);
-            
-            // Aplicar desconto se existir
-            if (discount) {
-                clientDiscount = parseFloat(decodeURIComponent(discount)) || 0;
+                if (latestOrder && latestOrder.productName && latestOrder.productPrice) {
+                    productName = latestOrder.productName;
+                    productPrice = latestOrder.productPrice;
+                    loadedByMethod = 'LocalStorage (mesmo navegador)';
+                    console.log('✅ Carregado por LocalStorage direto:', productName, productPrice);
+                }
             }
             
-            // Bloquear edição dos campos de produto
-            document.getElementById('productName').disabled = true;
-            document.getElementById('productPrice').disabled = true;
-            
-            // Esconder campo de desconto (só para vendedor)
-            document.getElementById('discountField').style.display = 'none';
-            
-            // Esconder seção de gerar link
-            document.getElementById('linkGeneratorSection').style.display = 'none';
-            
-            // Mostrar aviso
-            document.getElementById('previewNotice').classList.remove('hidden');
-            
-            // Calcular total
-            calculateProductTotal();
-            
-            // Garantir que página 1 esteja ativa
-            document.querySelectorAll('.form-page').forEach(page => {
-                page.classList.remove('active');
-            });
-            document.getElementById('page1').classList.add('active');
-            
-            // Salvar ID do pedido para marcar como usado depois
-            window.currentOrderId = orderId;
-            window.linkTimestamp = timestamp;
-        }
-        
-        // ============================================
-        // GERADOR DE LINK (SOMENTE MODO ADMIN)
-        // ============================================
-        function generateClientLink() {
-            const productName = document.getElementById('productName').value.trim();
-            const productPrice = document.getElementById('productPrice').value.trim();
-            const productDiscount = document.getElementById('productDiscount').value.trim() || '0';
-            
-            if (!productName || !productPrice) {
-                alert('Por favor, preencha o nome e preço do produto antes de gerar o link.');
-                return;
-            }
-            
-            // Gerar ID único com timestamp
-            const orderId = 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            const timestamp = Date.now();
-            
-            // Criar link com fragmento
-            const baseUrl = window.location.origin + window.location.pathname;
-            const encodedProductName = encodeURIComponent(productName);
-            const encodedProductPrice = encodeURIComponent(productPrice);
-            const encodedDiscount = encodeURIComponent(productDiscount);
-            
-            const clientLink = `${baseUrl}#product=${encodedProductName}&price=${encodedProductPrice}&discount=${encodedDiscount}&t=${timestamp}&id=${orderId}`;
-            
-            // Mostrar link
-            document.getElementById('generatedLink').textContent = clientLink;
-            document.getElementById('generatedLinkContainer').classList.remove('hidden');
-            
-            // Scroll para mostrar o link
-            document.getElementById('generatedLinkContainer').scrollIntoView({ behavior: 'smooth' });
-            
-            // Mostrar instruções
-            alert(`✅ Link gerado com sucesso!
-
-📋 Instruções:
-1. Copie o link acima
-2. Envie para o cliente via WhatsApp
-3. O link expira automaticamente após 24 horas
-4. Após o cliente preencher o formulário, o link é marcado como usado
-5. Para novo pedido, gere sempre um novo link`);
-            
-            if (parseFloat(productDiscount) > 0) {
-                alert(`💸 Desconto aplicado: R$ ${parseFloat(productDiscount).toFixed(2)}
-O cliente verá o produto com preço original, mas o desconto será aplicado automaticamente no cálculo final.`);
-            }
-        }
-        
-        function copyGeneratedLink() {
-            const link = document.getElementById('generatedLink').textContent;
-            
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(link).then(() => {
-                    document.getElementById('copySuccess').classList.remove('hidden');
-                    setTimeout(() => {
-                        document.getElementById('copySuccess').classList.add('hidden');
-                    }, 3000);
-                }).catch(err => {
-                    copyUsingExecCommand(link);
+            // ⭐⭐ APLICAR DADOS CARREGADOS
+            if (loadedByMethod && productName && productPrice) {
+                console.log('🎯 Aplicando dados carregados:', productName, productPrice);
+                document.getElementById('productName').value = productName;
+                document.getElementById('productPrice').value = productPrice;
+                
+                document.getElementById('previewNotice').classList.remove('hidden');
+                document.getElementById('methodUsed').innerHTML = 
+                    `Método usado: <strong>${loadedByMethod}</strong>`;
+                
+                document.getElementById('linkGeneratorSection').style.display = 'none';
+                calculateProductTotal();
+                
+                document.querySelectorAll('.form-page').forEach(page => {
+                    page.classList.remove('active');
                 });
-            } else {
-                copyUsingExecCommand(link);
+                document.getElementById('page1').classList.add('active');
+                window.scrollTo(0, 0);
             }
-        }
-        
-        function copyUsingExecCommand(text) {
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            textArea.style.position = 'fixed';
-            textArea.style.left = '-999999px';
-            textArea.style.top = '-999999px';
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
             
-            try {
-                document.execCommand('copy');
-                document.getElementById('copySuccess').classList.remove('hidden');
-                setTimeout(() => {
-                    document.getElementById('copySuccess').classList.add('hidden');
-                }, 3000);
-            } catch (err) {
-                alert('⚠️ Não foi possível copiar. Por favor, anote: ' + text);
-            } finally {
-                document.body.removeChild(textArea);
-            }
-        }
-        
-        function cleanupExpiredLinks() {
-            const usedLinks = JSON.parse(localStorage.getItem('usedLinks') || '[]');
-            const now = Date.now();
-            
-            // Manter apenas os últimos 100 links usados
-            if (usedLinks.length > 100) {
-                localStorage.setItem('usedLinks', JSON.stringify(usedLinks.slice(-100)));
-            }
-        }
-        
-        // ============================================
-        // CONFIGURAÇÃO DE EVENTOS
-        // ============================================
-        function setupEventListeners() {
             // Configurar eventos da página 1
             document.getElementById('productPrice').addEventListener('input', calculateProductTotal);
-            document.getElementById('productDiscount').addEventListener('input', saveData);
             
             // Configurar eventos da página 2
             document.getElementById('deliveryCity').addEventListener('change', function() {
                 selectedCity = this.value;
                 isOtherCity = this.value === 'other';
+                
                 updateCityDisplay();
                 saveData();
             });
@@ -1881,9 +1606,20 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
                 saveData();
             });
             
-            // Event listeners para gerar link (somente admin)
-            document.getElementById('generateLinkBtn').addEventListener('click', generateClientLink);
-            document.getElementById('copyLinkBtn').addEventListener('click', copyGeneratedLink);
+            // Event listeners para gerar link
+            document.getElementById('generateLinkBtn').addEventListener('click', generateAllPreviewLinks);
+            document.getElementById('copyFragmentBtn').addEventListener('click', function() {
+                copyToClipboard(document.getElementById('generatedLinkFragment').textContent, 'link');
+            });
+            document.getElementById('copySimpleBtn').addEventListener('click', function() {
+                copyToClipboard(document.getElementById('generatedLinkSimple').textContent, 'link');
+            });
+            
+            // Carregar dados salvos
+            loadSavedData();
+            
+            // Renderizar calendário inicial
+            renderCalendar(currentMonth, currentYear);
             
             // Inicializar tipo de entrega
             const deliveryTypeRadio = document.querySelector('input[name="deliveryType"]:checked');
@@ -1891,16 +1627,147 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
                 currentDeliveryType = deliveryTypeRadio.value;
                 updateDeliveryTypeDisplay();
             }
+            
+            // Limpar pedidos antigos
+            cleanupOldOrders();
+        });
+        
+        // ============================================
+        // FUNÇÃO PARA GERAR TODOS OS LINKS
+        // ============================================
+        function generateAllPreviewLinks() {
+            const productName = document.getElementById('productName').value;
+            const productPrice = document.getElementById('productPrice').value;
+            
+            if (!productName || !productPrice) {
+                alert('Por favor, preencha todos os campos do produto antes de gerar o link.');
+                return;
+            }
+            
+            // Gerar ID único
+            const orderId = 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
+            // Dados do pedido
+            const orderData = {
+                productName: productName,
+                productPrice: productPrice,
+                timestamp: Date.now(),
+                orderId: orderId
+            };
+            
+            // ⭐⭐ MÉTODO 1: Fragmento na URL (#)
+            const baseUrl = window.location.href.split('#')[0];
+            const encodedProductName = encodeURIComponent(productName);
+            const encodedProductPrice = encodeURIComponent(productPrice);
+            
+            const fragmentUrl = `${baseUrl}#product=${encodedProductName}&price=${encodedProductPrice}&preview=true`;
+            
+            // ⭐⭐ MÉTODO 2: LocalStorage com ID (?order=)
+            const simpleUrl = `${baseUrl}?order=${orderId}`;
+            
+            // Salvar no localStorage
+            localStorage.setItem(orderId, JSON.stringify(orderData));
+            localStorage.setItem('recent_order', orderId);
+            
+            // Mostrar todos os links
+            document.getElementById('generatedLinkFragment').textContent = fragmentUrl;
+            document.getElementById('generatedLinkSimple').textContent = simpleUrl;
+            document.getElementById('manualProduct').textContent = productName;
+            document.getElementById('manualPrice').textContent = productPrice;
+            
+            document.getElementById('generatedLinkContainer').classList.remove('hidden');
+            document.getElementById('copySuccess').classList.add('hidden');
+            
+            // Scroll para mostrar os links
+            document.getElementById('generatedLinkContainer').scrollIntoView({ behavior: 'smooth' });
+            
+            // Mostrar instruções
+            alert(`✅ Links gerados com sucesso!
+
+📌 RECOMENDADO: Use o "Link com Fragmento" primeiro.
+
+💡 DICA: Se um não funcionar, tente o outro.
+
+⚠️ O "Link Simples" só funciona se:
+• Compartilhado do MESMO navegador
+• Dentro de 24 horas
+• Cliente não limpar o cache`);
+        }
+        
+        // Limpar pedidos antigos do localStorage
+        function cleanupOldOrders() {
+            const allKeys = Object.keys(localStorage);
+            const now = Date.now();
+            
+            for (const key of allKeys) {
+                if (key.startsWith('order_')) {
+                    try {
+                        const data = JSON.parse(localStorage.getItem(key));
+                        if (data && data.timestamp && (now - data.timestamp) > 86400000) {
+                            localStorage.removeItem(key);
+                        }
+                    } catch (e) {
+                        // Ignorar erros
+                    }
+                }
+            }
+        }
+        
+        // Função para copiar para clipboard
+        function copyToClipboard(text, type) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopySuccess(type);
+                }).catch(err => {
+                    copyUsingExecCommand(text, type);
+                });
+            } else {
+                copyUsingExecCommand(text, type);
+            }
+        }
+        
+        function copyUsingExecCommand(text, type) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showCopySuccess(type);
+            } catch (err) {
+                alert('⚠️ Não foi possível copiar. Por favor, anote: ' + text);
+            } finally {
+                document.body.removeChild(textArea);
+            }
+        }
+        
+        function showCopySuccess(type) {
+            const copySuccess = document.getElementById('copySuccess');
+            copySuccess.classList.remove('hidden');
+            
+            setTimeout(() => {
+                copySuccess.classList.add('hidden');
+            }, 3000);
         }
         
         // ============================================
         // FUNÇÕES DE NAVEGAÇÃO
         // ============================================
         function nextPage(current, next) {
-            if (current === 1 && !validatePage1()) return;
-            if (current === 2 && !validatePage2()) return;
-            if (current === 3 && !validatePage3()) return;
-            if (current === 4 && !validatePage4()) return;
+            if (current === 1) {
+                if (!validatePage1()) return;
+            } else if (current === 2) {
+                if (!validatePage2()) return;
+            } else if (current === 3) {
+                if (!validatePage3()) return;
+            } else if (current === 4) {
+                if (!validatePage4()) return;
+            }
             
             if (next === 4) {
                 updateReviewData();
@@ -2154,14 +2021,13 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
         
         function getTotalWithShipping() {
             const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
-            // Aplica desconto do cliente se existir
-            const priceAfterDiscount = productPrice - clientDiscount;
-            const total = priceAfterDiscount + calculatedShipping + (nightFeeAmount || 0);
-            return total > 0 ? total : 0;
+            const total = productPrice + calculatedShipping + (nightFeeAmount || 0);
+            return total;
         }
         
         // IMPORTANTE: Para planilha, taxas são somadas ao frete
         function getShippingForSpreadsheet() {
+            // Retorna frete + taxas para a planilha
             return calculatedShipping + (nightFeeAmount || 0);
         }
         
@@ -2178,7 +2044,7 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
         }
         
         // ============================================
-        // CALENDÁRIO E HORÁRIOS COM REGRAS DE HORÁRIO
+        // CALENDÁRIO E HORÁRIOS
         // ============================================
         function renderCalendar(month, year) {
             const calendar = document.getElementById('calendar');
@@ -2320,84 +2186,38 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
                 routeType = 'weekday';
             }
             
-            // APLICAR REGRAS DE HORÁRIO
             routes = routes.filter(route => {
                 let isRouteAvailable = true;
-                const now = new Date();
-                const currentHour = now.getHours();
-                const currentMinutes = now.getMinutes();
-                const currentTimeInMinutes = currentHour * 60 + currentMinutes;
                 
-                // Se não for hoje, sempre disponível
-                if (!isToday) return true;
-                
-                // Regra 1: Segunda a Sexta após 17h - encerra primeira rota do dia seguinte
-                if (dayOfWeek >= 1 && dayOfWeek <= 5 && currentHour >= 17) {
-                    const tomorrow = new Date(today);
-                    tomorrow.setDate(tomorrow.getDate() + 1);
-                    
-                    // Se a data selecionada for amanhã
-                    if (date.getDate() === tomorrow.getDate() && 
-                        date.getMonth() === tomorrow.getMonth() && 
-                        date.getFullYear() === tomorrow.getFullYear()) {
-                        
-                        // Primeira rota do dia (07:30) fica indisponível
-                        if (route.start === '07:30') {
-                            isRouteAvailable = false;
-                        }
-                    }
-                }
-                
-                // Regra 2: Sábado após 12h - encerra primeira rota de domingo e segunda
-                if (dayOfWeek === 6 && currentHour >= 12) {
-                    const sunday = new Date(today);
-                    sunday.setDate(sunday.getDate() + 1);
-                    const monday = new Date(today);
-                    monday.setDate(monday.getDate() + 2);
-                    
-                    // Se for domingo
-                    if (date.getDate() === sunday.getDate() && 
-                        date.getMonth() === sunday.getMonth()) {
-                        
-                        // Primeira rota do domingo fica indisponível
-                        if (route.start === '08:00') {
-                            isRouteAvailable = false;
-                        }
-                    }
-                    
-                    // Se for segunda
-                    if (date.getDate() === monday.getDate() && 
-                        date.getMonth() === monday.getMonth()) {
-                        
-                        // Primeira rota da segunda fica indisponível
-                        if (route.start === '07:30') {
-                            isRouteAvailable = false;
-                        }
-                    }
-                }
-                
-                // Regra 3: Feriado após 12h - encerra primeira rota do dia seguinte
-                if (isHoliday && currentHour >= 12) {
-                    const nextDay = new Date(today);
-                    nextDay.setDate(nextDay.getDate() + 1);
-                    
-                    if (date.getDate() === nextDay.getDate() && 
-                        date.getMonth() === nextDay.getMonth()) {
-                        
-                        // Primeira rota do dia seguinte fica indisponível
-                        if (route.start === '07:30' || route.start === '08:00') {
-                            isRouteAvailable = false;
-                        }
-                    }
-                }
-                
-                // Verificar se já passou do horário da rota (para hoje)
                 if (isToday) {
                     const [startHour, startMinute] = route.start.split(':').map(Number);
                     const startTimeInMinutes = startHour * 60 + startMinute;
+                    const currentTimeInMinutes = currentHour * 60 + now.getMinutes();
+                    const timeUntilStart = startTimeInMinutes - currentTimeInMinutes;
                     
-                    // Se já passou mais de 30 minutos do início da rota
-                    if (currentTimeInMinutes > (startTimeInMinutes - 30)) {
+                    if (dayOfWeek >= 1 && dayOfWeek <= 5 && currentHour >= 17) {
+                        if (route.start === '07:30') {
+                            const tomorrow = new Date(today);
+                            tomorrow.setDate(tomorrow.getDate() + 1);
+                            if (date.getDate() === tomorrow.getDate()) {
+                                isRouteAvailable = false;
+                            }
+                        }
+                    }
+                    
+                    if (dayOfWeek === 6 && currentHour >= 12) {
+                        if (routeType === 'sunday' || (routeType === 'weekday' && route.start === '07:30')) {
+                            isRouteAvailable = false;
+                        }
+                    }
+                    
+                    if (dayOfWeek === 0) {
+                        if (routeType === 'weekday' && route.start === '07:30') {
+                            isRouteAvailable = false;
+                        }
+                    }
+                    
+                    if (timeUntilStart < 30) {
                         isRouteAvailable = false;
                     }
                 }
@@ -2405,14 +2225,6 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
                 return isRouteAvailable;
             });
             
-            // Se não houver rotas disponíveis, mostrar mensagem
-            if (routes.length === 0) {
-                optionsContainer.innerHTML = '<div class="alert alert-warning">Não há horários disponíveis para esta data. Por favor, selecione outra data.</div>';
-                document.getElementById('nextPage2Button').disabled = true;
-                return;
-            }
-            
-            // Renderizar rotas disponíveis
             routes.forEach((route, index) => {
                 const routeId = `time${routeType}${index + 1}`;
                 const routeElement = document.createElement('div');
@@ -2534,14 +2346,6 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
             html += `<div class="review-value">${formatCurrency(productPrice)}</div>`;
             html += '</div>';
             
-            // Desconto (se houver)
-            if (clientDiscount > 0) {
-                html += '<div class="review-item" style="color: var(--success);">';
-                html += '<div class="review-label">Desconto</div>';
-                html += `<div class="review-value">- ${formatCurrency(clientDiscount)}</div>`;
-                html += '</div>';
-            }
-            
             // Frete
             const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
             if (deliveryType === 'delivery' && !isOtherCity && calculatedShipping > 0) {
@@ -2627,13 +2431,6 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
             totalHtml += `<span>${formatCurrency(productPrice)}</span>`;
             totalHtml += '</div>';
             
-            if (clientDiscount > 0) {
-                totalHtml += '<div class="total-item" style="color: var(--success);">';
-                totalHtml += '<span>Desconto:</span>';
-                totalHtml += `<span>- ${formatCurrency(clientDiscount)}</span>`;
-                totalHtml += '</div>';
-            }
-            
             if (deliveryType === 'delivery' && !isOtherCity && calculatedShipping > 0) {
                 totalHtml += '<div class="total-item">';
                 totalHtml += '<span>Frete:</span>';
@@ -2681,9 +2478,7 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
             const sendCard = document.querySelector('input[name="sendCard"]:checked')?.value;
             const cardMessage = document.getElementById('cardMessage').value || '';
             
-            // Aplica desconto para cálculo na planilha
-            const finalPrice = productPrice - clientDiscount;
-            const formattedPrice = finalPrice.toFixed(2).replace('.', ',');
+            const formattedPrice = productPrice.toFixed(2).replace('.', ',');
             
             // IMPORTANTE: Frete + taxas juntos para a planilha
             const totalShipping = getShippingForSpreadsheet();
@@ -2728,7 +2523,7 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
             data[1] = buyerName;
             data[2] = buyerPhone;
             data[3] = productName;
-            data[4] = formattedPrice; // Preço com desconto aplicado
+            data[4] = formattedPrice;
             data[5] = formattedShipping; // Frete + taxas juntos
             data[6] = 'FORMULÁRIO MANUAL';
             data[7] = '';
@@ -2762,14 +2557,6 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
                 return;
             }
             
-            // Se veio de um link compartilhado, marcar como usado
-            if (!isAdminMode && window.currentOrderId) {
-                const usedLinks = JSON.parse(localStorage.getItem('usedLinks') || '[]');
-                usedLinks.push(window.currentOrderId);
-                localStorage.setItem('usedLinks', JSON.stringify(usedLinks));
-                console.log('📝 Link marcado como usado:', window.currentOrderId);
-            }
-            
             const submitBtn = document.getElementById('submitButton');
             const loadingSection = document.getElementById('loadingSection');
             
@@ -2782,7 +2569,6 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
             try {
                 const excelData = prepareExcelData();
                 console.log('📦 Dados para envio:', excelData);
-                console.log('💰 Frete + Taxas para planilha:', getShippingForSpreadsheet());
                 
                 const result = await enviarDadosParaPlanilha(excelData);
                 
@@ -2793,18 +2579,9 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
                     submitBtn.classList.add('btn-success');
                     
                     setTimeout(() => {
-                        // Mostrar página de sucesso baseada no método de pagamento
                         document.getElementById('page4').classList.remove('active');
-                        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
-                        
-                        if (paymentMethod === 'pix') {
-                            document.getElementById('thankYouPagePix').classList.add('active');
-                            showPaymentConfirmation('pix');
-                        } else {
-                            document.getElementById('thankYouPageCard').classList.add('active');
-                            showPaymentConfirmation('card');
-                        }
-                        
+                        document.getElementById('thankYouPage').classList.add('active');
+                        showPaymentConfirmation();
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }, 1000);
                     
@@ -2909,9 +2686,11 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
         // ============================================
         // PÁGINA DE SUCESSO E PAGAMENTO
         // ============================================
-        function showPaymentConfirmation(paymentType) {
+        function showPaymentConfirmation() {
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
             const total = getTotalWithShipping();
             const buyerName = document.getElementById('buyerName').value;
+            const paymentDetailsDiv = document.getElementById('paymentDetails');
             
             const formatCurrency = (value) => {
                 return parseFloat(value || 0).toLocaleString('pt-BR', {
@@ -2932,19 +2711,10 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
             html += `<div class="review-value">${document.getElementById('productName').value}</div>`;
             html += '</div>';
             
-            const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
             html += '<div class="review-item">';
-            html += '<div class="review-label">Valor Original</div>';
-            html += `<div class="review-value">${formatCurrency(productPrice)}</div>`;
+            html += '<div class="review-label">Valor</div>';
+            html += `<div class="review-value">${formatCurrency(parseFloat(document.getElementById('productPrice').value) || 0)}</div>`;
             html += '</div>';
-            
-            // Mostrar desconto se existir
-            if (clientDiscount > 0) {
-                html += '<div class="review-item" style="color: var(--success);">';
-                html += '<div class="review-label">Desconto</div>';
-                html += `<div class="review-value">- ${formatCurrency(clientDiscount)}</div>`;
-                html += '</div>';
-            }
             
             // Frete + taxas juntos na exibição também
             const totalShipping = getShippingForSpreadsheet();
@@ -2960,11 +2730,7 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
             html += `<div class="review-value"><strong>${formatCurrency(total)}</strong></div>`;
             html += '</div>';
             
-            if (paymentType === 'pix') {
-                document.getElementById('paymentDetailsPix').innerHTML = html;
-            } else {
-                document.getElementById('paymentDetailsCard').innerHTML = html;
-            }
+            paymentDetailsDiv.innerHTML = html;
         }
         
         function selectPixKey() {
@@ -3009,10 +2775,6 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
             message += `*Produto:* ${productName}%0A`;
             message += `*Valor:* R$ ${productPrice.toFixed(2)}%0A`;
             
-            if (clientDiscount > 0) {
-                message += `*Desconto:* -R$ ${clientDiscount.toFixed(2)}%0A`;
-            }
-            
             const totalShipping = getShippingForSpreadsheet();
             if (totalShipping > 0) {
                 message += `*Frete + Taxas:* R$ ${totalShipping.toFixed(2)}%0A`;
@@ -3034,7 +2796,6 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
             const formData = {
                 productName: document.getElementById('productName').value,
                 productPrice: document.getElementById('productPrice').value,
-                productDiscount: document.getElementById('productDiscount').value,
                 buyerName: document.getElementById('buyerName').value,
                 buyerPhone: document.getElementById('buyerPhone').value,
                 giftedName: document.getElementById('giftedName').value,
@@ -3065,20 +2826,18 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
         }
         
         function loadSavedData() {
-            // Só carrega dados salvos se for modo administrador
-            if (!isAdminMode) return;
-            
             const savedData = localStorage.getItem('mundoCarolFormData');
             if (!savedData) return;
             
             try {
                 const data = JSON.parse(savedData);
                 
-                // Só preenche se for modo admin e não tiver sido pré-carregado
-                if (isAdminMode && !document.getElementById('productName').disabled) {
+                // Só preenche se não tiver sido pré-carregado
+                if (!document.getElementById('productName').value) {
                     document.getElementById('productName').value = data.productName || '';
+                }
+                if (!document.getElementById('productPrice').value) {
                     document.getElementById('productPrice').value = data.productPrice || '';
-                    document.getElementById('productDiscount').value = data.productDiscount || '0';
                 }
                 
                 document.getElementById('buyerName').value = data.buyerName || '';
@@ -3151,9 +2910,6 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
         }
         
         function clearSavedData() {
-            // Não limpa se for modo cliente
-            if (!isAdminMode) return;
-            
             localStorage.removeItem('mundoCarolFormData');
             
             selectedDate = null;
@@ -3168,7 +2924,6 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
             calculatedShipping = 0;
             selectedCity = '';
             currentDeliveryType = '';
-            clientDiscount = 0;
         }
         
         function validateForm() {
@@ -3177,5 +2932,3 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
     </script>
 </body>
 </html>
-
-
