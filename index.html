@@ -222,7 +222,6 @@
             transition: all 0.3s;
             text-align: center;
             text-decoration: none;
-            width: 100%;
         }
         
         .btn-primary {
@@ -287,10 +286,12 @@
             display: flex;
             gap: 10px;
             margin-top: 25px;
+            justify-content: space-between;
         }
         
         .nav-buttons .btn {
             flex: 1;
+            max-width: 48%;
         }
         
         .hidden {
@@ -837,6 +838,43 @@
             margin-bottom: 10px;
         }
         
+        .payment-option-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .payment-option-card h3 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        
+        .discount-field {
+            background: #e8f5e9;
+            border-left: 4px solid #28a745;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 0;
+        }
+        
+        .discount-field label {
+            color: #155724;
+            font-weight: 600;
+        }
+        
+        .discount-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
         @media (max-width: 480px) {
             .header h1 {
                 font-size: 20px;
@@ -878,6 +916,11 @@
             
             .nav-buttons {
                 flex-direction: column;
+                gap: 8px;
+            }
+            
+            .nav-buttons .btn {
+                max-width: 100%;
             }
             
             .review-item {
@@ -894,10 +937,6 @@
         @media (min-width: 768px) {
             .container {
                 max-width: 700px;
-            }
-            
-            .nav-buttons {
-                flex-direction: row;
             }
         }
     </style>
@@ -941,6 +980,13 @@
                 <div class="form-group">
                     <label for="productPrice">Preço (R$):</label>
                     <input type="number" id="productPrice" class="form-control" min="0" step="0.01" placeholder="0,00" required>
+                </div>
+                
+                <!-- Campo de Desconto (SOMENTE PARA VENDEDOR) -->
+                <div id="discountField" class="discount-field">
+                    <label for="productDiscount">Desconto (R$):</label>
+                    <input type="number" id="productDiscount" class="form-control" min="0" step="0.01" placeholder="0,00" value="0">
+                    <div class="discount-info">Digite o valor do desconto que será aplicado ao gerar o link para o cliente.</div>
                 </div>
                 
                 <!-- Seção de pré-visualização (SOMENTE PARA CLIENTE) -->
@@ -1047,6 +1093,7 @@
             </div>
             
             <div class="nav-buttons">
+                <button type="button" class="btn btn-secondary" onclick="prevPage(1, 1)" style="display: none;"><i class="fas fa-arrow-left"></i> Voltar</button>
                 <button type="button" class="btn btn-primary" onclick="nextPage(1, 2)">Próxima Página <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
@@ -1275,8 +1322,8 @@
             </div>
         </div>
         
-        <!-- Página de Sucesso -->
-        <div id="thankYouPage" class="form-page">
+        <!-- Página de Sucesso PIX -->
+        <div id="thankYouPagePix" class="form-page">
             <div class="success-page">
                 <div class="success-icon">
                     <i class="fas fa-check-circle"></i>
@@ -1296,28 +1343,67 @@
                         </button>
                     </div>
                     
-                    <div class="instructions">
-                        <h3><i class="fas fa-list-ol"></i> Instruções para pagamento:</h3>
-                        <ol>
-                            <li>Copie a chave PIX acima</li>
-                            <li>Abra seu aplicativo de banco ou carteira digital</li>
-                            <li>Vá na opção "Pagar com PIX" ou "PIX Copia e Cola"</li>
-                            <li>Cole a chave e confirme o valor total</li>
-                            <li>Finalize o pagamento</li>
-                        </ol>
-                    </div>
-                    
                     <div id="paymentSummary" class="info-card">
                         <h3><i class="fas fa-file-invoice-dollar"></i> Resumo do Pedido</h3>
-                        <div id="paymentDetails"></div>
+                        <div id="paymentDetailsPix"></div>
                     </div>
                     
-                    <div class="info-card">
-                        <h3><i class="fas fa-info-circle"></i> Próximos passos:</h3>
-                        <p>1. Realize o pagamento via PIX ou aguarde o link do cartão</p>
-                        <p>2. Envie o comprovante para nosso WhatsApp</p>
-                        <p>3. Sua entrega será agendada conforme selecionado</p>
-                        <p>4. Acompanhe o status pelo WhatsApp</p>
+                    <!-- Botão WhatsApp discreto -->
+                    <button class="whatsapp-discreto" onclick="sendWhatsAppMessage()">
+                        <i class="fab fa-whatsapp"></i> WhatsApp: (31) 98323-8087
+                    </button>
+                    
+                    <div class="schedule-info">
+                        <h3><i class="fas fa-clock"></i> Horário de Atendimento</h3>
+                        <div class="schedule-item">
+                            <span class="schedule-day">Segunda a Sexta:</span>
+                            <span class="schedule-time">07:30 às 17:30</span>
+                        </div>
+                        <div class="schedule-item">
+                            <span class="schedule-day">Sábado e Feriados:</span>
+                            <span class="schedule-time">07:30 às 12:00</span>
+                        </div>
+                        <div class="schedule-item">
+                            <span class="schedule-day">Domingo:</span>
+                            <span class="schedule-time">Não temos atendimentos aos domingos, apenas entregas das cestas encomendadas até sábado 12 horas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Página de Sucesso CARTÃO -->
+        <div id="thankYouPageCard" class="form-page">
+            <div class="success-page">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                
+                <h1 class="success-title">PEDIDO ENVIADO COM SUCESSO!</h1>
+                <p class="success-subtitle">Seus dados foram registrados e enviados para nossa equipe. Em breve você receberá o link de pagamento!</p>
+                
+                <div class="payment-details">
+                    <div class="payment-option-card">
+                        <h3><i class="fas fa-credit-card"></i> Pagamento via Cartão de Crédito</h3>
+                        <div class="alert alert-info" style="margin: 15px 0;">
+                            <p><strong>Você escolheu pagar via Cartão de Crédito.</strong></p>
+                            <p>Nosso atendente enviará para você um link seguro de pagamento via WhatsApp em breve.</p>
+                            <p>Fique atento(a) às mensagens do WhatsApp!</p>
+                        </div>
+                        
+                        <div class="info-card" style="background: #f8f9fa; margin-top: 20px;">
+                            <h3><i class="fas fa-file-invoice-dollar"></i> Resumo do Pedido</h3>
+                            <div id="paymentDetailsCard"></div>
+                        </div>
+                        
+                        <div class="alert alert-warning" style="margin-top: 20px;">
+                            <p><strong>Alternativa: Pagamento via PIX</strong></p>
+                            <p>Se preferir pagar agora via PIX, utilize nossa chave abaixo:</p>
+                            <div class="pix-key" style="font-size: 16px; padding: 10px; margin: 10px 0;" onclick="selectPixKey()">10648303000179</div>
+                            <button type="button" class="btn btn-secondary" onclick="copyPixKey()" style="width: 100%;">
+                                <i class="fas fa-copy"></i> Copiar Chave PIX
+                            </button>
+                        </div>
                     </div>
                     
                     <!-- Botão WhatsApp discreto -->
@@ -1376,6 +1462,7 @@
         let currentDeliveryType = '';
         let isAdminMode = true; // Sempre começa em modo administrador
         let linkExpirationTime = 24 * 60 * 60 * 1000; // 24 horas em milissegundos
+        let clientDiscount = 0; // Desconto para cliente
         
         // ============================================
         // TABELA DE FRETES
@@ -1505,6 +1592,7 @@
                 const params = new URLSearchParams(hash);
                 const product = params.get('product');
                 const price = params.get('price');
+                const discount = params.get('discount');
                 const timestamp = params.get('t');
                 const orderId = params.get('id');
                 
@@ -1532,7 +1620,7 @@
                     
                     // É um link válido! Mudar para modo cliente
                     isAdminMode = false;
-                    setupClientMode(product, price, orderId, linkTime);
+                    setupClientMode(product, price, discount, orderId, linkTime);
                     
                 } else {
                     // Hash inválido, voltar para modo admin
@@ -1579,6 +1667,8 @@
             // Habilitar edição dos campos de produto
             document.getElementById('productName').disabled = false;
             document.getElementById('productPrice').disabled = false;
+            document.getElementById('productDiscount').disabled = false;
+            document.getElementById('discountField').style.display = 'block';
             
             // Mostrar seção de gerar link
             document.getElementById('linkGeneratorSection').style.display = 'block';
@@ -1587,6 +1677,7 @@
             // Limpar formulário
             document.getElementById('productName').value = '';
             document.getElementById('productPrice').value = '';
+            document.getElementById('productDiscount').value = '0';
             document.getElementById('buyerName').value = '';
             document.getElementById('buyerPhone').value = '';
             document.getElementById('giftedName').value = '';
@@ -1599,7 +1690,7 @@
             document.getElementById('page1').classList.add('active');
         }
         
-        function setupClientMode(product, price, orderId, timestamp) {
+        function setupClientMode(product, price, discount, orderId, timestamp) {
             console.log('👤 Configurando modo Cliente');
             
             // Esconder badge
@@ -1609,9 +1700,17 @@
             document.getElementById('productName').value = decodeURIComponent(product);
             document.getElementById('productPrice').value = decodeURIComponent(price);
             
+            // Aplicar desconto se existir
+            if (discount) {
+                clientDiscount = parseFloat(decodeURIComponent(discount)) || 0;
+            }
+            
             // Bloquear edição dos campos de produto
             document.getElementById('productName').disabled = true;
             document.getElementById('productPrice').disabled = true;
+            
+            // Esconder campo de desconto (só para vendedor)
+            document.getElementById('discountField').style.display = 'none';
             
             // Esconder seção de gerar link
             document.getElementById('linkGeneratorSection').style.display = 'none';
@@ -1639,6 +1738,7 @@
         function generateClientLink() {
             const productName = document.getElementById('productName').value.trim();
             const productPrice = document.getElementById('productPrice').value.trim();
+            const productDiscount = document.getElementById('productDiscount').value.trim() || '0';
             
             if (!productName || !productPrice) {
                 alert('Por favor, preencha o nome e preço do produto antes de gerar o link.');
@@ -1653,8 +1753,9 @@
             const baseUrl = window.location.origin + window.location.pathname;
             const encodedProductName = encodeURIComponent(productName);
             const encodedProductPrice = encodeURIComponent(productPrice);
+            const encodedDiscount = encodeURIComponent(productDiscount);
             
-            const clientLink = `${baseUrl}#product=${encodedProductName}&price=${encodedProductPrice}&t=${timestamp}&id=${orderId}`;
+            const clientLink = `${baseUrl}#product=${encodedProductName}&price=${encodedProductPrice}&discount=${encodedDiscount}&t=${timestamp}&id=${orderId}`;
             
             // Mostrar link
             document.getElementById('generatedLink').textContent = clientLink;
@@ -1672,6 +1773,11 @@
 3. O link expira automaticamente após 24 horas
 4. Após o cliente preencher o formulário, o link é marcado como usado
 5. Para novo pedido, gere sempre um novo link`);
+            
+            if (parseFloat(productDiscount) > 0) {
+                alert(`💸 Desconto aplicado: R$ ${parseFloat(productDiscount).toFixed(2)}
+O cliente verá o produto com preço original, mas o desconto será aplicado automaticamente no cálculo final.`);
+            }
         }
         
         function copyGeneratedLink() {
@@ -1730,6 +1836,7 @@
         function setupEventListeners() {
             // Configurar eventos da página 1
             document.getElementById('productPrice').addEventListener('input', calculateProductTotal);
+            document.getElementById('productDiscount').addEventListener('input', saveData);
             
             // Configurar eventos da página 2
             document.getElementById('deliveryCity').addEventListener('change', function() {
@@ -1874,12 +1981,12 @@
                 if (!isOtherCity && deliveryType === 'delivery') {
                     if (!selectedDate) {
                         alert('Por favor, selecione uma data de entrega.');
-                        return;
+                        return false;
                     }
                     
                     if (!document.querySelector('input[name="deliveryTime"]:checked')) {
                         alert('Por favor, selecione um horário de entrega.');
-                        return;
+                        return false;
                     }
                 }
             }
@@ -1887,12 +1994,12 @@
             if (deliveryType === 'pickup') {
                 if (!selectedDate) {
                     alert('Por favor, selecione uma data para retirada.');
-                    return;
+                    return false;
                 }
                 
                 if (!document.querySelector('input[name="deliveryTime"]:checked')) {
                     alert('Por favor, selecione um horário para retirada.');
-                    return;
+                    return false;
                 }
             }
             
@@ -2046,13 +2153,14 @@
         
         function getTotalWithShipping() {
             const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
-            const total = productPrice + calculatedShipping + (nightFeeAmount || 0);
-            return total;
+            // Aplica desconto do cliente se existir
+            const priceAfterDiscount = productPrice - clientDiscount;
+            const total = priceAfterDiscount + calculatedShipping + (nightFeeAmount || 0);
+            return total > 0 ? total : 0;
         }
         
         // IMPORTANTE: Para planilha, taxas são somadas ao frete
         function getShippingForSpreadsheet() {
-            // CORREÇÃO: Soma corretamente o frete + taxas noturnas/domingo
             return calculatedShipping + (nightFeeAmount || 0);
         }
         
@@ -2069,7 +2177,7 @@
         }
         
         // ============================================
-        // CALENDÁRIO E HORÁRIOS
+        // CALENDÁRIO E HORÁRIOS COM REGRAS DE HORÁRIO
         // ============================================
         function renderCalendar(month, year) {
             const calendar = document.getElementById('calendar');
@@ -2211,38 +2319,84 @@
                 routeType = 'weekday';
             }
             
+            // APLICAR REGRAS DE HORÁRIO
             routes = routes.filter(route => {
                 let isRouteAvailable = true;
+                const now = new Date();
+                const currentHour = now.getHours();
+                const currentMinutes = now.getMinutes();
+                const currentTimeInMinutes = currentHour * 60 + currentMinutes;
                 
+                // Se não for hoje, sempre disponível
+                if (!isToday) return true;
+                
+                // Regra 1: Segunda a Sexta após 17h - encerra primeira rota do dia seguinte
+                if (dayOfWeek >= 1 && dayOfWeek <= 5 && currentHour >= 17) {
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    
+                    // Se a data selecionada for amanhã
+                    if (date.getDate() === tomorrow.getDate() && 
+                        date.getMonth() === tomorrow.getMonth() && 
+                        date.getFullYear() === tomorrow.getFullYear()) {
+                        
+                        // Primeira rota do dia (07:30) fica indisponível
+                        if (route.start === '07:30') {
+                            isRouteAvailable = false;
+                        }
+                    }
+                }
+                
+                // Regra 2: Sábado após 12h - encerra primeira rota de domingo e segunda
+                if (dayOfWeek === 6 && currentHour >= 12) {
+                    const sunday = new Date(today);
+                    sunday.setDate(sunday.getDate() + 1);
+                    const monday = new Date(today);
+                    monday.setDate(monday.getDate() + 2);
+                    
+                    // Se for domingo
+                    if (date.getDate() === sunday.getDate() && 
+                        date.getMonth() === sunday.getMonth()) {
+                        
+                        // Primeira rota do domingo fica indisponível
+                        if (route.start === '08:00') {
+                            isRouteAvailable = false;
+                        }
+                    }
+                    
+                    // Se for segunda
+                    if (date.getDate() === monday.getDate() && 
+                        date.getMonth() === monday.getMonth()) {
+                        
+                        // Primeira rota da segunda fica indisponível
+                        if (route.start === '07:30') {
+                            isRouteAvailable = false;
+                        }
+                    }
+                }
+                
+                // Regra 3: Feriado após 12h - encerra primeira rota do dia seguinte
+                if (isHoliday && currentHour >= 12) {
+                    const nextDay = new Date(today);
+                    nextDay.setDate(nextDay.getDate() + 1);
+                    
+                    if (date.getDate() === nextDay.getDate() && 
+                        date.getMonth() === nextDay.getMonth()) {
+                        
+                        // Primeira rota do dia seguinte fica indisponível
+                        if (route.start === '07:30' || route.start === '08:00') {
+                            isRouteAvailable = false;
+                        }
+                    }
+                }
+                
+                // Verificar se já passou do horário da rota (para hoje)
                 if (isToday) {
                     const [startHour, startMinute] = route.start.split(':').map(Number);
                     const startTimeInMinutes = startHour * 60 + startMinute;
-                    const currentTimeInMinutes = currentHour * 60 + now.getMinutes();
-                    const timeUntilStart = startTimeInMinutes - currentTimeInMinutes;
                     
-                    if (dayOfWeek >= 1 && dayOfWeek <= 5 && currentHour >= 17) {
-                        if (route.start === '07:30') {
-                            const tomorrow = new Date(today);
-                            tomorrow.setDate(tomorrow.getDate() + 1);
-                            if (date.getDate() === tomorrow.getDate()) {
-                                isRouteAvailable = false;
-                            }
-                        }
-                    }
-                    
-                    if (dayOfWeek === 6 && currentHour >= 12) {
-                        if (routeType === 'sunday' || (routeType === 'weekday' && route.start === '07:30')) {
-                            isRouteAvailable = false;
-                        }
-                    }
-                    
-                    if (dayOfWeek === 0) {
-                        if (routeType === 'weekday' && route.start === '07:30') {
-                            isRouteAvailable = false;
-                        }
-                    }
-                    
-                    if (timeUntilStart < 30) {
+                    // Se já passou mais de 30 minutos do início da rota
+                    if (currentTimeInMinutes > (startTimeInMinutes - 30)) {
                         isRouteAvailable = false;
                     }
                 }
@@ -2250,6 +2404,14 @@
                 return isRouteAvailable;
             });
             
+            // Se não houver rotas disponíveis, mostrar mensagem
+            if (routes.length === 0) {
+                optionsContainer.innerHTML = '<div class="alert alert-warning">Não há horários disponíveis para esta data. Por favor, selecione outra data.</div>';
+                document.getElementById('nextPage2Button').disabled = true;
+                return;
+            }
+            
+            // Renderizar rotas disponíveis
             routes.forEach((route, index) => {
                 const routeId = `time${routeType}${index + 1}`;
                 const routeElement = document.createElement('div');
@@ -2371,6 +2533,14 @@
             html += `<div class="review-value">${formatCurrency(productPrice)}</div>`;
             html += '</div>';
             
+            // Desconto (se houver)
+            if (clientDiscount > 0) {
+                html += '<div class="review-item" style="color: var(--success);">';
+                html += '<div class="review-label">Desconto</div>';
+                html += `<div class="review-value">- ${formatCurrency(clientDiscount)}</div>`;
+                html += '</div>';
+            }
+            
             // Frete
             const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
             if (deliveryType === 'delivery' && !isOtherCity && calculatedShipping > 0) {
@@ -2456,6 +2626,13 @@
             totalHtml += `<span>${formatCurrency(productPrice)}</span>`;
             totalHtml += '</div>';
             
+            if (clientDiscount > 0) {
+                totalHtml += '<div class="total-item" style="color: var(--success);">';
+                totalHtml += '<span>Desconto:</span>';
+                totalHtml += `<span>- ${formatCurrency(clientDiscount)}</span>`;
+                totalHtml += '</div>';
+            }
+            
             if (deliveryType === 'delivery' && !isOtherCity && calculatedShipping > 0) {
                 totalHtml += '<div class="total-item">';
                 totalHtml += '<span>Frete:</span>';
@@ -2503,10 +2680,11 @@
             const sendCard = document.querySelector('input[name="sendCard"]:checked')?.value;
             const cardMessage = document.getElementById('cardMessage').value || '';
             
-            const formattedPrice = productPrice.toFixed(2).replace('.', ',');
+            // Aplica desconto para cálculo na planilha
+            const finalPrice = productPrice - clientDiscount;
+            const formattedPrice = finalPrice.toFixed(2).replace('.', ',');
             
             // IMPORTANTE: Frete + taxas juntos para a planilha
-            // CORREÇÃO: Garantir que a taxa noturna/domingo seja somada
             const totalShipping = getShippingForSpreadsheet();
             const formattedShipping = totalShipping.toFixed(2).replace('.', ',');
             
@@ -2549,7 +2727,7 @@
             data[1] = buyerName;
             data[2] = buyerPhone;
             data[3] = productName;
-            data[4] = formattedPrice;
+            data[4] = formattedPrice; // Preço com desconto aplicado
             data[5] = formattedShipping; // Frete + taxas juntos
             data[6] = 'FORMULÁRIO MANUAL';
             data[7] = '';
@@ -2614,9 +2792,18 @@
                     submitBtn.classList.add('btn-success');
                     
                     setTimeout(() => {
+                        // Mostrar página de sucesso baseada no método de pagamento
                         document.getElementById('page4').classList.remove('active');
-                        document.getElementById('thankYouPage').classList.add('active');
-                        showPaymentConfirmation();
+                        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+                        
+                        if (paymentMethod === 'pix') {
+                            document.getElementById('thankYouPagePix').classList.add('active');
+                            showPaymentConfirmation('pix');
+                        } else {
+                            document.getElementById('thankYouPageCard').classList.add('active');
+                            showPaymentConfirmation('card');
+                        }
+                        
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }, 1000);
                     
@@ -2721,11 +2908,9 @@
         // ============================================
         // PÁGINA DE SUCESSO E PAGAMENTO
         // ============================================
-        function showPaymentConfirmation() {
-            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+        function showPaymentConfirmation(paymentType) {
             const total = getTotalWithShipping();
             const buyerName = document.getElementById('buyerName').value;
-            const paymentDetailsDiv = document.getElementById('paymentDetails');
             
             const formatCurrency = (value) => {
                 return parseFloat(value || 0).toLocaleString('pt-BR', {
@@ -2746,10 +2931,19 @@
             html += `<div class="review-value">${document.getElementById('productName').value}</div>`;
             html += '</div>';
             
+            const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
             html += '<div class="review-item">';
-            html += '<div class="review-label">Valor</div>';
-            html += `<div class="review-value">${formatCurrency(parseFloat(document.getElementById('productPrice').value) || 0)}</div>`;
+            html += '<div class="review-label">Valor Original</div>';
+            html += `<div class="review-value">${formatCurrency(productPrice)}</div>`;
             html += '</div>';
+            
+            // Mostrar desconto se existir
+            if (clientDiscount > 0) {
+                html += '<div class="review-item" style="color: var(--success);">';
+                html += '<div class="review-label">Desconto</div>';
+                html += `<div class="review-value">- ${formatCurrency(clientDiscount)}</div>`;
+                html += '</div>';
+            }
             
             // Frete + taxas juntos na exibição também
             const totalShipping = getShippingForSpreadsheet();
@@ -2765,7 +2959,11 @@
             html += `<div class="review-value"><strong>${formatCurrency(total)}</strong></div>`;
             html += '</div>';
             
-            paymentDetailsDiv.innerHTML = html;
+            if (paymentType === 'pix') {
+                document.getElementById('paymentDetailsPix').innerHTML = html;
+            } else {
+                document.getElementById('paymentDetailsCard').innerHTML = html;
+            }
         }
         
         function selectPixKey() {
@@ -2810,6 +3008,10 @@
             message += `*Produto:* ${productName}%0A`;
             message += `*Valor:* R$ ${productPrice.toFixed(2)}%0A`;
             
+            if (clientDiscount > 0) {
+                message += `*Desconto:* -R$ ${clientDiscount.toFixed(2)}%0A`;
+            }
+            
             const totalShipping = getShippingForSpreadsheet();
             if (totalShipping > 0) {
                 message += `*Frete + Taxas:* R$ ${totalShipping.toFixed(2)}%0A`;
@@ -2831,6 +3033,7 @@
             const formData = {
                 productName: document.getElementById('productName').value,
                 productPrice: document.getElementById('productPrice').value,
+                productDiscount: document.getElementById('productDiscount').value,
                 buyerName: document.getElementById('buyerName').value,
                 buyerPhone: document.getElementById('buyerPhone').value,
                 giftedName: document.getElementById('giftedName').value,
@@ -2874,6 +3077,7 @@
                 if (isAdminMode && !document.getElementById('productName').disabled) {
                     document.getElementById('productName').value = data.productName || '';
                     document.getElementById('productPrice').value = data.productPrice || '';
+                    document.getElementById('productDiscount').value = data.productDiscount || '0';
                 }
                 
                 document.getElementById('buyerName').value = data.buyerName || '';
@@ -2963,6 +3167,7 @@
             calculatedShipping = 0;
             selectedCity = '';
             currentDeliveryType = '';
+            clientDiscount = 0;
         }
         
         function validateForm() {
