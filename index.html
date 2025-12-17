@@ -1551,35 +1551,32 @@
             ]
         };
         
-        // ============================================
-        // INICIALIZAÇÃO
-        // ============================================
-       document.addEventListener('readystatechange', function() {
+    // ============================================
+// INICIALIZAÇÃO
+// ============================================
+document.addEventListener('readystatechange', function() {
     if (document.readyState === 'complete') {
-        // TODO: Coloque TODO o conteúdo da sua função atual aqui dentro
+        console.log('🚀 Sistema de Pedidos inicializado');
+        
+        // Verificar se veio de um link compartilhado
+        checkSharedLink();
+        
+        // Configurar modo administrador (sempre começa assim)
+        setupAdminMode();
+        
+        // Configurar eventos
+        setupEventListeners();
+        
+        // Carregar dados salvos (apenas para modo admin)
+        loadSavedData();
+        
+        // Renderizar calendário inicial
+        renderCalendar(currentMonth, currentYear);
+        
+        // Limpar pedidos expirados
+        cleanupExpiredLinks();
     }
 });
-            console.log('🚀 Sistema de Pedidos inicializado');
-            
-            // Verificar se veio de um link compartilhado
-            checkSharedLink();
-            
-            // Configurar modo administrador (sempre começa assim)
-            setupAdminMode();
-            
-            // Configurar eventos
-            setupEventListeners();
-            
-            // Carregar dados salvos (apenas para modo admin)
-            loadSavedData();
-            
-            // Renderizar calendário inicial
-            renderCalendar(currentMonth, currentYear);
-            
-            // Limpar pedidos expirados
-            cleanupExpiredLinks();
-        });
-        
         // ============================================
         // VERIFICAÇÃO DE LINK COMPARTILHADO
         // ============================================
@@ -3180,4 +3177,5 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
     </script>
 </body>
 </html>
+
 
