@@ -798,6 +798,62 @@
             margin-bottom: 10px;
         }
         
+        .product-locked {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .product-locked h3 {
+            color: #155724;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .product-locked .lock-icon {
+            color: #28a745;
+            font-size: 20px;
+        }
+        
+        .product-locked-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .product-locked-item {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .product-locked-item strong {
+            color: #155724;
+            font-size: 14px;
+        }
+        
+        .product-locked-item p {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .lock-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
         /* Botão WhatsApp discreto */
         .whatsapp-discreto {
             background: white;
@@ -887,6 +943,11 @@
                 text-align: left;
                 width: 100%;
             }
+            
+            .product-locked-content {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
         
         @media (min-width: 768px) {
@@ -904,69 +965,79 @@
     <div class="container">
         <!-- Cabeçalho -->
         <div class="header">
-            <h1><i class="fas fa-gift"></i> Formulário de Pedido</h1>
+            <h1><i class="fas fa-gift"></i> Formulário de Pedido - Mundo Carol</h1>
             <p>Preencha os dados abaixo para realizar seu pedido</p>
         </div>
         
         <!-- Status de Envio -->
         <div id="sendStatus" class="status-box hidden"></div>
         
+        <!-- SEÇÃO DE PRODUTO PRÉ-SELECIONADO (aparece quando vem de link) -->
+        <div id="productLockedSection" class="product-locked hidden">
+            <div class="lock-badge">BLOQUEADO</div>
+            <h3><i class="fas fa-lock lock-icon"></i> Produto Selecionado</h3>
+            <div class="product-locked-content">
+                <div class="product-locked-item">
+                    <strong>Produto:</strong>
+                    <p id="lockedProductName"></p>
+                </div>
+                <div class="product-locked-item">
+                    <strong>Valor:</strong>
+                    <p id="lockedProductPrice"></p>
+                </div>
+            </div>
+            <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                <i class="fas fa-info-circle"></i> Estes dados foram pré-selecionados e não podem ser alterados.
+            </p>
+        </div>
+        
         <!-- Página 1: Produto e Dados Básicos -->
         <div id="page1" class="form-page active">
-            <div class="section">
+            <div class="section" id="productSection">
                 <h2 class="section-title"><i class="fas fa-box"></i> Produto Escolhido</h2>
-                
-                <div class="form-group">
-                    <label for="productName">Nome do Produto:</label>
-                    <input type="text" id="productName" class="form-control" placeholder="Digite o nome do produto" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="productPrice">Preço (R$):</label>
-                    <input type="number" id="productPrice" class="form-control" min="0" step="0.01" placeholder="0,00" required>
-                </div>
-                
-                <!-- Seção de pré-visualização -->
-                <div id="previewNotice" class="preview-notice hidden">
-                    <p><strong>✓ Produto pré-selecionado:</strong> Seu pedido já está configurado. Continue preenchendo os dados abaixo.</p>
-                    <p id="methodUsed" style="font-size: 11px; margin-top: 3px;"></p>
-                </div>
                 
                 <div class="alert alert-info">
                     <p><strong>Frete será calculado após escolha do seu endereço e aparecerá ao final para conferência.</strong></p>
                 </div>
                 
-                <!-- Gerador de Link -->
-                <div id="linkGeneratorSection">
-                    <div class="link-instructions">
-                        <p><strong>📋 Para enviar para cliente:</strong> Preencha acima e clique em "Gerar Link"</p>
+                <div id="normalProductFields">
+                    <div class="form-group">
+                        <label for="productName">Nome do Produto:</label>
+                        <input type="text" id="productName" class="form-control" placeholder="Digite o nome do produto" required>
                     </div>
-                    <button type="button" class="btn btn-primary" id="generateLinkBtn">Gerar Link para Cliente</button>
                     
-                    <div id="generatedLinkContainer" class="generated-link-container hidden">
-                        <div class="multi-method-notice">
-                            <p><strong>🎯 Três métodos de compartilhamento:</strong></p>
-                            <p><span class="method-tag method-fragment">Fragmento (#)</span> Link completo com dados na URL</p>
-                            <p><span class="method-tag method-localstorage">LocalStorage</span> Link simples (mesmo navegador)</p>
-                            <p><span class="method-tag method-url">URL Simples</span> Para copiar manualmente os dados</p>
+                    <div class="form-group">
+                        <label for="productPrice">Preço (R$):</label>
+                        <input type="number" id="productPrice" class="form-control" min="0" step="0.01" placeholder="0,00" required>
+                    </div>
+                    
+                    <!-- Gerador de Link (só aparece quando não veio de link) -->
+                    <div id="linkGeneratorSection">
+                        <div class="link-instructions">
+                            <p><strong>📋 Para enviar para cliente:</strong> Preencha acima e clique em "Gerar Link"</p>
                         </div>
+                        <button type="button" class="btn btn-primary" id="generateLinkBtn">Gerar Link para Cliente</button>
                         
-                        <h3 class="section-title">1. Link com Fragmento (Recomendado):</h3>
-                        <div id="generatedLinkFragment" class="generated-link"></div>
-                        <button type="button" id="copyFragmentBtn" class="btn copy-btn">Copiar Link Fragmento</button>
-                        
-                        <h3 class="section-title" style="margin-top: 15px;">2. Link Simples (LocalStorage):</h3>
-                        <div id="generatedLinkSimple" class="generated-link"></div>
-                        <button type="button" id="copySimpleBtn" class="btn copy-btn">Copiar Link Simples</button>
-                        
-                        <h3 class="section-title" style="margin-top: 15px;">3. Dados para Copiar Manualmente:</h3>
-                        <div class="alert alert-warning">
-                            <p><strong>Produto:</strong> <span id="manualProduct"></span></p>
-                            <p><strong>Preço:</strong> R$ <span id="manualPrice"></span></p>
-                            <p><strong>Instrução:</strong> Copie estes dados e envie para o cliente colar manualmente.</p>
+                        <div id="generatedLinkContainer" class="generated-link-container hidden">
+                            <div class="multi-method-notice">
+                                <p><strong>🎯 Link para enviar ao cliente:</strong></p>
+                                <p>O cliente receberá o produto e valor já pré-selecionados e não poderá alterá-los.</p>
+                            </div>
+                            
+                            <h3 class="section-title">Link Gerado:</h3>
+                            <div id="generatedLink" class="generated-link"></div>
+                            <button type="button" id="copyLinkBtn" class="btn copy-btn">Copiar Link</button>
+                            
+                            <div class="alert alert-warning" style="margin-top: 15px;">
+                                <p><strong>Instruções:</strong></p>
+                                <p>1. Copie o link acima</p>
+                                <p>2. Envie para seu cliente via WhatsApp ou outro app</p>
+                                <p>3. O cliente verá o produto e valor já preenchidos</p>
+                                <p>4. Ele só precisará completar seus dados e endereço</p>
+                            </div>
+                            
+                            <p class="success hidden" id="copySuccess" style="color: var(--success); font-weight: 600; text-align: center; margin-top: 10px;">✅ Link copiado com sucesso!</p>
                         </div>
-                        
-                        <p class="success hidden" id="copySuccess" style="color: var(--success); font-weight: 600; text-align: center; margin-top: 10px;">✅ Link copiado com sucesso!</p>
                     </div>
                 </div>
             </div>
@@ -1349,7 +1420,7 @@
         let selectedTimeLabel = null;
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
-        let specialDates = ['03-08', '06-12', '12-25']; // Datas especiais
+        let specialDates = ['03-08', '06-12', '12-25'];
         let holidays = [];
         let avulsoDates = [];
         let noDeliveryDates = [];
@@ -1361,7 +1432,11 @@
         let selectedCity = '';
         let isSubmitting = false;
         let currentDeliveryType = '';
-        let currentOrderId = null;
+        
+        // IMPORTANTE: Controla se veio de link (produto bloqueado)
+        let isFromLink = false;
+        let lockedProductName = '';
+        let lockedProductPrice = '';
         
         // ============================================
         // TABELA DE FRETES ATUALIZADA
@@ -1451,114 +1526,13 @@
         };
         
         // ============================================
-        // INICIALIZAÇÃO COM 3 MÉTODOS DE CARREGAMENTO
+        // INICIALIZAÇÃO - VERIFICA SE VEIO DE LINK
         // ============================================
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Sistema de Pedidos inicializado com gerador de links');
+            console.log('🚀 Sistema de Pedidos inicializado');
             
-            let loadedByMethod = null;
-            let productName = '';
-            let productPrice = '';
-            
-            // ⭐⭐ MÉTODO 1: Fragmentos na URL (#)
-            const hash = window.location.hash.substring(1);
-            if (hash) {
-                console.log('📌 Tentando Método 1 (Fragmentos):', hash);
-                try {
-                    const params = new URLSearchParams(hash);
-                    productName = params.get('product');
-                    productPrice = params.get('price');
-                    const preview = params.get('preview');
-                    
-                    if (productName && productPrice && preview === 'true') {
-                        productName = decodeURIComponent(productName);
-                        productPrice = decodeURIComponent(productPrice);
-                        loadedByMethod = 'Fragmento na URL (#)';
-                        console.log('✅ Carregado por Fragmentos:', productName, productPrice);
-                    }
-                } catch (e) {
-                    console.log('❌ Falha no Método 1 (Fragmentos):', e);
-                }
-            }
-            
-            // ⭐⭐ MÉTODO 2: LocalStorage (ID na URL ?order=)
-            if (!loadedByMethod) {
-                const urlParams = new URLSearchParams(window.location.search);
-                const orderId = urlParams.get('order');
-                
-                if (orderId) {
-                    console.log('📌 Tentando Método 2 (LocalStorage):', orderId);
-                    try {
-                        const orderData = localStorage.getItem(orderId);
-                        if (orderData) {
-                            const data = JSON.parse(orderData);
-                            if (data.productName && data.productPrice && (Date.now() - data.timestamp) < 86400000) {
-                                productName = data.productName;
-                                productPrice = data.productPrice;
-                                loadedByMethod = 'LocalStorage (ID compartilhado)';
-                                currentOrderId = orderId;
-                                console.log('✅ Carregado por LocalStorage:', productName, productPrice);
-                            } else {
-                                console.log('❌ Dados do LocalStorage expirados ou inválidos');
-                                localStorage.removeItem(orderId);
-                            }
-                        }
-                    } catch (e) {
-                        console.log('❌ Falha no Método 2 (LocalStorage):', e);
-                    }
-                }
-            }
-            
-            // ⭐⭐ MÉTODO 3: LocalStorage direto (mesmo navegador)
-            if (!loadedByMethod) {
-                console.log('📌 Tentando Método 3 (LocalStorage direto)');
-                const allKeys = Object.keys(localStorage);
-                let latestOrder = null;
-                let latestTime = 0;
-                
-                for (const key of allKeys) {
-                    if (key.startsWith('order_')) {
-                        try {
-                            const data = JSON.parse(localStorage.getItem(key));
-                            if (data && data.timestamp && data.timestamp > latestTime && 
-                                (Date.now() - data.timestamp) < 3600000) {
-                                latestTime = data.timestamp;
-                                latestOrder = data;
-                                currentOrderId = key;
-                            }
-                        } catch (e) {
-                            // Ignorar chaves inválidas
-                        }
-                    }
-                }
-                
-                if (latestOrder && latestOrder.productName && latestOrder.productPrice) {
-                    productName = latestOrder.productName;
-                    productPrice = latestOrder.productPrice;
-                    loadedByMethod = 'LocalStorage (mesmo navegador)';
-                    console.log('✅ Carregado por LocalStorage direto:', productName, productPrice);
-                }
-            }
-            
-            // ⭐⭐ APLICAR DADOS CARREGADOS
-            if (loadedByMethod && productName && productPrice) {
-                console.log('🎯 Aplicando dados carregados:', productName, productPrice);
-                document.getElementById('productName').value = productName;
-                document.getElementById('productPrice').value = productPrice;
-                
-                document.getElementById('previewNotice').classList.remove('hidden');
-                document.getElementById('methodUsed').innerHTML = 
-                    `Método usado: <strong>${loadedByMethod}</strong>`;
-                
-                document.getElementById('linkGeneratorSection').style.display = 'none';
-                calculateProductTotal();
-                
-                document.querySelectorAll('.form-page').forEach(page => {
-                    page.classList.remove('active');
-                });
-                document.getElementById('page1').classList.add('active');
-                window.scrollTo(0, 0);
-            }
+            // Verificar se veio de link compartilhado
+            checkIfFromLink();
             
             // Configurar eventos da página 1
             document.getElementById('productPrice').addEventListener('input', calculateProductTotal);
@@ -1607,12 +1581,9 @@
             });
             
             // Event listeners para gerar link
-            document.getElementById('generateLinkBtn').addEventListener('click', generateAllPreviewLinks);
-            document.getElementById('copyFragmentBtn').addEventListener('click', function() {
-                copyToClipboard(document.getElementById('generatedLinkFragment').textContent, 'link');
-            });
-            document.getElementById('copySimpleBtn').addEventListener('click', function() {
-                copyToClipboard(document.getElementById('generatedLinkSimple').textContent, 'link');
+            document.getElementById('generateLinkBtn').addEventListener('click', generateClientLink);
+            document.getElementById('copyLinkBtn').addEventListener('click', function() {
+                copyToClipboard(document.getElementById('generatedLink').textContent, 'link');
             });
             
             // Carregar dados salvos
@@ -1627,15 +1598,60 @@
                 currentDeliveryType = deliveryTypeRadio.value;
                 updateDeliveryTypeDisplay();
             }
-            
-            // Limpar pedidos antigos
-            cleanupOldOrders();
         });
         
         // ============================================
-        // FUNÇÃO PARA GERAR TODOS OS LINKS
+        // VERIFICAR SE VEIO DE LINK COMPARTILHADO
         // ============================================
-        function generateAllPreviewLinks() {
+        function checkIfFromLink() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const product = urlParams.get('product');
+            const price = urlParams.get('price');
+            
+            if (product && price) {
+                // Veio de link - bloquear produto
+                isFromLink = true;
+                lockedProductName = decodeURIComponent(product);
+                lockedProductPrice = decodeURIComponent(price);
+                
+                console.log('📌 Carregado de link:', lockedProductName, lockedProductPrice);
+                
+                // Mostrar seção de produto bloqueado
+                showLockedProduct();
+                
+                // Ocultar campos de produto e gerador de link
+                document.getElementById('normalProductFields').style.display = 'none';
+                document.getElementById('linkGeneratorSection').style.display = 'none';
+                
+                // Preencher campos (readonly)
+                document.getElementById('productName').value = lockedProductName;
+                document.getElementById('productPrice').value = lockedProductPrice;
+                
+                // Tornar campos somente leitura
+                document.getElementById('productName').readOnly = true;
+                document.getElementById('productPrice').readOnly = true;
+                
+                // Estilizar campos como bloqueados
+                document.getElementById('productName').style.backgroundColor = '#f8f9fa';
+                document.getElementById('productName').style.cursor = 'not-allowed';
+                document.getElementById('productPrice').style.backgroundColor = '#f8f9fa';
+                document.getElementById('productPrice').style.cursor = 'not-allowed';
+                
+                // Calcular total inicial
+                calculateProductTotal();
+            }
+        }
+        
+        function showLockedProduct() {
+            document.getElementById('productLockedSection').classList.remove('hidden');
+            document.getElementById('lockedProductName').textContent = lockedProductName;
+            document.getElementById('lockedProductPrice').textContent = `R$ ${parseFloat(lockedProductPrice).toFixed(2).replace('.', ',')}`;
+        }
+        
+        // ============================================
+        // GERADOR DE LINKS SIMPLIFICADO
+        // ============================================
+        function generateClientLink() {
             const productName = document.getElementById('productName').value;
             const productPrice = document.getElementById('productPrice').value;
             
@@ -1644,73 +1660,34 @@
                 return;
             }
             
-            // Gerar ID único
-            const orderId = 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            
-            // Dados do pedido
-            const orderData = {
-                productName: productName,
-                productPrice: productPrice,
-                timestamp: Date.now(),
-                orderId: orderId
-            };
-            
-            // ⭐⭐ MÉTODO 1: Fragmento na URL (#)
-            const baseUrl = window.location.href.split('#')[0];
+            // Codificar os valores para URL
             const encodedProductName = encodeURIComponent(productName);
             const encodedProductPrice = encodeURIComponent(productPrice);
             
-            const fragmentUrl = `${baseUrl}#product=${encodedProductName}&price=${encodedProductPrice}&preview=true`;
+            // Criar URL com parâmetros
+            const baseUrl = window.location.origin + window.location.pathname;
+            const clientLink = `${baseUrl}?product=${encodedProductName}&price=${encodedProductPrice}`;
             
-            // ⭐⭐ MÉTODO 2: LocalStorage com ID (?order=)
-            const simpleUrl = `${baseUrl}?order=${orderId}`;
-            
-            // Salvar no localStorage
-            localStorage.setItem(orderId, JSON.stringify(orderData));
-            localStorage.setItem('recent_order', orderId);
-            
-            // Mostrar todos os links
-            document.getElementById('generatedLinkFragment').textContent = fragmentUrl;
-            document.getElementById('generatedLinkSimple').textContent = simpleUrl;
-            document.getElementById('manualProduct').textContent = productName;
-            document.getElementById('manualPrice').textContent = productPrice;
-            
+            // Mostrar link
+            document.getElementById('generatedLink').textContent = clientLink;
             document.getElementById('generatedLinkContainer').classList.remove('hidden');
             document.getElementById('copySuccess').classList.add('hidden');
             
-            // Scroll para mostrar os links
+            // Scroll para mostrar o link
             document.getElementById('generatedLinkContainer').scrollIntoView({ behavior: 'smooth' });
             
             // Mostrar instruções
-            alert(`✅ Links gerados com sucesso!
+            alert(`✅ Link gerado com sucesso!
 
-📌 RECOMENDADO: Use o "Link com Fragmento" primeiro.
+Copie o link e envie para seu cliente.
 
-💡 DICA: Se um não funcionar, tente o outro.
+Quando o cliente abrir o link:
+• O produto estará pré-selecionado
+• O valor estará pré-definido
+• O cliente NÃO poderá alterar produto/valor
+• Ele só precisará completar seus dados
 
-⚠️ O "Link Simples" só funciona se:
-• Compartilhado do MESMO navegador
-• Dentro de 24 horas
-• Cliente não limpar o cache`);
-        }
-        
-        // Limpar pedidos antigos do localStorage
-        function cleanupOldOrders() {
-            const allKeys = Object.keys(localStorage);
-            const now = Date.now();
-            
-            for (const key of allKeys) {
-                if (key.startsWith('order_')) {
-                    try {
-                        const data = JSON.parse(localStorage.getItem(key));
-                        if (data && data.timestamp && (now - data.timestamp) > 86400000) {
-                            localStorage.removeItem(key);
-                        }
-                    } catch (e) {
-                        // Ignorar erros
-                    }
-                }
-            }
+⚠️ IMPORTANTE: O link não expira, mas use em até 30 dias.`);
         }
         
         // Função para copiar para clipboard
@@ -2832,11 +2809,9 @@
             try {
                 const data = JSON.parse(savedData);
                 
-                // Só preenche se não tiver sido pré-carregado
-                if (!document.getElementById('productName').value) {
+                // Só preenche se não tiver sido pré-carregado por link
+                if (!isFromLink) {
                     document.getElementById('productName').value = data.productName || '';
-                }
-                if (!document.getElementById('productPrice').value) {
                     document.getElementById('productPrice').value = data.productPrice || '';
                 }
                 
