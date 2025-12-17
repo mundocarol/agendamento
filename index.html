@@ -142,6 +142,13 @@
             box-shadow: 0 0 0 2px rgba(214, 51, 132, 0.1);
         }
         
+        .form-control:disabled {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+            border-color: #e9ecef;
+        }
+        
         .radio-group {
             margin: 15px 0;
         }
@@ -749,40 +756,6 @@
             color: #0d47a1;
         }
         
-        .multi-method-notice {
-            background-color: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 12px;
-            border-radius: 8px;
-            margin: 12px 0;
-            font-size: 13px;
-            color: #856404;
-        }
-        
-        .method-tag {
-            display: inline-block;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-right: 4px;
-        }
-        
-        .method-fragment {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        
-        .method-localstorage {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
-        
-        .method-url {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        
         .generated-link-container {
             margin-top: 15px;
         }
@@ -798,7 +771,6 @@
             margin-bottom: 10px;
         }
         
-        /* Botão WhatsApp discreto */
         .whatsapp-discreto {
             background: white;
             border: 2px solid var(--whatsapp);
@@ -824,7 +796,6 @@
             box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
         }
         
-        /* Taxa separada na revisão */
         .taxa-item {
             color: #dc3545;
             font-weight: 600;
@@ -834,7 +805,38 @@
             color: #dc3545;
         }
         
-        /* Ajustes para mobile */
+        .admin-mode-badge {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .expired-message {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .expired-message h3 {
+            color: #721c24;
+            margin-bottom: 10px;
+        }
+        
         @media (max-width: 480px) {
             .header h1 {
                 font-size: 20px;
@@ -908,6 +910,21 @@
             <p>Preencha os dados abaixo para realizar seu pedido</p>
         </div>
         
+        <!-- Modo Administrador -->
+        <div id="adminModeBadge" class="admin-mode-badge hidden">
+            <i class="fas fa-user-shield"></i> MODO VENDEDOR
+        </div>
+        
+        <!-- Mensagem de Link Expirado -->
+        <div id="expiredMessage" class="expired-message hidden">
+            <h3><i class="fas fa-exclamation-triangle"></i> LINK EXPIRADO</h3>
+            <p>Este link de pedido expirou ou já foi utilizado.</p>
+            <p>Entre em contato com o vendedor para receber um novo link.</p>
+            <button class="btn btn-primary" onclick="resetToAdminMode()">
+                <i class="fas fa-redo"></i> Voltar para Modo Vendedor
+            </button>
+        </div>
+        
         <!-- Status de Envio -->
         <div id="sendStatus" class="status-box hidden"></div>
         
@@ -926,17 +943,19 @@
                     <input type="number" id="productPrice" class="form-control" min="0" step="0.01" placeholder="0,00" required>
                 </div>
                 
-                <!-- Seção de pré-visualização -->
+                <!-- Seção de pré-visualização (SOMENTE PARA CLIENTE) -->
                 <div id="previewNotice" class="preview-notice hidden">
-                    <p><strong>✓ Produto pré-selecionado:</strong> Seu pedido já está configurado. Continue preenchendo os dados abaixo.</p>
-                    <p id="methodUsed" style="font-size: 11px; margin-top: 3px;"></p>
+                    <p><strong>✓ Produto pré-selecionado:</strong> O produto já foi escolhido pelo vendedor.</p>
+                    <p style="font-size: 11px; margin-top: 3px;">
+                        <i class="fas fa-lock"></i> Produto bloqueado para edição
+                    </p>
                 </div>
                 
                 <div class="alert alert-info">
                     <p><strong>Frete será calculado após escolha do seu endereço e aparecerá ao final para conferência.</strong></p>
                 </div>
                 
-                <!-- Gerador de Link -->
+                <!-- Gerador de Link (SOMENTE PARA VENDEDOR) -->
                 <div id="linkGeneratorSection">
                     <div class="link-instructions">
                         <p><strong>📋 Para enviar para cliente:</strong> Preencha acima e clique em "Gerar Link"</p>
@@ -944,29 +963,23 @@
                     <button type="button" class="btn btn-primary" id="generateLinkBtn">Gerar Link para Cliente</button>
                     
                     <div id="generatedLinkContainer" class="generated-link-container hidden">
-                        <div class="multi-method-notice">
-                            <p><strong>🎯 Três métodos de compartilhamento:</strong></p>
-                            <p><span class="method-tag method-fragment">Fragmento (#)</span> Link completo com dados na URL</p>
-                            <p><span class="method-tag method-localstorage">LocalStorage</span> Link simples (mesmo navegador)</p>
-                            <p><span class="method-tag method-url">URL Simples</span> Para copiar manualmente os dados</p>
+                        <h3 class="section-title">Link para Compartilhar:</h3>
+                        <div id="generatedLink" class="generated-link"></div>
+                        <button type="button" id="copyLinkBtn" class="btn copy-btn">
+                            <i class="fas fa-copy"></i> Copiar Link
+                        </button>
+                        
+                        <div class="alert alert-info" style="margin-top: 10px;">
+                            <p><strong>📝 Instruções:</strong></p>
+                            <p>1. Copie o link acima</p>
+                            <p>2. Envie para o cliente via WhatsApp</p>
+                            <p>3. O link expira automaticamente após 24 horas ou após ser usado</p>
+                            <p>4. Para novo pedido, gere sempre um novo link</p>
                         </div>
                         
-                        <h3 class="section-title">1. Link com Fragmento (Recomendado):</h3>
-                        <div id="generatedLinkFragment" class="generated-link"></div>
-                        <button type="button" id="copyFragmentBtn" class="btn copy-btn">Copiar Link Fragmento</button>
-                        
-                        <h3 class="section-title" style="margin-top: 15px;">2. Link Simples (LocalStorage):</h3>
-                        <div id="generatedLinkSimple" class="generated-link"></div>
-                        <button type="button" id="copySimpleBtn" class="btn copy-btn">Copiar Link Simples</button>
-                        
-                        <h3 class="section-title" style="margin-top: 15px;">3. Dados para Copiar Manualmente:</h3>
-                        <div class="alert alert-warning">
-                            <p><strong>Produto:</strong> <span id="manualProduct"></span></p>
-                            <p><strong>Preço:</strong> R$ <span id="manualPrice"></span></p>
-                            <p><strong>Instrução:</strong> Copie estes dados e envie para o cliente colar manualmente.</p>
-                        </div>
-                        
-                        <p class="success hidden" id="copySuccess" style="color: var(--success); font-weight: 600; text-align: center; margin-top: 10px;">✅ Link copiado com sucesso!</p>
+                        <p class="success hidden" id="copySuccess" style="color: var(--success); font-weight: 600; text-align: center; margin-top: 10px;">
+                            ✅ Link copiado com sucesso!
+                        </p>
                     </div>
                 </div>
             </div>
@@ -1349,7 +1362,7 @@
         let selectedTimeLabel = null;
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
-        let specialDates = ['03-08', '06-12', '12-25']; // Datas especiais
+        let specialDates = ['03-08', '06-12', '12-25'];
         let holidays = [];
         let avulsoDates = [];
         let noDeliveryDates = [];
@@ -1361,10 +1374,11 @@
         let selectedCity = '';
         let isSubmitting = false;
         let currentDeliveryType = '';
-        let currentOrderId = null;
+        let isAdminMode = true; // Sempre começa em modo administrador
+        let linkExpirationTime = 24 * 60 * 60 * 1000; // 24 horas em milissegundos
         
         // ============================================
-        // TABELA DE FRETES ATUALIZADA
+        // TABELA DE FRETES
         // ============================================
         const shippingRates = {
             'Belo Horizonte': [
@@ -1420,7 +1434,7 @@
         };
         
         // ============================================
-        // HORÁRIOS ATUALIZADOS
+        // HORÁRIOS
         // ============================================
         const routeTimes = {
             weekday: [
@@ -1451,115 +1465,269 @@
         };
         
         // ============================================
-        // INICIALIZAÇÃO COM 3 MÉTODOS DE CARREGAMENTO
+        // INICIALIZAÇÃO
         // ============================================
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Sistema de Pedidos inicializado com gerador de links');
+            console.log('🚀 Sistema de Pedidos inicializado');
             
-            let loadedByMethod = null;
-            let productName = '';
-            let productPrice = '';
+            // Verificar se veio de um link compartilhado
+            checkSharedLink();
             
-            // ⭐⭐ MÉTODO 1: Fragmentos na URL (#)
+            // Configurar modo administrador (sempre começa assim)
+            setupAdminMode();
+            
+            // Configurar eventos
+            setupEventListeners();
+            
+            // Carregar dados salvos (apenas para modo admin)
+            loadSavedData();
+            
+            // Renderizar calendário inicial
+            renderCalendar(currentMonth, currentYear);
+            
+            // Limpar pedidos expirados
+            cleanupExpiredLinks();
+        });
+        
+        // ============================================
+        // VERIFICAÇÃO DE LINK COMPARTILHADO
+        // ============================================
+        function checkSharedLink() {
             const hash = window.location.hash.substring(1);
-            if (hash) {
-                console.log('📌 Tentando Método 1 (Fragmentos):', hash);
-                try {
-                    const params = new URLSearchParams(hash);
-                    productName = params.get('product');
-                    productPrice = params.get('price');
-                    const preview = params.get('preview');
+            
+            if (!hash) {
+                // Sem hash = modo administrador
+                isAdminMode = true;
+                return;
+            }
+            
+            try {
+                const params = new URLSearchParams(hash);
+                const product = params.get('product');
+                const price = params.get('price');
+                const timestamp = params.get('t');
+                const orderId = params.get('id');
+                
+                // Verificar se é um link válido
+                if (product && price && timestamp && orderId) {
+                    // Verificar se o link expirou (24 horas)
+                    const linkTime = parseInt(timestamp);
+                    const currentTime = Date.now();
                     
-                    if (productName && productPrice && preview === 'true') {
-                        productName = decodeURIComponent(productName);
-                        productPrice = decodeURIComponent(productPrice);
-                        loadedByMethod = 'Fragmento na URL (#)';
-                        console.log('✅ Carregado por Fragmentos:', productName, productPrice);
+                    if (currentTime - linkTime > linkExpirationTime) {
+                        // Link expirado
+                        showExpiredMessage();
+                        isAdminMode = false;
+                        return;
                     }
-                } catch (e) {
-                    console.log('❌ Falha no Método 1 (Fragmentos):', e);
+                    
+                    // Verificar se já foi usado (armazenado no localStorage)
+                    const usedLinks = JSON.parse(localStorage.getItem('usedLinks') || '[]');
+                    if (usedLinks.includes(orderId)) {
+                        // Link já usado
+                        showExpiredMessage();
+                        isAdminMode = false;
+                        return;
+                    }
+                    
+                    // É um link válido! Mudar para modo cliente
+                    isAdminMode = false;
+                    setupClientMode(product, price, orderId, linkTime);
+                    
+                } else {
+                    // Hash inválido, voltar para modo admin
+                    isAdminMode = true;
                 }
+                
+            } catch (e) {
+                console.error('Erro ao processar link:', e);
+                isAdminMode = true;
+            }
+        }
+        
+        function showExpiredMessage() {
+            document.getElementById('expiredMessage').classList.remove('hidden');
+            document.getElementById('page1').classList.add('hidden');
+            document.getElementById('adminModeBadge').classList.add('hidden');
+        }
+        
+        function resetToAdminMode() {
+            // Limpar URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+            
+            // Resetar formulário
+            clearSavedData();
+            
+            // Mostrar modo admin
+            document.getElementById('expiredMessage').classList.add('hidden');
+            document.getElementById('page1').classList.remove('hidden');
+            setupAdminMode();
+            
+            // Recarregar página para garantir estado limpo
+            window.location.reload();
+        }
+        
+        // ============================================
+        // CONFIGURAÇÃO DOS MODOS
+        // ============================================
+        function setupAdminMode() {
+            console.log('🔧 Configurando modo Vendedor');
+            
+            // Mostrar badge
+            document.getElementById('adminModeBadge').classList.remove('hidden');
+            
+            // Habilitar edição dos campos de produto
+            document.getElementById('productName').disabled = false;
+            document.getElementById('productPrice').disabled = false;
+            
+            // Mostrar seção de gerar link
+            document.getElementById('linkGeneratorSection').style.display = 'block';
+            document.getElementById('previewNotice').classList.add('hidden');
+            
+            // Limpar formulário
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('buyerName').value = '';
+            document.getElementById('buyerPhone').value = '';
+            document.getElementById('giftedName').value = '';
+            document.getElementById('giftedPhone').value = '';
+            
+            // Garantir que página 1 esteja ativa
+            document.querySelectorAll('.form-page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById('page1').classList.add('active');
+        }
+        
+        function setupClientMode(product, price, orderId, timestamp) {
+            console.log('👤 Configurando modo Cliente');
+            
+            // Esconder badge
+            document.getElementById('adminModeBadge').classList.add('hidden');
+            
+            // Preencher produto (bloqueado para edição)
+            document.getElementById('productName').value = decodeURIComponent(product);
+            document.getElementById('productPrice').value = decodeURIComponent(price);
+            
+            // Bloquear edição dos campos de produto
+            document.getElementById('productName').disabled = true;
+            document.getElementById('productPrice').disabled = true;
+            
+            // Esconder seção de gerar link
+            document.getElementById('linkGeneratorSection').style.display = 'none';
+            
+            // Mostrar aviso
+            document.getElementById('previewNotice').classList.remove('hidden');
+            
+            // Calcular total
+            calculateProductTotal();
+            
+            // Garantir que página 1 esteja ativa
+            document.querySelectorAll('.form-page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById('page1').classList.add('active');
+            
+            // Salvar ID do pedido para marcar como usado depois
+            window.currentOrderId = orderId;
+            window.linkTimestamp = timestamp;
+        }
+        
+        // ============================================
+        // GERADOR DE LINK (SOMENTE MODO ADMIN)
+        // ============================================
+        function generateClientLink() {
+            const productName = document.getElementById('productName').value.trim();
+            const productPrice = document.getElementById('productPrice').value.trim();
+            
+            if (!productName || !productPrice) {
+                alert('Por favor, preencha o nome e preço do produto antes de gerar o link.');
+                return;
             }
             
-            // ⭐⭐ MÉTODO 2: LocalStorage (ID na URL ?order=)
-            if (!loadedByMethod) {
-                const urlParams = new URLSearchParams(window.location.search);
-                const orderId = urlParams.get('order');
-                
-                if (orderId) {
-                    console.log('📌 Tentando Método 2 (LocalStorage):', orderId);
-                    try {
-                        const orderData = localStorage.getItem(orderId);
-                        if (orderData) {
-                            const data = JSON.parse(orderData);
-                            if (data.productName && data.productPrice && (Date.now() - data.timestamp) < 86400000) {
-                                productName = data.productName;
-                                productPrice = data.productPrice;
-                                loadedByMethod = 'LocalStorage (ID compartilhado)';
-                                currentOrderId = orderId;
-                                console.log('✅ Carregado por LocalStorage:', productName, productPrice);
-                            } else {
-                                console.log('❌ Dados do LocalStorage expirados ou inválidos');
-                                localStorage.removeItem(orderId);
-                            }
-                        }
-                    } catch (e) {
-                        console.log('❌ Falha no Método 2 (LocalStorage):', e);
-                    }
-                }
-            }
+            // Gerar ID único com timestamp
+            const orderId = 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            const timestamp = Date.now();
             
-            // ⭐⭐ MÉTODO 3: LocalStorage direto (mesmo navegador)
-            if (!loadedByMethod) {
-                console.log('📌 Tentando Método 3 (LocalStorage direto)');
-                const allKeys = Object.keys(localStorage);
-                let latestOrder = null;
-                let latestTime = 0;
-                
-                for (const key of allKeys) {
-                    if (key.startsWith('order_')) {
-                        try {
-                            const data = JSON.parse(localStorage.getItem(key));
-                            if (data && data.timestamp && data.timestamp > latestTime && 
-                                (Date.now() - data.timestamp) < 3600000) {
-                                latestTime = data.timestamp;
-                                latestOrder = data;
-                                currentOrderId = key;
-                            }
-                        } catch (e) {
-                            // Ignorar chaves inválidas
-                        }
-                    }
-                }
-                
-                if (latestOrder && latestOrder.productName && latestOrder.productPrice) {
-                    productName = latestOrder.productName;
-                    productPrice = latestOrder.productPrice;
-                    loadedByMethod = 'LocalStorage (mesmo navegador)';
-                    console.log('✅ Carregado por LocalStorage direto:', productName, productPrice);
-                }
-            }
+            // Criar link com fragmento
+            const baseUrl = window.location.origin + window.location.pathname;
+            const encodedProductName = encodeURIComponent(productName);
+            const encodedProductPrice = encodeURIComponent(productPrice);
             
-            // ⭐⭐ APLICAR DADOS CARREGADOS
-            if (loadedByMethod && productName && productPrice) {
-                console.log('🎯 Aplicando dados carregados:', productName, productPrice);
-                document.getElementById('productName').value = productName;
-                document.getElementById('productPrice').value = productPrice;
-                
-                document.getElementById('previewNotice').classList.remove('hidden');
-                document.getElementById('methodUsed').innerHTML = 
-                    `Método usado: <strong>${loadedByMethod}</strong>`;
-                
-                document.getElementById('linkGeneratorSection').style.display = 'none';
-                calculateProductTotal();
-                
-                document.querySelectorAll('.form-page').forEach(page => {
-                    page.classList.remove('active');
+            const clientLink = `${baseUrl}#product=${encodedProductName}&price=${encodedProductPrice}&t=${timestamp}&id=${orderId}`;
+            
+            // Mostrar link
+            document.getElementById('generatedLink').textContent = clientLink;
+            document.getElementById('generatedLinkContainer').classList.remove('hidden');
+            
+            // Scroll para mostrar o link
+            document.getElementById('generatedLinkContainer').scrollIntoView({ behavior: 'smooth' });
+            
+            // Mostrar instruções
+            alert(`✅ Link gerado com sucesso!
+
+📋 Instruções:
+1. Copie o link acima
+2. Envie para o cliente via WhatsApp
+3. O link expira automaticamente após 24 horas
+4. Após o cliente preencher o formulário, o link é marcado como usado
+5. Para novo pedido, gere sempre um novo link`);
+        }
+        
+        function copyGeneratedLink() {
+            const link = document.getElementById('generatedLink').textContent;
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(link).then(() => {
+                    document.getElementById('copySuccess').classList.remove('hidden');
+                    setTimeout(() => {
+                        document.getElementById('copySuccess').classList.add('hidden');
+                    }, 3000);
+                }).catch(err => {
+                    copyUsingExecCommand(link);
                 });
-                document.getElementById('page1').classList.add('active');
-                window.scrollTo(0, 0);
+            } else {
+                copyUsingExecCommand(link);
             }
+        }
+        
+        function copyUsingExecCommand(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
             
+            try {
+                document.execCommand('copy');
+                document.getElementById('copySuccess').classList.remove('hidden');
+                setTimeout(() => {
+                    document.getElementById('copySuccess').classList.add('hidden');
+                }, 3000);
+            } catch (err) {
+                alert('⚠️ Não foi possível copiar. Por favor, anote: ' + text);
+            } finally {
+                document.body.removeChild(textArea);
+            }
+        }
+        
+        function cleanupExpiredLinks() {
+            const usedLinks = JSON.parse(localStorage.getItem('usedLinks') || '[]');
+            const now = Date.now();
+            
+            // Manter apenas os últimos 100 links usados
+            if (usedLinks.length > 100) {
+                localStorage.setItem('usedLinks', JSON.stringify(usedLinks.slice(-100)));
+            }
+        }
+        
+        // ============================================
+        // CONFIGURAÇÃO DE EVENTOS
+        // ============================================
+        function setupEventListeners() {
             // Configurar eventos da página 1
             document.getElementById('productPrice').addEventListener('input', calculateProductTotal);
             
@@ -1567,7 +1735,6 @@
             document.getElementById('deliveryCity').addEventListener('change', function() {
                 selectedCity = this.value;
                 isOtherCity = this.value === 'other';
-                
                 updateCityDisplay();
                 saveData();
             });
@@ -1606,20 +1773,9 @@
                 saveData();
             });
             
-            // Event listeners para gerar link
-            document.getElementById('generateLinkBtn').addEventListener('click', generateAllPreviewLinks);
-            document.getElementById('copyFragmentBtn').addEventListener('click', function() {
-                copyToClipboard(document.getElementById('generatedLinkFragment').textContent, 'link');
-            });
-            document.getElementById('copySimpleBtn').addEventListener('click', function() {
-                copyToClipboard(document.getElementById('generatedLinkSimple').textContent, 'link');
-            });
-            
-            // Carregar dados salvos
-            loadSavedData();
-            
-            // Renderizar calendário inicial
-            renderCalendar(currentMonth, currentYear);
+            // Event listeners para gerar link (somente admin)
+            document.getElementById('generateLinkBtn').addEventListener('click', generateClientLink);
+            document.getElementById('copyLinkBtn').addEventListener('click', copyGeneratedLink);
             
             // Inicializar tipo de entrega
             const deliveryTypeRadio = document.querySelector('input[name="deliveryType"]:checked');
@@ -1627,147 +1783,16 @@
                 currentDeliveryType = deliveryTypeRadio.value;
                 updateDeliveryTypeDisplay();
             }
-            
-            // Limpar pedidos antigos
-            cleanupOldOrders();
-        });
-        
-        // ============================================
-        // FUNÇÃO PARA GERAR TODOS OS LINKS
-        // ============================================
-        function generateAllPreviewLinks() {
-            const productName = document.getElementById('productName').value;
-            const productPrice = document.getElementById('productPrice').value;
-            
-            if (!productName || !productPrice) {
-                alert('Por favor, preencha todos os campos do produto antes de gerar o link.');
-                return;
-            }
-            
-            // Gerar ID único
-            const orderId = 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            
-            // Dados do pedido
-            const orderData = {
-                productName: productName,
-                productPrice: productPrice,
-                timestamp: Date.now(),
-                orderId: orderId
-            };
-            
-            // ⭐⭐ MÉTODO 1: Fragmento na URL (#)
-            const baseUrl = window.location.href.split('#')[0];
-            const encodedProductName = encodeURIComponent(productName);
-            const encodedProductPrice = encodeURIComponent(productPrice);
-            
-            const fragmentUrl = `${baseUrl}#product=${encodedProductName}&price=${encodedProductPrice}&preview=true`;
-            
-            // ⭐⭐ MÉTODO 2: LocalStorage com ID (?order=)
-            const simpleUrl = `${baseUrl}?order=${orderId}`;
-            
-            // Salvar no localStorage
-            localStorage.setItem(orderId, JSON.stringify(orderData));
-            localStorage.setItem('recent_order', orderId);
-            
-            // Mostrar todos os links
-            document.getElementById('generatedLinkFragment').textContent = fragmentUrl;
-            document.getElementById('generatedLinkSimple').textContent = simpleUrl;
-            document.getElementById('manualProduct').textContent = productName;
-            document.getElementById('manualPrice').textContent = productPrice;
-            
-            document.getElementById('generatedLinkContainer').classList.remove('hidden');
-            document.getElementById('copySuccess').classList.add('hidden');
-            
-            // Scroll para mostrar os links
-            document.getElementById('generatedLinkContainer').scrollIntoView({ behavior: 'smooth' });
-            
-            // Mostrar instruções
-            alert(`✅ Links gerados com sucesso!
-
-📌 RECOMENDADO: Use o "Link com Fragmento" primeiro.
-
-💡 DICA: Se um não funcionar, tente o outro.
-
-⚠️ O "Link Simples" só funciona se:
-• Compartilhado do MESMO navegador
-• Dentro de 24 horas
-• Cliente não limpar o cache`);
-        }
-        
-        // Limpar pedidos antigos do localStorage
-        function cleanupOldOrders() {
-            const allKeys = Object.keys(localStorage);
-            const now = Date.now();
-            
-            for (const key of allKeys) {
-                if (key.startsWith('order_')) {
-                    try {
-                        const data = JSON.parse(localStorage.getItem(key));
-                        if (data && data.timestamp && (now - data.timestamp) > 86400000) {
-                            localStorage.removeItem(key);
-                        }
-                    } catch (e) {
-                        // Ignorar erros
-                    }
-                }
-            }
-        }
-        
-        // Função para copiar para clipboard
-        function copyToClipboard(text, type) {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showCopySuccess(type);
-                }).catch(err => {
-                    copyUsingExecCommand(text, type);
-                });
-            } else {
-                copyUsingExecCommand(text, type);
-            }
-        }
-        
-        function copyUsingExecCommand(text, type) {
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            textArea.style.position = 'fixed';
-            textArea.style.left = '-999999px';
-            textArea.style.top = '-999999px';
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            
-            try {
-                document.execCommand('copy');
-                showCopySuccess(type);
-            } catch (err) {
-                alert('⚠️ Não foi possível copiar. Por favor, anote: ' + text);
-            } finally {
-                document.body.removeChild(textArea);
-            }
-        }
-        
-        function showCopySuccess(type) {
-            const copySuccess = document.getElementById('copySuccess');
-            copySuccess.classList.remove('hidden');
-            
-            setTimeout(() => {
-                copySuccess.classList.add('hidden');
-            }, 3000);
         }
         
         // ============================================
         // FUNÇÕES DE NAVEGAÇÃO
         // ============================================
         function nextPage(current, next) {
-            if (current === 1) {
-                if (!validatePage1()) return;
-            } else if (current === 2) {
-                if (!validatePage2()) return;
-            } else if (current === 3) {
-                if (!validatePage3()) return;
-            } else if (current === 4) {
-                if (!validatePage4()) return;
-            }
+            if (current === 1 && !validatePage1()) return;
+            if (current === 2 && !validatePage2()) return;
+            if (current === 3 && !validatePage3()) return;
+            if (current === 4 && !validatePage4()) return;
             
             if (next === 4) {
                 updateReviewData();
@@ -1849,12 +1874,12 @@
                 if (!isOtherCity && deliveryType === 'delivery') {
                     if (!selectedDate) {
                         alert('Por favor, selecione uma data de entrega.');
-                        return false;
+                        return;
                     }
                     
                     if (!document.querySelector('input[name="deliveryTime"]:checked')) {
                         alert('Por favor, selecione um horário de entrega.');
-                        return false;
+                        return;
                     }
                 }
             }
@@ -1862,12 +1887,12 @@
             if (deliveryType === 'pickup') {
                 if (!selectedDate) {
                     alert('Por favor, selecione uma data para retirada.');
-                    return false;
+                    return;
                 }
                 
                 if (!document.querySelector('input[name="deliveryTime"]:checked')) {
                     alert('Por favor, selecione um horário para retirada.');
-                    return false;
+                    return;
                 }
             }
             
@@ -2027,7 +2052,7 @@
         
         // IMPORTANTE: Para planilha, taxas são somadas ao frete
         function getShippingForSpreadsheet() {
-            // Retorna frete + taxas para a planilha
+            // CORREÇÃO: Soma corretamente o frete + taxas noturnas/domingo
             return calculatedShipping + (nightFeeAmount || 0);
         }
         
@@ -2481,6 +2506,7 @@
             const formattedPrice = productPrice.toFixed(2).replace('.', ',');
             
             // IMPORTANTE: Frete + taxas juntos para a planilha
+            // CORREÇÃO: Garantir que a taxa noturna/domingo seja somada
             const totalShipping = getShippingForSpreadsheet();
             const formattedShipping = totalShipping.toFixed(2).replace('.', ',');
             
@@ -2557,6 +2583,14 @@
                 return;
             }
             
+            // Se veio de um link compartilhado, marcar como usado
+            if (!isAdminMode && window.currentOrderId) {
+                const usedLinks = JSON.parse(localStorage.getItem('usedLinks') || '[]');
+                usedLinks.push(window.currentOrderId);
+                localStorage.setItem('usedLinks', JSON.stringify(usedLinks));
+                console.log('📝 Link marcado como usado:', window.currentOrderId);
+            }
+            
             const submitBtn = document.getElementById('submitButton');
             const loadingSection = document.getElementById('loadingSection');
             
@@ -2569,6 +2603,7 @@
             try {
                 const excelData = prepareExcelData();
                 console.log('📦 Dados para envio:', excelData);
+                console.log('💰 Frete + Taxas para planilha:', getShippingForSpreadsheet());
                 
                 const result = await enviarDadosParaPlanilha(excelData);
                 
@@ -2826,17 +2861,18 @@
         }
         
         function loadSavedData() {
+            // Só carrega dados salvos se for modo administrador
+            if (!isAdminMode) return;
+            
             const savedData = localStorage.getItem('mundoCarolFormData');
             if (!savedData) return;
             
             try {
                 const data = JSON.parse(savedData);
                 
-                // Só preenche se não tiver sido pré-carregado
-                if (!document.getElementById('productName').value) {
+                // Só preenche se for modo admin e não tiver sido pré-carregado
+                if (isAdminMode && !document.getElementById('productName').disabled) {
                     document.getElementById('productName').value = data.productName || '';
-                }
-                if (!document.getElementById('productPrice').value) {
                     document.getElementById('productPrice').value = data.productPrice || '';
                 }
                 
@@ -2910,6 +2946,9 @@
         }
         
         function clearSavedData() {
+            // Não limpa se for modo cliente
+            if (!isAdminMode) return;
+            
             localStorage.removeItem('mundoCarolFormData');
             
             selectedDate = null;
