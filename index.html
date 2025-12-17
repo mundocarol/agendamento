@@ -67,6 +67,30 @@
             font-size: 14px;
         }
         
+        .product-summary {
+            background: linear-gradient(135deg, #e8f5e9 0%, #d4edda 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid var(--success);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .product-summary h3 {
+            color: #155724;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .product-summary p {
+            color: #333;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
         .form-page {
             display: none;
             background: white;
@@ -757,20 +781,6 @@
             color: #333;
         }
         
-        .preview-notice {
-            background-color: #e8f5e9;
-            border-left: 4px solid #28a745;
-            padding: 12px;
-            border-radius: 8px;
-            margin: 12px 0;
-            font-size: 13px;
-            color: #155724;
-        }
-        
-        .preview-notice strong {
-            color: #28a745;
-        }
-        
         .link-instructions {
             background-color: #e3f2fd;
             border-left: 4px solid #2196f3;
@@ -789,30 +799,6 @@
             margin: 12px 0;
             font-size: 13px;
             color: #856404;
-        }
-        
-        .method-tag {
-            display: inline-block;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-right: 4px;
-        }
-        
-        .method-fragment {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        
-        .method-localstorage {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
-        
-        .method-url {
-            background-color: #f8d7da;
-            color: #721c24;
         }
         
         .generated-link-container {
@@ -891,63 +877,6 @@
         .expired-message p {
             color: #721c24;
             margin-bottom: 15px;
-        }
-        
-        .items-collapsible {
-            margin: 15px 0;
-        }
-        
-        .items-collapsible-header {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 8px;
-            border: 2px solid var(--border);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            color: var(--primary);
-            transition: all 0.3s;
-        }
-        
-        .items-collapsible-header:hover {
-            background: #e9ecef;
-        }
-        
-        .items-collapsible-header i {
-            transition: transform 0.3s;
-        }
-        
-        .items-collapsible-header.open i {
-            transform: rotate(180deg);
-        }
-        
-        .items-collapsible-content {
-            background: white;
-            padding: 15px;
-            border-radius: 0 0 8px 8px;
-            border: 2px solid var(--border);
-            border-top: none;
-            margin-top: -2px;
-            max-height: 300px;
-            overflow-y: auto;
-            font-size: 14px;
-            line-height: 1.8;
-        }
-        
-        .items-collapsible-content ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        
-        .items-collapsible-content li {
-            padding: 4px 0;
-            border-bottom: 1px dashed #eee;
-        }
-        
-        .items-collapsible-content li:last-child {
-            border-bottom: none;
         }
         
         .error-message {
@@ -1033,6 +962,102 @@
             color: #dc3545;
         }
         
+        /* Modal de Erro */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            font-size: 18px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            padding: 25px;
+        }
+        
+        .modal-content h4 {
+            color: var(--danger);
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .modal-content ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .modal-content li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+        
         /* Ajustes para mobile */
         @media (max-width: 480px) {
             .header h1 {
@@ -1105,6 +1130,16 @@
             .section-title {
                 font-size: 16px;
             }
+            
+            .product-summary {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .modal {
+                max-height: 85vh;
+            }
         }
         
         @media (min-width: 768px) {
@@ -1129,6 +1164,24 @@
     </style>
 </head>
 <body>
+    <!-- Modal de Erro -->
+    <div class="modal-overlay" id="errorModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Campos Obrigatórios</h3>
+                <button class="modal-close" onclick="closeErrorModal()">&times;</button>
+            </div>
+            <div class="modal-content">
+                <h4>Preencha os seguintes campos antes de avançar:</h4>
+                <ul id="errorList"></ul>
+                <p>Clique fora do modal ou no botão abaixo para fechar e corrigir.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeErrorModal()">Entendi, vou corrigir</button>
+            </div>
+        </div>
+    </div>
+    
     <div class="container">
         <!-- Mensagem de Link Expirado -->
         <div id="expiredMessage" class="expired-message hidden">
@@ -1146,26 +1199,20 @@
             <p>Preencha os dados abaixo para realizar seu pedido</p>
         </div>
         
+        <!-- Resumo do Produto (visível em todas as páginas quando vem de link) -->
+        <div id="productSummary" class="product-summary hidden">
+            <div>
+                <h3><i class="fas fa-box"></i> Produto Selecionado</h3>
+                <p id="summaryProductName"></p>
+            </div>
+            <div>
+                <h3><i class="fas fa-tag"></i> Valor</h3>
+                <p id="summaryProductPrice"></p>
+            </div>
+        </div>
+        
         <!-- Status de Envio -->
         <div id="sendStatus" class="status-box hidden"></div>
-        
-        <!-- SEÇÃO DE PRODUTO PRÉ-SELECIONADO (aparece quando vem de link) -->
-        <div id="productLockedSection" class="product-locked hidden">
-            <h3><i class="fas fa-box lock-icon"></i> Produto Selecionado</h3>
-            <div class="product-locked-content">
-                <div class="product-locked-item">
-                    <strong>Produto:</strong>
-                    <p id="lockedProductName"></p>
-                </div>
-                <div class="product-locked-item">
-                    <strong>Valor:</strong>
-                    <p id="lockedProductPrice"></p>
-                </div>
-            </div>
-            <p style="font-size: 12px; color: #666; margin-top: 10px;">
-                <i class="fas fa-info-circle"></i> Estes dados foram pré-selecionados e não podem ser alterados.
-            </p>
-        </div>
         
         <!-- Página 1: Produto e Dados Básicos -->
         <div id="page1" class="form-page active">
@@ -1185,28 +1232,6 @@
                     <div class="form-group">
                         <label for="productName">Nome do Produto:</label>
                         <input type="text" id="productName" class="form-control" placeholder="Digite o nome do produto" required>
-                    </div>
-                    
-                    <div id="itemsFieldContainer" class="form-group">
-                        <label for="itemsList">Itens (opcional):</label>
-                        <textarea id="itemsList" class="form-control" rows="5" placeholder="Cole aqui a lista de itens, um por linha. Exemplo:
-1    Ferrero Rocher pacote 3 unidades
-1    Salgadinho Torcida
-1    Azeitona Verde (pacotinho)
-1    Palmito em conserva pote 180g"></textarea>
-                        <small style="display: block; margin-top: 8px; color: #666;">
-                            Cole sua lista de itens acima (um por linha)
-                        </small>
-                    </div>
-                    
-                    <!-- Lista suspensa para cliente (visível apenas quando vem de link) -->
-                    <div id="itemsCollapsibleContainer" class="items-collapsible hidden">
-                        <div class="items-collapsible-header" onclick="toggleItemsList()">
-                            <span>Veja os Itens <i class="fas fa-chevron-down"></i></span>
-                        </div>
-                        <div class="items-collapsible-content hidden" id="itemsListContent">
-                            <div id="lockedItemsList"></div>
-                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -1311,9 +1336,6 @@
                 </div>
             </div>
             
-            <!-- Mensagem de erro da página 1 -->
-            <div id="page1Error" class="error-message hidden"></div>
-            
             <div class="nav-buttons">
                 <button type="button" class="btn btn-secondary" onclick="prevPage(1, 1)" disabled><i class="fas fa-arrow-left"></i> Anterior</button>
                 <button type="button" class="btn btn-primary" onclick="nextPage(1, 2)">Próxima <i class="fas fa-arrow-right"></i></button>
@@ -1407,9 +1429,6 @@
                 </div>
             </div>
             
-            <!-- Mensagem de erro da página 2 -->
-            <div id="page2Error" class="error-message hidden"></div>
-            
             <div class="nav-buttons">
                 <button type="button" class="btn btn-secondary" onclick="prevPage(2, 1)"><i class="fas fa-arrow-left"></i> Anterior</button>
                 <button type="button" class="btn btn-primary" onclick="nextPage(2, 3)" id="nextPage2Button" disabled>Próxima <i class="fas fa-arrow-right"></i></button>
@@ -1460,9 +1479,6 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Mensagem de erro da página 3 -->
-            <div id="page3Error" class="error-message hidden"></div>
             
             <div class="nav-buttons">
                 <button type="button" class="btn btn-secondary" onclick="prevPage(3, 2)"><i class="fas fa-arrow-left"></i> Anterior</button>
@@ -1550,9 +1566,6 @@
                 <div id="statusBox" class="status-box"></div>
             </div>
             
-            <!-- Mensagem de erro da página 4 -->
-            <div id="page4Error" class="error-message hidden"></div>
-            
             <div class="nav-buttons">
                 <button type="button" class="btn btn-secondary" onclick="prevPage(4, 3)"><i class="fas fa-arrow-left"></i> Anterior</button>
                 <button type="button" class="btn btn-primary" onclick="submitForm()" id="submitButton" disabled>Enviar Pedido <i class="fas fa-paper-plane"></i></button>
@@ -1605,8 +1618,8 @@
                         <p>4. Acompanhe o status pelo WhatsApp</p>
                     </div>
                     
-                    <!-- Botão WhatsApp discreto -->
-                    <button class="whatsapp-discreto" onclick="sendWhatsAppMessage()">
+                    <!-- Botão WhatsApp -->
+                    <button class="whatsapp-discreto" onclick="sendWhatsAppMessage('pix')">
                         <i class="fab fa-whatsapp"></i> WhatsApp: (31) 98323-8087
                     </button>
                     
@@ -1644,7 +1657,7 @@
                     <div class="payment-option-header">
                         <h3><i class="fas fa-credit-card"></i> Você escolheu pagamento via Link de Cartão</h3>
                         <p>Para receber seu link, clique abaixo e já solicite ao seu atendente</p>
-                        <button class="whatsapp-discreto" onclick="requestCardLink()" style="margin-top: 15px;">
+                        <button class="whatsapp-discreto" onclick="sendWhatsAppMessage('card')" style="margin-top: 15px;">
                             <i class="fab fa-whatsapp"></i> Solicitar Link de Cartão
                         </button>
                     </div>
@@ -1737,9 +1750,7 @@
         let isFromLink = false;
         let lockedProductName = '';
         let lockedProductPrice = '';
-        let lockedItemsList = '';
         let linkExpiration = null;
-        let linkUsed = false;
         
         // ============================================
         // TABELA DE FRETES ATUALIZADA
@@ -1904,6 +1915,20 @@
             
             // Esconder cabeçalho nas outras páginas
             hideHeaderOnOtherPages();
+            
+            // Fechar modal ao clicar fora
+            document.getElementById('errorModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeErrorModal();
+                }
+            });
+            
+            // Fechar modal com ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeErrorModal();
+                }
+            });
         });
         
         // ============================================
@@ -1930,22 +1955,58 @@
             });
         }
         
-        function toggleItemsList() {
-            const header = document.querySelector('.items-collapsible-header');
-            const content = document.getElementById('itemsListContent');
-            
-            header.classList.toggle('open');
-            content.classList.toggle('hidden');
-        }
-        
         function clearProduct() {
             document.getElementById('productName').value = '';
             document.getElementById('productPrice').value = '';
-            document.getElementById('itemsList').value = '';
             document.getElementById('generatedLinkContainer').classList.add('hidden');
+            hideProductSummary();
             
             // Mostrar mensagem de confirmação
-            showPageError('page1', '✅ Produto limpo com sucesso!', 'success');
+            showSuccessMessage('✅ Produto limpo com sucesso!');
+        }
+        
+        function showSuccessMessage(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-warning';
+            alertDiv.innerHTML = `<p>${message}</p>`;
+            alertDiv.style.animation = 'fadeIn 0.3s';
+            
+            const productSection = document.getElementById('productSection');
+            productSection.insertBefore(alertDiv, productSection.firstChild);
+            
+            setTimeout(() => {
+                alertDiv.style.opacity = '0';
+                alertDiv.style.transition = 'opacity 0.5s';
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.parentNode.removeChild(alertDiv);
+                    }
+                }, 500);
+            }, 3000);
+        }
+        
+        function showProductSummary() {
+            document.getElementById('productSummary').classList.remove('hidden');
+        }
+        
+        function hideProductSummary() {
+            document.getElementById('productSummary').classList.add('hidden');
+        }
+        
+        function updateProductSummary() {
+            if (isFromLink) {
+                document.getElementById('summaryProductName').textContent = lockedProductName;
+                document.getElementById('summaryProductPrice').textContent = `R$ ${parseFloat(lockedProductPrice).toFixed(2).replace('.', ',')}`;
+                showProductSummary();
+            } else if (document.getElementById('productName').value && document.getElementById('productPrice').value) {
+                const productName = document.getElementById('productName').value;
+                const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
+                document.getElementById('summaryProductName').textContent = productName;
+                document.getElementById('summaryProductPrice').textContent = `R$ ${productPrice.toFixed(2).replace('.', ',')}`;
+                showProductSummary();
+            } else {
+                hideProductSummary();
+            }
         }
         
         // ============================================
@@ -1955,7 +2016,6 @@
             const urlParams = new URLSearchParams(window.location.search);
             const product = urlParams.get('product');
             const price = urlParams.get('price');
-            const items = urlParams.get('items');
             const timestamp = urlParams.get('t');
             const used = urlParams.get('used');
             
@@ -1984,7 +2044,6 @@
                 isFromLink = true;
                 lockedProductName = decodeURIComponent(product);
                 lockedProductPrice = decodeURIComponent(price);
-                lockedItemsList = items ? decodeURIComponent(items) : '';
                 linkExpiration = timestamp ? parseInt(timestamp) + (24 * 60 * 60 * 1000) : null;
                 
                 // Marcar como usado no localStorage
@@ -1992,24 +2051,12 @@
                 
                 console.log('📌 Carregado de link válido:', lockedProductName, lockedProductPrice);
                 
-                // Mostrar seção de produto selecionado
-                showLockedProduct();
-                
                 // Ocultar botão limpar
                 document.getElementById('clearProductBtn').style.display = 'none';
                 
                 // Ocultar campos de produto e gerador de link
                 document.getElementById('normalProductFields').style.display = 'none';
                 document.getElementById('linkGeneratorSection').style.display = 'none';
-                document.getElementById('itemsFieldContainer').style.display = 'none';
-                
-                // Mostrar lista suspensa para cliente
-                if (lockedItemsList) {
-                    document.getElementById('itemsCollapsibleContainer').classList.remove('hidden');
-                    document.getElementById('lockedItemsList').innerHTML = '<ul>' + 
-                        lockedItemsList.split('\n').map(item => `<li>${item.trim()}</li>`).join('') + 
-                        '</ul>';
-                }
                 
                 // Preencher campos (readonly)
                 document.getElementById('productName').value = lockedProductName;
@@ -2024,6 +2071,9 @@
                 document.getElementById('productName').style.cursor = 'not-allowed';
                 document.getElementById('productPrice').style.backgroundColor = '#f8f9fa';
                 document.getElementById('productPrice').style.cursor = 'not-allowed';
+                
+                // Atualizar resumo do produto
+                updateProductSummary();
                 
                 // Calcular total inicial
                 calculateProductTotal();
@@ -2042,49 +2092,34 @@
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Olá! Recebi um link expirado e preciso de um novo link para fazer um pedido.`, '_blank');
         }
         
-        function showLockedProduct() {
-            document.getElementById('productLockedSection').classList.remove('hidden');
-            document.getElementById('lockedProductName').textContent = lockedProductName;
-            document.getElementById('lockedProductPrice').textContent = `R$ ${parseFloat(lockedProductPrice).toFixed(2).replace('.', ',')}`;
-        }
-        
         // ============================================
         // GERADOR DE LINKS COM VALIDADE
         // ============================================
         function generateClientLink() {
             const productName = document.getElementById('productName').value;
             const productPrice = document.getElementById('productPrice').value;
-            const itemsList = document.getElementById('itemsList').value;
             
             if (!productName || !productPrice) {
-                showPageError('page1', '❌ Por favor, preencha todos os campos do produto antes de gerar o link.', 'error');
+                showModalError('Por favor, preencha todos os campos do produto antes de gerar o link.');
                 return;
             }
             
             // Codificar os valores para URL
             const encodedProductName = encodeURIComponent(productName);
             const encodedProductPrice = encodeURIComponent(productPrice);
-            const encodedItemsList = encodeURIComponent(itemsList);
             const timestamp = Date.now();
             
             // Criar URL com parâmetros (incluindo timestamp para validade)
             const baseUrl = window.location.origin + window.location.pathname;
-            let clientLink = `${baseUrl}?product=${encodedProductName}&price=${encodedProductPrice}&t=${timestamp}`;
-            
-            if (itemsList) {
-                clientLink += `&items=${encodedItemsList}`;
-            }
+            const clientLink = `${baseUrl}?product=${encodedProductName}&price=${encodedProductPrice}&t=${timestamp}`;
             
             // Mostrar link
             document.getElementById('generatedLink').textContent = clientLink;
             document.getElementById('generatedLinkContainer').classList.remove('hidden');
             document.getElementById('copySuccess').classList.remove('show');
             
-            // Scroll para mostrar o link
-            document.getElementById('generatedLinkContainer').scrollIntoView({ behavior: 'smooth' });
-            
-            // Mostrar instruções
-            showPageError('page1', '✅ Link gerado com sucesso! Válido por 24 horas ou até ser usado.', 'success');
+            // Não fazer scroll, apenas mostrar no lugar atual
+            showSuccessMessage('✅ Link gerado com sucesso! Válido por 24 horas ou até ser usado.');
         }
         
         // Função para copiar para clipboard
@@ -2131,37 +2166,69 @@
         }
         
         // ============================================
+        // MODAL DE ERRO
+        // ============================================
+        function showModalError(message, errors = []) {
+            const modal = document.getElementById('errorModal');
+            const errorList = document.getElementById('errorList');
+            
+            errorList.innerHTML = '';
+            
+            if (errors.length > 0) {
+                errors.forEach(error => {
+                    const li = document.createElement('li');
+                    li.textContent = error;
+                    errorList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.textContent = message;
+                errorList.appendChild(li);
+            }
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeErrorModal() {
+            const modal = document.getElementById('errorModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // ============================================
         // FUNÇÕES DE NAVEGAÇÃO COM VALIDAÇÃO
         // ============================================
         function nextPage(current, next) {
-            // Limpar mensagens de erro anteriores
-            clearErrorMessages();
-            
             let validationResult = true;
-            let errorMessage = '';
+            let errorMessages = [];
             
             if (current === 1) {
                 validationResult = validatePage1();
-                if (!validationResult) {
-                    showPageError('page1', '❌ Por favor, preencha todos os campos obrigatórios antes de avançar.', 'error');
+                if (!validationResult.valid) {
+                    errorMessages = validationResult.errors;
+                    showModalError('Preencha os seguintes campos antes de avançar:', errorMessages);
                     return;
                 }
             } else if (current === 2) {
                 validationResult = validatePage2();
-                if (!validationResult) {
-                    showPageError('page2', '❌ Por favor, preencha todos os campos obrigatórios antes de avançar.', 'error');
+                if (!validationResult.valid) {
+                    errorMessages = validationResult.errors;
+                    showModalError('Preencha os seguintes campos antes de avançar:', errorMessages);
                     return;
                 }
             } else if (current === 3) {
                 validationResult = validatePage3();
-                if (!validationResult) {
-                    showPageError('page3', '❌ Por favor, preencha todos os campos obrigatórios antes de avançar.', 'error');
+                if (!validationResult.valid) {
+                    errorMessages = validationResult.errors;
+                    showModalError('Preencha os seguintes campos antes de avançar:', errorMessages);
                     return;
                 }
             } else if (current === 4) {
                 validationResult = validatePage4();
-                if (!validationResult) {
-                    showPageError('page4', '❌ Por favor, preencha todos os campos obrigatórios antes de avançar.', 'error');
+                if (!validationResult.valid) {
+                    errorMessages = validationResult.errors;
+                    showModalError('Preencha os seguintes campos antes de avançar:', errorMessages);
                     return;
                 }
             }
@@ -2187,153 +2254,144 @@
             saveData();
         }
         
-        function clearErrorMessages() {
-            document.querySelectorAll('.error-message').forEach(el => {
-                el.classList.add('hidden');
-            });
-        }
-        
-        function showPageError(pageId, message, type = 'error') {
-            const errorDiv = document.getElementById(`${pageId}Error`);
-            if (!errorDiv) return;
-            
-            errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-            errorDiv.classList.remove('hidden');
-            
-            if (type === 'success') {
-                errorDiv.style.background = '#d4edda';
-                errorDiv.style.color = '#155724';
-                errorDiv.style.border = '1px solid #c3e6cb';
-            }
-            
-            // Scroll para a mensagem de erro
-            errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            // Se for mensagem de sucesso, remover após 3 segundos
-            if (type === 'success') {
-                setTimeout(() => {
-                    errorDiv.classList.add('hidden');
-                }, 3000);
-            }
-        }
-        
         // ============================================
         // FUNÇÕES DE VALIDAÇÃO DETALHADA
         // ============================================
         function validatePage1() {
-            const required = [
-                { id: 'productName', name: 'Nome do Produto' },
-                { id: 'productPrice', name: 'Preço' },
-                { id: 'buyerName', name: 'Nome do Comprador' },
-                { id: 'buyerPhone', name: 'Telefone do Comprador' },
-                { id: 'giftedName', name: 'Nome do Presenteado' }
-            ];
+            const errors = [];
             
-            for (const field of required) {
-                const element = document.getElementById(field.id);
-                if (!element || !element.value.trim()) {
-                    return false;
-                }
+            if (!document.getElementById('productName').value.trim()) {
+                errors.push('Nome do Produto');
             }
             
-            // Telefone agora aceita QUALQUER formato (sem validação)
+            if (!document.getElementById('productPrice').value.trim()) {
+                errors.push('Preço do Produto');
+            }
+            
+            if (!document.getElementById('buyerName').value.trim()) {
+                errors.push('Nome do Comprador');
+            }
+            
+            if (!document.getElementById('buyerPhone').value.trim()) {
+                errors.push('Telefone do Comprador');
+            }
+            
+            if (!document.getElementById('giftedName').value.trim()) {
+                errors.push('Nome do Presenteado');
+            }
             
             if (!document.querySelector('input[name="anonymous"]:checked')) {
-                return false;
+                errors.push('Escolha se quer compra anônima ou não');
             }
             
             if (!document.querySelector('input[name="deliveryType"]:checked')) {
-                return false;
+                errors.push('Escolha o tipo de entrega');
             }
             
-            return true;
+            return {
+                valid: errors.length === 0,
+                errors: errors
+            };
         }
         
         function validatePage2() {
+            const errors = [];
             const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
             
             if (deliveryType === 'delivery') {
                 const city = document.getElementById('deliveryCity').value;
                 if (!city) {
-                    return false;
+                    errors.push('Cidade de entrega');
                 }
                 
                 if (city !== 'other') {
-                    const required = [
-                        { id: 'street', name: 'Rua' },
-                        { id: 'number', name: 'Número' },
-                        { id: 'neighborhood', name: 'Bairro' }
-                    ];
+                    if (!document.getElementById('street').value.trim()) {
+                        errors.push('Rua');
+                    }
                     
-                    for (const field of required) {
-                        const element = document.getElementById(field.id);
-                        if (!element || !element.value.trim()) {
-                            return false;
-                        }
+                    if (!document.getElementById('number').value.trim()) {
+                        errors.push('Número');
+                    }
+                    
+                    if (!document.getElementById('neighborhood').value.trim()) {
+                        errors.push('Bairro');
                     }
                 }
                 
                 if (!isOtherCity && deliveryType === 'delivery') {
                     if (!selectedDate) {
-                        return false;
+                        errors.push('Data de entrega');
                     }
                     
                     if (!document.querySelector('input[name="deliveryTime"]:checked')) {
-                        return false;
+                        errors.push('Horário de entrega');
                     }
                 }
             }
             
             if (deliveryType === 'pickup') {
                 if (!selectedDate) {
-                    return false;
+                    errors.push('Data de retirada');
                 }
                 
                 if (!document.querySelector('input[name="deliveryTime"]:checked')) {
-                    return false;
+                    errors.push('Horário de retirada');
                 }
             }
             
-            return true;
+            return {
+                valid: errors.length === 0,
+                errors: errors
+            };
         }
         
         function validatePage3() {
+            const errors = [];
+            
             if (!document.querySelector('input[name="sendCard"]:checked')) {
-                return false;
+                errors.push('Escolha se quer enviar cartão ou não');
             }
             
-            const sendCard = document.querySelector('input[name="sendCard"]:checked').value;
+            const sendCard = document.querySelector('input[name="sendCard"]:checked')?.value;
             if (sendCard === 'yes') {
                 if (!document.getElementById('cardMessage').value.trim()) {
-                    return false;
+                    errors.push('Mensagem do cartão');
                 }
                 
                 if (!document.querySelector('input[name="signedCard"]:checked')) {
-                    return false;
+                    errors.push('Confirme se assinou o cartão');
                 }
             }
             
             if (!document.querySelector('input[name="acknowledgeTerms"]:checked')) {
-                return false;
+                errors.push('Aceite os termos de ciência');
             }
             
-            return true;
+            return {
+                valid: errors.length === 0,
+                errors: errors
+            };
         }
         
         function validatePage4() {
+            const errors = [];
+            
             if (!document.querySelector('input[name="paymentMethod"]:checked')) {
-                return false;
+                errors.push('Escolha a forma de pagamento');
             }
             
             if (!document.querySelector('input[name="foundUs"]:checked')) {
-                return false;
+                errors.push('Nos informe como nos encontrou');
             }
             
             if (!document.getElementById('confirmData').checked) {
-                return false;
+                errors.push('Confirme que todos os dados estão corretos');
             }
             
-            return true;
+            return {
+                valid: errors.length === 0,
+                errors: errors
+            };
         }
         
         // ============================================
@@ -2409,6 +2467,9 @@
         function calculateProductTotal() {
             const price = parseFloat(document.getElementById('productPrice').value) || 0;
             originalTotal = price;
+            
+            // Atualizar resumo do produto
+            updateProductSummary();
             
             if (selectedCity && selectedCity !== 'other' && currentDeliveryType === 'delivery') {
                 calculateShipping();
@@ -2769,27 +2830,6 @@
             html += `<div class="review-value">${document.getElementById('productName').value}</div>`;
             html += '</div>';
             
-            // Itens (se houver)
-            const itemsList = document.getElementById('itemsList').value;
-            if (itemsList.trim()) {
-                html += '<div class="review-item">';
-                html += '<div class="review-label">Itens incluídos</div>';
-                html += '<div class="review-value">';
-                html += '<div style="font-size: 12px; color: #666; text-align: left;">';
-                const items = itemsList.split('\n').slice(0, 3);
-                items.forEach(item => {
-                    if (item.trim()) {
-                        html += `<div>${item.trim()}</div>`;
-                    }
-                });
-                if (itemsList.split('\n').length > 3) {
-                    html += '<div>...</div>';
-                }
-                html += '</div>';
-                html += '</div>';
-                html += '</div>';
-            }
-            
             // Valores
             const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
             const finalTotal = getTotalWithShipping();
@@ -2922,7 +2962,6 @@
             
             const productName = document.getElementById('productName').value;
             const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
-            const itemsList = document.getElementById('itemsList').value || '';
             const buyerName = document.getElementById('buyerName').value;
             const buyerPhone = document.getElementById('buyerPhone').value;
             const giftedName = document.getElementById('giftedName').value;
@@ -3000,8 +3039,6 @@
                 data[18] = cardMessage.replace(/\n/g, ' ');
             }
             
-            data[19] = itemsList.replace(/\n/g, '; '); // Itens em uma célula, separados por ;
-            
             data[46] = foundUs || '';
             data[48] = anonymousText;
             data[32] = paymentText;
@@ -3012,8 +3049,9 @@
         async function submitForm() {
             if (isSubmitting) return;
             
-            if (!validateForm()) {
-                showPageError('page4', '❌ Por favor, corrija os erros no formulário.', 'error');
+            const validation = validateForm();
+            if (!validation.valid) {
+                showModalError('Por favor, corrija os erros no formulário:', validation.errors);
                 return;
             }
             
@@ -3024,8 +3062,6 @@
             isSubmitting = true;
             loadingSection.style.display = 'block';
             
-            showPageError('page4', '⏳ Preparando envio dos dados...', 'info');
-            
             try {
                 const excelData = prepareExcelData();
                 console.log('📦 Dados para envio:', excelData);
@@ -3033,8 +3069,6 @@
                 const result = await enviarDadosParaPlanilha(excelData);
                 
                 if (result.success) {
-                    showPageError('page4', `✅ ${result.message}`, 'success');
-                    
                     submitBtn.innerHTML = '✅ ENVIADO';
                     submitBtn.classList.add('btn-success');
                     
@@ -3064,7 +3098,7 @@
                 
             } catch (error) {
                 console.error('❌ Erro no envio:', error);
-                showPageError('page4', `❌ Erro: ${error.message || 'Falha na conexão'}`, 'error');
+                showModalError(`Erro: ${error.message || 'Falha na conexão'}`);
                 submitBtn.disabled = false;
                 isSubmitting = false;
             } finally {
@@ -3130,7 +3164,6 @@
         // ============================================
         function showPaymentConfirmation(type) {
             const paymentMethod = type;
-            const total = getTotalWithShipping();
             const buyerName = document.getElementById('buyerName').value;
             const paymentDetailsDiv = type === 'pix' ? document.getElementById('paymentDetails') : document.getElementById('paymentDetailsCard');
             
@@ -3153,13 +3186,16 @@
             html += `<div class="review-value">${document.getElementById('productName').value}</div>`;
             html += '</div>';
             
+            const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
+            const totalShipping = getShippingForSpreadsheet();
+            const total = getTotalWithShipping();
+            
             html += '<div class="review-item">';
             html += '<div class="review-label">Valor</div>';
-            html += `<div class="review-value">${formatCurrency(parseFloat(document.getElementById('productPrice').value) || 0)}</div>`;
+            html += `<div class="review-value">${formatCurrency(productPrice)}</div>`;
             html += '</div>';
             
             // Frete + taxas juntos na exibição também
-            const totalShipping = getShippingForSpreadsheet();
             if (totalShipping > 0) {
                 html += '<div class="review-item">';
                 html += '<div class="review-label">Frete + Taxas</div>';
@@ -3227,45 +3263,41 @@
             }
         }
         
-        function sendWhatsAppMessage() {
+        function sendWhatsAppMessage(paymentType) {
             const buyerName = document.getElementById('buyerName').value;
             const buyerPhone = document.getElementById('buyerPhone').value;
             const productName = document.getElementById('productName').value;
-            const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
-            const total = getTotalWithShipping();
-            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
             const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
             
             let message = `*NOVO PEDIDO - Mundo Carol*%0A%0A`;
             message += `*Cliente:* ${buyerName}%0A`;
             message += `*Telefone:* ${buyerPhone}%0A`;
             message += `*Produto:* ${productName}%0A`;
-            message += `*Valor:* R$ ${productPrice.toFixed(2)}%0A`;
             
-            const totalShipping = getShippingForSpreadsheet();
-            if (totalShipping > 0) {
-                message += `*Frete + Taxas:* R$ ${totalShipping.toFixed(2)}%0A`;
+            // Cidade
+            if (deliveryType === 'delivery' && !isOtherCity && selectedCity) {
+                message += `*Cidade:* ${selectedCity}%0A`;
+            } else if (deliveryType === 'delivery' && isOtherCity) {
+                message += `*Cidade:* Outra cidade%0A`;
+            } else if (deliveryType === 'pickup') {
+                message += `*Cidade:* Retirada BH%0A`;
             }
             
-            message += `*TOTAL:* R$ ${total.toFixed(2)}%0A`;
-            message += `*Tipo de entrega:* ${deliveryType === 'pickup' ? 'Retirada na loja' : 'Entrega'}%0A`;
-            message += `*Pagamento:* ${paymentMethod === 'pix' ? 'PIX' : 'Cartão'}%0A%0A`;
-            message += `Formulário enviado com sucesso!`;
+            // Data e hora
+            if (selectedDate && selectedTimeLabel) {
+                const formattedDate = selectedDate.toLocaleDateString('pt-BR');
+                message += `*Data:* ${formattedDate}%0A`;
+                message += `*Horário:* ${selectedTimeLabel}%0A`;
+            }
             
-            const phone = WHATSAPP_NUMBER;
-            window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
-        }
-        
-        function requestCardLink() {
-            const buyerName = document.getElementById('buyerName').value;
-            const productName = document.getElementById('productName').value;
-            const total = getTotalWithShipping();
+            // Forma de pagamento
+            if (paymentType === 'pix') {
+                message += `*Pagamento:* PIX%0A`;
+            } else if (paymentType === 'card') {
+                message += `*Pagamento:* Cartão de Crédito%0A`;
+            }
             
-            let message = `*SOLICITAÇÃO DE LINK DE CARTÃO*%0A%0A`;
-            message += `*Cliente:* ${buyerName}%0A`;
-            message += `*Produto:* ${productName}%0A`;
-            message += `*Valor Total:* R$ ${total.toFixed(2)}%0A%0A`;
-            message += `Preciso do link de pagamento por cartão de crédito para este pedido.`;
+            message += `%0AFormulário enviado com sucesso!`;
             
             const phone = WHATSAPP_NUMBER;
             window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
@@ -3278,7 +3310,6 @@
             const formData = {
                 productName: document.getElementById('productName').value,
                 productPrice: document.getElementById('productPrice').value,
-                itemsList: document.getElementById('itemsList').value,
                 buyerName: document.getElementById('buyerName').value,
                 buyerPhone: document.getElementById('buyerPhone').value,
                 giftedName: document.getElementById('giftedName').value,
@@ -3320,7 +3351,6 @@
                 if (!isFromLink) {
                     document.getElementById('productName').value = data.productName || '';
                     document.getElementById('productPrice').value = data.productPrice || '';
-                    document.getElementById('itemsList').value = data.itemsList || '';
                 }
                 
                 document.getElementById('buyerName').value = data.buyerName || '';
@@ -3411,7 +3441,17 @@
         }
         
         function validateForm() {
-            return validatePage1() && validatePage2() && validatePage3() && validatePage4();
+            const page1 = validatePage1();
+            if (!page1.valid) return page1;
+            
+            const page2 = validatePage2();
+            if (!page2.valid) return page2;
+            
+            const page3 = validatePage3();
+            if (!page3.valid) return page3;
+            
+            const page4 = validatePage4();
+            return page4;
         }
     </script>
 </body>
