@@ -1554,7 +1554,11 @@
         // ============================================
         // INICIALIZAÇÃO
         // ============================================
-        document.addEventListener('DOMContentLoaded', function() {
+       document.addEventListener('readystatechange', function() {
+    if (document.readyState === 'complete') {
+        // TODO: Coloque TODO o conteúdo da sua função atual aqui dentro
+    }
+});
             console.log('🚀 Sistema de Pedidos inicializado');
             
             // Verificar se veio de um link compartilhado
@@ -3176,3 +3180,4 @@ O cliente verá o produto com preço original, mas o desconto será aplicado aut
     </script>
 </body>
 </html>
+
