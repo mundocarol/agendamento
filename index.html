@@ -1059,6 +1059,26 @@
             height: 18px;
         }
         
+        .autosave-indicator {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: var(--success);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            animation: fadeIn 0.3s;
+        }
+        
+        .autosave-indicator.show {
+            display: flex;
+        }
+        
         @media (max-width: 480px) {
             .header h1 {
                 font-size: 16px;
@@ -1146,6 +1166,12 @@
                 bottom: 10px;
                 max-width: none;
             }
+            
+            .autosave-indicator {
+                bottom: 60px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
         }
         
         @media (min-width: 768px) {
@@ -1181,6 +1207,12 @@
             <div class="progress-step" id="step4"></div>
             <div class="progress-step" id="step5"></div>
             <div class="progress-step" id="step6"></div>
+        </div>
+        
+        <!-- Indicador de Autosave -->
+        <div id="autosaveIndicator" class="autosave-indicator">
+            <i class="fas fa-save"></i>
+            <span>Dados salvos automaticamente</span>
         </div>
         
         <!-- Resumo dos Produtos (visível apenas na página 1 quando veio de link) -->
@@ -1219,20 +1251,20 @@
                         <div class="form-row">
                             <div class="form-group" style="flex: 0.5;">
                                 <label for="productQuantity1">Qtde</label>
-                                <input type="number" id="productQuantity1" class="form-control product-quantity" min="1" value="1" onchange="updateProductsSummary()">
+                                <input type="number" id="productQuantity1" class="form-control product-quantity" min="1" value="1">
                             </div>
                             <div class="form-group" style="flex: 0.8;">
                                 <label for="productCode1">Código</label>
-                                <input type="text" id="productCode1" class="form-control product-code" placeholder="Ex: 060" oninput="updateProductsSummary()">
+                                <input type="text" id="productCode1" class="form-control product-code" placeholder="Ex: 060">
                             </div>
                             <div class="form-group" style="flex: 2;">
                                 <label for="productName1">Descrição</label>
-                                <input type="text" id="productName1" class="form-control product-name" placeholder="Descrição do produto" required oninput="updateProductsSummary()">
+                                <input type="text" id="productName1" class="form-control product-name" placeholder="Descrição do produto" required>
                                 <div class="error-text" id="errorProductName1"></div>
                             </div>
                             <div class="form-group" style="flex: 1;">
                                 <label for="productPrice1">Preço (R$)</label>
-                                <input type="number" id="productPrice1" class="form-control product-price" min="0" step="0.01" placeholder="0,00" required onchange="updateProductsSummary()">
+                                <input type="number" id="productPrice1" class="form-control product-price" min="0" step="0.01" placeholder="0,00" required>
                                 <div class="error-text" id="errorProductPrice1"></div>
                             </div>
                         </div>
@@ -1928,11 +1960,11 @@
                 checkIfFromLink();
             }
             
-            // Configurar eventos
+            // Configurar eventos básicos
             setupEventListeners();
             
             // Carregar dados salvos
-            loadSavedData();
+            loadFormData();
             
             // Renderizar calendário inicial
             renderCalendar(currentMonth, currentYear);
@@ -1943,33 +1975,409 @@
             // Atualizar resumo inicial
             updateProductsSummary();
             
-            // Configurar salvamento automático
-            setupAutoSave();
+            // Configurar AUTOSAVE UNIVERSAL (funciona para ambos os fluxos)
+            setupUniversalAutosave();
             
             // Ocultar seções desnecessárias se veio de link
             if (isFromLink) {
                 document.getElementById('productSection').style.display = 'none';
                 document.getElementById('clearAllSection').style.display = 'none';
             }
+            
+            // Mostrar mensagem inicial
+            console.log('✅ Sistema carregado. Modo:', isFromLink ? 'LINK' : 'FLUXO NORMAL');
         });
         
-        function setupEventListeners() {
-            // Cidade
-            document.getElementById('deliveryCity').addEventListener('change', function() {
-                selectedCity = this.value;
-                isOtherCity = this.value === 'other';
-                updateCityDisplay();
-                saveData();
+        // ============================================
+        // SISTEMA DE AUTOSAVE UNIVERSAL
+        // ============================================
+        
+        function setupUniversalAutosave() {
+            console.log('🔧 Configurando autosave universal...');
+            
+            // 1. Todos os inputs de texto, número, textarea e select
+            document.querySelectorAll('input[type="text"], input[type="number"], textarea, select').forEach(input => {
+                // Remover listeners antigos primeiro (evitar duplicação)
+                const newInput = input.cloneNode(true);
+                input.parentNode.replaceChild(newInput, input);
+                
+                // Adicionar novos listeners ao novo elemento
+                newInput.addEventListener('input', handleAutosave);
+                newInput.addEventListener('change', handleAutosave);
+                
+                // Restaurar eventos específicos
+                if (newInput.classList.contains('product-quantity') || 
+                    newInput.classList.contains('product-code') ||
+                    newInput.classList.contains('product-name') ||
+                    newInput.classList.contains('product-price')) {
+                    newInput.addEventListener('input', updateProductsSummary);
+                    newInput.addEventListener('change', updateProductsSummary);
+                }
+                
+                if (newInput.id === 'deliveryCity') {
+                    newInput.addEventListener('change', function() {
+                        selectedCity = this.value;
+                        isOtherCity = this.value === 'other';
+                        updateCityDisplay();
+                        handleAutosave();
+                    });
+                }
             });
             
-            // Tipo de entrega
-            document.querySelectorAll('input[name="deliveryType"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    currentDeliveryType = this.value;
-                    saveData();
+            // 2. Todos os radio buttons
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                const newRadio = radio.cloneNode(true);
+                radio.parentNode.replaceChild(newRadio, radio);
+                
+                newRadio.addEventListener('change', handleAutosave);
+                
+                // Restaurar eventos específicos
+                if (newRadio.name === 'sendCard') {
+                    newRadio.addEventListener('change', function() {
+                        const cardSection = document.getElementById('cardMessageSection');
+                        const noCardSection = document.getElementById('noCardSection');
+                        
+                        if (this.value === 'yes') {
+                            cardSection.classList.remove('hidden');
+                            noCardSection.classList.add('hidden');
+                        } else {
+                            cardSection.classList.add('hidden');
+                            noCardSection.classList.remove('hidden');
+                        }
+                        handleAutosave();
+                    });
+                }
+                
+                if (newRadio.name === 'anonymous' || newRadio.name === 'anonymousNoCard') {
+                    newRadio.addEventListener('change', function() {
+                        const anonymousNotes = newRadio.name === 'anonymous' ? 
+                            document.getElementById('anonymousNotes') : 
+                            document.getElementById('anonymousNotesNoCard');
+                        if (this.value === 'yes') {
+                            anonymousNotes.classList.remove('hidden');
+                        } else {
+                            anonymousNotes.classList.add('hidden');
+                        }
+                        handleAutosave();
+                    });
+                }
+            });
+            
+            // 3. Eventos de calendário
+            if (document.getElementById('prevMonth')) {
+                document.getElementById('prevMonth').addEventListener('click', function() {
+                    currentMonth--;
+                    if (currentMonth < 0) {
+                        currentMonth = 11;
+                        currentYear--;
+                    }
+                    renderCalendar(currentMonth, currentYear);
+                    handleAutosave();
                 });
+            }
+            
+            if (document.getElementById('nextMonth')) {
+                document.getElementById('nextMonth').addEventListener('click', function() {
+                    currentMonth++;
+                    if (currentMonth > 11) {
+                        currentMonth = 0;
+                        currentYear++;
+                    }
+                    renderCalendar(currentMonth, currentYear);
+                    handleAutosave();
+                });
+            }
+            
+            console.log('✅ Autosave configurado para TODOS os elementos');
+        }
+        
+        function handleAutosave() {
+            // Pequeno debounce para evitar salvar a cada tecla pressionada
+            clearTimeout(window.autosaveTimeout);
+            window.autosaveTimeout = setTimeout(() => {
+                saveFormData();
+                showAutosaveIndicator();
+            }, 1000); // 1 segundo de delay
+        }
+        
+        function showAutosaveIndicator() {
+            const indicator = document.getElementById('autosaveIndicator');
+            indicator.classList.add('show');
+            
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+        
+        function saveFormData() {
+            try {
+                const storageKey = isFromLink ? 'mundoCarolFormData_link' : 'mundoCarolFormData';
+                
+                const { products } = getAllProducts();
+                
+                const formData = {
+                    timestamp: new Date().toISOString(),
+                    isFromLink: isFromLink,
+                    linkProducts: isFromLink ? lockedProducts : [],
+                    
+                    // Dados pessoais
+                    buyerName: document.getElementById('buyerName')?.value || '',
+                    buyerPhone: document.getElementById('buyerPhone')?.value || '',
+                    giftedName: document.getElementById('giftedName')?.value || '',
+                    giftedPhone: document.getElementById('giftedPhone')?.value || '',
+                    
+                    // Endereço
+                    deliveryType: document.querySelector('input[name="deliveryType"]:checked')?.value || '',
+                    deliveryCity: document.getElementById('deliveryCity')?.value || '',
+                    street: document.getElementById('street')?.value || '',
+                    number: document.getElementById('number')?.value || '',
+                    complement: document.getElementById('complement')?.value || '',
+                    neighborhood: document.getElementById('neighborhood')?.value || '',
+                    referencePoint: document.getElementById('referencePoint')?.value || '',
+                    
+                    // Cartão
+                    sendCard: document.querySelector('input[name="sendCard"]:checked')?.value || '',
+                    cardMessage: document.getElementById('cardMessage')?.value || '',
+                    anonymous: document.querySelector('input[name="anonymous"]:checked')?.value || 
+                              document.querySelector('input[name="anonymousNoCard"]:checked')?.value || '',
+                    anonymousNotes: document.getElementById('anonymousNotesText')?.value || 
+                                   document.getElementById('anonymousNotesTextNoCard')?.value || '',
+                    signedCard: document.querySelector('input[name="signedCard"]:checked')?.value || '',
+                    acknowledgeTerms: document.querySelector('input[name="acknowledgeTerms"]:checked')?.value || '',
+                    
+                    // Outros
+                    paymentMethod: document.querySelector('input[name="paymentMethod"]:checked')?.value || '',
+                    foundUs: document.querySelector('input[name="foundUs"]:checked')?.value || '',
+                    
+                    // Calendário
+                    selectedDate: selectedDate ? selectedDate.toISOString() : null,
+                    selectedTime: selectedTime || '',
+                    selectedTimeLabel: selectedTimeLabel || '',
+                    
+                    // Valores calculados
+                    selectedCity: selectedCity,
+                    calculatedShipping: calculatedShipping,
+                    nightFeeAmount: nightFeeAmount,
+                    currentDeliveryType: currentDeliveryType,
+                    
+                    // Produtos
+                    products: products,
+                    productRows: productRows,
+                    
+                    // Salvar valores individuais dos produtos
+                    productData: {}
+                };
+                
+                // Salvar valores individuais dos produtos
+                for (let i = 1; i <= productRows; i++) {
+                    formData.productData[`productQuantity${i}`] = document.getElementById(`productQuantity${i}`)?.value || '';
+                    formData.productData[`productCode${i}`] = document.getElementById(`productCode${i}`)?.value || '';
+                    formData.productData[`productName${i}`] = document.getElementById(`productName${i}`)?.value || '';
+                    formData.productData[`productPrice${i}`] = document.getElementById(`productPrice${i}`)?.value || '';
+                }
+                
+                // Página atual
+                const activePage = document.querySelector('.form-page.active');
+                formData.currentPage = activePage ? activePage.id.replace('page', '') : '1';
+                
+                // Salvar no localStorage
+                localStorage.setItem(storageKey, JSON.stringify(formData));
+                
+                // Para debugging
+                if (window.location.hostname.includes('github.io')) {
+                    console.log('💾 Dados salvos:', {
+                        key: storageKey,
+                        page: formData.currentPage,
+                        time: new Date().toLocaleTimeString()
+                    });
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao salvar dados:', error);
+            }
+        }
+        
+        function loadFormData() {
+            try {
+                const storageKey = isFromLink ? 'mundoCarolFormData_link' : 'mundoCarolFormData';
+                const savedData = localStorage.getItem(storageKey);
+                
+                if (!savedData) {
+                    console.log('ℹ️ Nenhum dado salvo encontrado');
+                    return;
+                }
+                
+                const data = JSON.parse(savedData);
+                console.log('📂 Carregando dados salvos de:', data.timestamp);
+                
+                // Restaurar dados básicos
+                if (data.buyerName) document.getElementById('buyerName').value = data.buyerName;
+                if (data.buyerPhone) document.getElementById('buyerPhone').value = data.buyerPhone;
+                if (data.giftedName) document.getElementById('giftedName').value = data.giftedName;
+                if (data.giftedPhone) document.getElementById('giftedPhone').value = data.giftedPhone;
+                
+                // Restaurar endereço
+                if (data.deliveryCity) document.getElementById('deliveryCity').value = data.deliveryCity;
+                if (data.street) document.getElementById('street').value = data.street;
+                if (data.number) document.getElementById('number').value = data.number;
+                if (data.complement) document.getElementById('complement').value = data.complement;
+                if (data.neighborhood) document.getElementById('neighborhood').value = data.neighborhood;
+                if (data.referencePoint) document.getElementById('referencePoint').value = data.referencePoint;
+                
+                // Restaurar cartão
+                if (data.cardMessage) document.getElementById('cardMessage').value = data.cardMessage;
+                if (data.anonymousNotes) {
+                    document.getElementById('anonymousNotesText').value = data.anonymousNotes;
+                    document.getElementById('anonymousNotesTextNoCard').value = data.anonymousNotes;
+                }
+                
+                // Restaurar produtos (apenas se não for de link)
+                if (!isFromLink && data.products && Array.isArray(data.products)) {
+                    // Limpar produtos existentes
+                    document.getElementById('productsContainer').innerHTML = '';
+                    productRows = 0;
+                    
+                    // Recriar produtos
+                    data.products.forEach((product, index) => {
+                        productRows++;
+                        const container = document.getElementById('productsContainer');
+                        
+                        const newRow = document.createElement('div');
+                        newRow.className = 'product-row';
+                        newRow.id = `productRow${productRows}`;
+                        
+                        newRow.innerHTML = `
+                            <button class="remove-btn" onclick="removeProductRow('productRow${productRows}')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="form-row">
+                                <div class="form-group" style="flex: 0.5;">
+                                    <label for="productQuantity${productRows}">Qtde</label>
+                                    <input type="number" id="productQuantity${productRows}" class="form-control product-quantity" min="1" value="${product.quantity}">
+                                </div>
+                                <div class="form-group" style="flex: 0.8;">
+                                    <label for="productCode${productRows}">Código</label>
+                                    <input type="text" id="productCode${productRows}" class="form-control product-code" value="${product.code || ''}">
+                                </div>
+                                <div class="form-group" style="flex: 2;">
+                                    <label for="productName${productRows}">Descrição</label>
+                                    <input type="text" id="productName${productRows}" class="form-control product-name" value="${product.name}" required>
+                                </div>
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="productPrice${productRows}">Preço (R$)</label>
+                                    <input type="number" id="productPrice${productRows}" class="form-control product-price" value="${product.price}" required>
+                                </div>
+                            </div>
+                        `;
+                        
+                        container.appendChild(newRow);
+                    });
+                    
+                    updateRemoveButtons();
+                }
+                
+                // Restaurar radios
+                restoreRadio('deliveryType', data.deliveryType);
+                restoreRadio('sendCard', data.sendCard);
+                restoreRadio('anonymous', data.anonymous);
+                restoreRadio('anonymousNoCard', data.anonymous);
+                restoreRadio('signedCard', data.signedCard);
+                restoreRadio('acknowledgeTerms', data.acknowledgeTerms);
+                restoreRadio('paymentMethod', data.paymentMethod);
+                restoreRadio('foundUs', data.foundUs);
+                
+                // Restaurar variáveis
+                selectedCity = data.selectedCity || '';
+                calculatedShipping = data.calculatedShipping || 0;
+                nightFeeAmount = data.nightFeeAmount || 0;
+                currentDeliveryType = data.currentDeliveryType || '';
+                
+                // Restaurar calendário
+                if (data.selectedDate) {
+                    selectedDate = new Date(data.selectedDate);
+                    selectedTime = data.selectedTime;
+                    selectedTimeLabel = data.selectedTimeLabel;
+                    
+                    // Atualizar calendário visualmente
+                    if (selectedDate) {
+                        currentMonth = selectedDate.getMonth();
+                        currentYear = selectedDate.getFullYear();
+                        renderCalendar(currentMonth, currentYear);
+                        
+                        // Selecionar a data no calendário
+                        setTimeout(() => {
+                            selectDate(selectedDate);
+                        }, 500);
+                    }
+                }
+                
+                // Atualizar UI
+                updateCityDisplay();
+                updateProductsSummary();
+                
+                // Mostrar/ocultar seções conforme dados
+                if (data.sendCard === 'yes') {
+                    document.getElementById('cardMessageSection').classList.remove('hidden');
+                    document.getElementById('noCardSection').classList.add('hidden');
+                } else if (data.sendCard === 'no') {
+                    document.getElementById('cardMessageSection').classList.add('hidden');
+                    document.getElementById('noCardSection').classList.remove('hidden');
+                }
+                
+                if (data.anonymous === 'yes') {
+                    document.getElementById('anonymousNotes').classList.remove('hidden');
+                    document.getElementById('anonymousNotesNoCard').classList.remove('hidden');
+                }
+                
+                // Restaurar página atual
+                if (data.currentPage && data.currentPage !== '1') {
+                    setTimeout(() => {
+                        navigateToPage(parseInt(data.currentPage));
+                    }, 300);
+                }
+                
+                console.log('✅ Dados carregados com sucesso');
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados:', error);
+            }
+        }
+        
+        function restoreRadio(name, value) {
+            if (!value) return;
+            
+            const radio = document.querySelector(`input[name="${name}"][value="${value}"]`);
+            if (radio) {
+                radio.checked = true;
+                // Disparar evento change para atualizar UI
+                const event = new Event('change');
+                radio.dispatchEvent(event);
+            }
+        }
+        
+        function navigateToPage(pageNumber) {
+            if (pageNumber < 1 || pageNumber > 6) return;
+            
+            // Esconder todas as páginas
+            document.querySelectorAll('.form-page').forEach(page => {
+                page.classList.remove('active');
             });
             
+            // Mostrar página desejada
+            document.getElementById(`page${pageNumber}`).classList.add('active');
+            
+            // Atualizar progresso
+            document.querySelectorAll('.progress-step').forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+            
+            for (let i = 1; i < pageNumber; i++) {
+                document.getElementById(`step${i}`).classList.add('completed');
+            }
+            document.getElementById(`step${pageNumber}`).classList.add('active');
+        }
+        
+        function setupEventListeners() {
             // Calendário
             document.getElementById('prevMonth').addEventListener('click', function() {
                 currentMonth--;
@@ -1988,30 +2396,6 @@
                 }
                 renderCalendar(currentMonth, currentYear);
             });
-            
-            // Configurar autosave para todos os inputs
-            setupAutosaveForAllInputs();
-        }
-        
-        function setupAutosaveForAllInputs() {
-            // Todos os inputs de texto
-            document.querySelectorAll('input[type="text"], input[type="number"], textarea, select').forEach(input => {
-                input.addEventListener('input', saveData);
-                input.addEventListener('change', saveData);
-            });
-            
-            // Todos os radios
-            document.querySelectorAll('input[type="radio"]').forEach(radio => {
-                radio.addEventListener('change', saveData);
-            });
-        }
-        
-        function setupAutoSave() {
-            // Salvar dados a cada 5 segundos
-            setInterval(saveData, 5000);
-            
-            // Salvar ao sair da página
-            window.addEventListener('beforeunload', saveData);
         }
         
         function setupCardSection() {
@@ -2028,7 +2412,6 @@
                         cardSection.classList.add('hidden');
                         noCardSection.classList.remove('hidden');
                     }
-                    saveData();
                 });
             });
             
@@ -2041,7 +2424,6 @@
                     } else {
                         anonymousNotes.classList.add('hidden');
                     }
-                    saveData();
                 });
             });
             
@@ -2054,7 +2436,6 @@
                     } else {
                         anonymousNotes.classList.add('hidden');
                     }
-                    saveData();
                 });
             });
         }
@@ -2077,20 +2458,20 @@
                 <div class="form-row">
                     <div class="form-group" style="flex: 0.5;">
                         <label for="productQuantity${productRows}">Qtde</label>
-                        <input type="number" id="productQuantity${productRows}" class="form-control product-quantity" min="1" value="1" onchange="updateProductsSummary()">
+                        <input type="number" id="productQuantity${productRows}" class="form-control product-quantity" min="1" value="1">
                     </div>
                     <div class="form-group" style="flex: 0.8;">
                         <label for="productCode${productRows}">Código</label>
-                        <input type="text" id="productCode${productRows}" class="form-control product-code" placeholder="Ex: 060" oninput="updateProductsSummary()">
+                        <input type="text" id="productCode${productRows}" class="form-control product-code" placeholder="Ex: 060">
                     </div>
                     <div class="form-group" style="flex: 2;">
                         <label for="productName${productRows}">Descrição</label>
-                        <input type="text" id="productName${productRows}" class="form-control product-name" placeholder="Descrição do produto" required oninput="updateProductsSummary()">
+                        <input type="text" id="productName${productRows}" class="form-control product-name" placeholder="Descrição do produto" required>
                         <div class="error-text" id="errorProductName${productRows}"></div>
                     </div>
                     <div class="form-group" style="flex: 1;">
                         <label for="productPrice${productRows}">Preço (R$)</label>
-                        <input type="number" id="productPrice${productRows}" class="form-control product-price" min="0" step="0.01" placeholder="0,00" required onchange="updateProductsSummary()">
+                        <input type="number" id="productPrice${productRows}" class="form-control product-price" min="0" step="0.01" placeholder="0,00" required>
                         <div class="error-text" id="errorProductPrice${productRows}"></div>
                     </div>
                 </div>
@@ -2099,7 +2480,21 @@
             container.appendChild(newRow);
             updateRemoveButtons();
             updateProductsSummary();
-            saveData();
+            
+            // Configurar autosave para os novos inputs
+            const newInputs = newRow.querySelectorAll('input');
+            newInputs.forEach(input => {
+                input.addEventListener('input', handleAutosave);
+                input.addEventListener('change', handleAutosave);
+                
+                if (input.classList.contains('product-quantity') || 
+                    input.classList.contains('product-code') ||
+                    input.classList.contains('product-name') ||
+                    input.classList.contains('product-price')) {
+                    input.addEventListener('input', updateProductsSummary);
+                    input.addEventListener('change', updateProductsSummary);
+                }
+            });
         }
         
         function removeProductRow(rowId) {
@@ -2109,7 +2504,7 @@
                 productRows--;
                 updateRemoveButtons();
                 updateProductsSummary();
-                saveData();
+                handleAutosave();
             }
         }
         
@@ -2160,7 +2555,7 @@
                 calculateShipping();
             }
             
-            saveData();
+            handleAutosave();
         }
         
         function updateProductsSummaryDisplay(products) {
@@ -2190,104 +2585,12 @@
         // ============================================
         function clearAllData() {
             if (confirm('Tem certeza que deseja limpar todos os dados? Isso apagará todos os produtos e informações preenchidas.')) {
-                // Limpar produtos
-                document.getElementById('productsContainer').innerHTML = '';
-                productRows = 1;
-                
-                // Adicionar primeira linha de produto vazia
-                const container = document.getElementById('productsContainer');
-                const newRow = document.createElement('div');
-                newRow.className = 'product-row';
-                newRow.id = `productRow1`;
-                newRow.innerHTML = `
-                    <button class="remove-btn" onclick="removeProductRow('productRow1')" style="display: none;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="form-row">
-                        <div class="form-group" style="flex: 0.5;">
-                            <label for="productQuantity1">Qtde</label>
-                            <input type="number" id="productQuantity1" class="form-control product-quantity" min="1" value="1" onchange="updateProductsSummary()">
-                        </div>
-                        <div class="form-group" style="flex: 0.8;">
-                            <label for="productCode1">Código</label>
-                            <input type="text" id="productCode1" class="form-control product-code" placeholder="Ex: 060" oninput="updateProductsSummary()">
-                        </div>
-                        <div class="form-group" style="flex: 2;">
-                            <label for="productName1">Descrição</label>
-                            <input type="text" id="productName1" class="form-control product-name" placeholder="Descrição do produto" required oninput="updateProductsSummary()">
-                            <div class="error-text" id="errorProductName1"></div>
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label for="productPrice1">Preço (R$)</label>
-                            <input type="number" id="productPrice1" class="form-control product-price" min="0" step="0.01" placeholder="0,00" required onchange="updateProductsSummary()">
-                            <div class="error-text" id="errorProductPrice1"></div>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(newRow);
-                
-                // Limpar outros campos
-                document.getElementById('buyerName').value = '';
-                document.getElementById('buyerPhone').value = '';
-                document.getElementById('giftedName').value = '';
-                document.getElementById('giftedPhone').value = '';
-                document.getElementById('deliveryCity').value = '';
-                document.getElementById('street').value = '';
-                document.getElementById('number').value = '';
-                document.getElementById('complement').value = '';
-                document.getElementById('neighborhood').value = '';
-                document.getElementById('referencePoint').value = '';
-                document.getElementById('cardMessage').value = '';
-                document.getElementById('anonymousNotesText').value = '';
-                document.getElementById('anonymousNotesTextNoCard').value = '';
-                
-                // Desmarcar radios
-                document.querySelectorAll('input[type="radio"]').forEach(radio => {
-                    radio.checked = false;
-                });
-                
-                // Resetar variáveis
-                selectedDate = null;
-                selectedTime = null;
-                selectedTimeLabel = null;
-                nightFeeAmount = 0;
-                isOtherCity = false;
-                calculatedShipping = 0;
-                selectedCity = '';
-                currentDeliveryType = '';
-                
-                // Resetar calendário
-                currentMonth = new Date().getMonth();
-                currentYear = new Date().getFullYear();
-                renderCalendar(currentMonth, currentYear);
-                
-                // Ocultar seções
-                document.getElementById('cardMessageSection').classList.add('hidden');
-                document.getElementById('noCardSection').classList.add('hidden');
-                document.getElementById('anonymousNotes').classList.add('hidden');
-                document.getElementById('anonymousNotesNoCard').classList.add('hidden');
-                
                 // Limpar localStorage
-                localStorage.removeItem('mundoCarolFormData');
-                if (isFromLink) {
-                    localStorage.removeItem('mundoCarolFormData_link');
-                }
+                const storageKey = isFromLink ? 'mundoCarolFormData_link' : 'mundoCarolFormData';
+                localStorage.removeItem(storageKey);
                 
-                // Atualizar display
-                updateProductsSummary();
-                showToast('Todos os dados foram limpos com sucesso!', 'success');
-                
-                // Voltar para primeira página
-                document.querySelectorAll('.form-page').forEach(page => {
-                    page.classList.remove('active');
-                });
-                document.getElementById('page1').classList.add('active');
-                
-                // Resetar progresso
-                document.querySelectorAll('.progress-step').forEach(step => {
-                    step.classList.remove('active', 'completed');
-                });
-                document.getElementById('step1').classList.add('active');
+                // Recarregar a página
+                location.reload();
             }
         }
         
@@ -2575,6 +2878,9 @@
                 return;
             }
             
+            // SALVAR antes de mudar de página
+            saveFormData();
+            
             // Atualizar progresso
             updateProgress(current, next);
             
@@ -2588,15 +2894,16 @@
             }
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            saveData();
         }
         
         function prevPage(current, prev) {
+            // SALVAR antes de mudar de página
+            saveFormData();
+            
             document.getElementById(`page${current}`).classList.remove('active');
             document.getElementById(`page${prev}`).classList.add('active');
             updateProgress(current, prev, false);
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            saveData();
         }
         
         function updateProgress(current, next, forward = true) {
@@ -2838,7 +3145,7 @@
                 }
             }
             
-            saveData();
+            handleAutosave();
         }
         
         function getTotalWithShipping() {
@@ -3014,14 +3321,14 @@
                         nightFeeAmount = feeAmount;
                     }
                     
-                    saveData();
+                    handleAutosave();
                 });
                 
                 optionsContainer.appendChild(routeElement);
             });
             
             document.getElementById('timeOptions').classList.remove('hidden');
-            saveData();
+            handleAutosave();
         }
         
         function resetCalendar() {
@@ -3036,7 +3343,7 @@
                 day.classList.remove('selected');
             });
             
-            saveData();
+            handleAutosave();
         }
         
         // ============================================
@@ -3365,8 +3672,11 @@
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }, 1000);
                     
+                    // Limpar localStorage após envio bem-sucedido
                     setTimeout(() => {
-                        clearSavedData();
+                        const storageKey = isFromLink ? 'mundoCarolFormData_link' : 'mundoCarolFormData';
+                        localStorage.removeItem(storageKey);
+                        console.log('🗑️ Dados limpos após envio');
                     }, 5000);
                     
                 } else {
@@ -3580,250 +3890,6 @@
             message += `%0AFormulário enviado com sucesso!`;
             
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
-        }
-        
-        // ============================================
-        // SALVAR E CARREGAR DADOS (MELHORADO)
-        // ============================================
-        function saveData() {
-            // Se for de link, salvar em um localStorage separado
-            const storageKey = isFromLink ? 'mundoCarolFormData_link' : 'mundoCarolFormData';
-            
-            const { products } = getAllProducts();
-            
-            const formData = {
-                isFromLink: isFromLink,
-                linkProducts: isFromLink ? lockedProducts : [],
-                products: products,
-                buyerName: document.getElementById('buyerName').value,
-                buyerPhone: document.getElementById('buyerPhone').value,
-                giftedName: document.getElementById('giftedName').value,
-                giftedPhone: document.getElementById('giftedPhone').value,
-                anonymous: document.querySelector('input[name="anonymous"]:checked')?.value || 
-                          document.querySelector('input[name="anonymousNoCard"]:checked')?.value,
-                anonymousNotes: document.getElementById('anonymousNotesText').value || 
-                               document.getElementById('anonymousNotesTextNoCard').value,
-                deliveryType: document.querySelector('input[name="deliveryType"]:checked')?.value,
-                deliveryCity: document.getElementById('deliveryCity').value,
-                street: document.getElementById('street').value,
-                number: document.getElementById('number').value,
-                complement: document.getElementById('complement').value,
-                neighborhood: document.getElementById('neighborhood').value,
-                referencePoint: document.getElementById('referencePoint').value,
-                selectedCity: selectedCity,
-                calculatedShipping: calculatedShipping,
-                selectedDate: selectedDate ? selectedDate.toISOString() : null,
-                selectedTime: selectedTime,
-                selectedTimeLabel: selectedTimeLabel,
-                nightFeeAmount: nightFeeAmount,
-                sendCard: document.querySelector('input[name="sendCard"]:checked')?.value,
-                cardMessage: document.getElementById('cardMessage').value,
-                signedCard: document.querySelector('input[name="signedCard"]:checked')?.value,
-                acknowledgeTerms: document.querySelector('input[name="acknowledgeTerms"]:checked')?.value,
-                paymentMethod: document.querySelector('input[name="paymentMethod"]:checked')?.value,
-                foundUs: document.querySelector('input[name="foundUs"]:checked')?.value,
-                productRows: productRows,
-                currentPage: document.querySelector('.form-page.active')?.id?.replace('page', '') || '1'
-            };
-            
-            // Salvar valores individuais dos produtos
-            for (let i = 1; i <= productRows; i++) {
-                formData[`productQuantity${i}`] = document.getElementById(`productQuantity${i}`)?.value || '';
-                formData[`productCode${i}`] = document.getElementById(`productCode${i}`)?.value || '';
-                formData[`productName${i}`] = document.getElementById(`productName${i}`)?.value || '';
-                formData[`productPrice${i}`] = document.getElementById(`productPrice${i}`)?.value || '';
-            }
-            
-            localStorage.setItem(storageKey, JSON.stringify(formData));
-            
-            // 🔥 Também salvar timestamp do último autosave
-            localStorage.setItem('lastAutosave', Date.now());
-        }
-        
-        function loadSavedData() {
-            // Verificar se há dados salvos (para links ou fluxo normal)
-            const storageKey = isFromLink ? 'mundoCarolFormData_link' : 'mundoCarolFormData';
-            const savedData = localStorage.getItem(storageKey);
-            
-            if (!savedData) return;
-            
-            try {
-                const data = JSON.parse(savedData);
-                
-                // Restaurar produtos (apenas se não for de link)
-                if (data.products && Array.isArray(data.products) && !isFromLink) {
-                    document.getElementById('productsContainer').innerHTML = '';
-                    productRows = 0;
-                    
-                    data.products.forEach((product, index) => {
-                        productRows++;
-                        const container = document.getElementById('productsContainer');
-                        
-                        const newRow = document.createElement('div');
-                        newRow.className = 'product-row';
-                        newRow.id = `productRow${productRows}`;
-                        
-                        newRow.innerHTML = `
-                            <button class="remove-btn" onclick="removeProductRow('productRow${productRows}')">
-                                <i class="fas fa-times"></i>
-                            </button>
-                            <div class="form-row">
-                                <div class="form-group" style="flex: 0.5;">
-                                    <label for="productQuantity${productRows}">Qtde</label>
-                                    <input type="number" id="productQuantity${productRows}" class="form-control product-quantity" min="1" value="${product.quantity}" onchange="updateProductsSummary()">
-                                </div>
-                                <div class="form-group" style="flex: 0.8;">
-                                    <label for="productCode${productRows}">Código</label>
-                                    <input type="text" id="productCode${productRows}" class="form-control product-code" value="${product.code || ''}" oninput="updateProductsSummary()">
-                                </div>
-                                <div class="form-group" style="flex: 2;">
-                                    <label for="productName${productRows}">Descrição</label>
-                                    <input type="text" id="productName${productRows}" class="form-control product-name" value="${product.name}" required oninput="updateProductsSummary()">
-                                </div>
-                                <div class="form-group" style="flex: 1;">
-                                    <label for="productPrice${productRows}">Preço (R$)</label>
-                                    <input type="number" id="productPrice${productRows}" class="form-control product-price" value="${product.price}" required onchange="updateProductsSummary()">
-                                </div>
-                            </div>
-                        `;
-                        
-                        container.appendChild(newRow);
-                    });
-                }
-                
-                // Restaurar outros dados
-                document.getElementById('buyerName').value = data.buyerName || '';
-                document.getElementById('buyerPhone').value = data.buyerPhone || '';
-                document.getElementById('giftedName').value = data.giftedName || '';
-                document.getElementById('giftedPhone').value = data.giftedPhone || '';
-                document.getElementById('deliveryCity').value = data.deliveryCity || '';
-                document.getElementById('street').value = data.street || '';
-                document.getElementById('number').value = data.number || '';
-                document.getElementById('complement').value = data.complement || '';
-                document.getElementById('neighborhood').value = data.neighborhood || '';
-                document.getElementById('referencePoint').value = data.referencePoint || '';
-                document.getElementById('cardMessage').value = data.cardMessage || '';
-                document.getElementById('anonymousNotesText').value = data.anonymousNotes || '';
-                document.getElementById('anonymousNotesTextNoCard').value = data.anonymousNotes || '';
-                
-                selectedCity = data.selectedCity || '';
-                calculatedShipping = data.calculatedShipping || 0;
-                nightFeeAmount = data.nightFeeAmount || 0;
-                currentDeliveryType = data.deliveryType || '';
-                
-                // Restaurar radios
-                const radios = [
-                    { name: 'anonymous', value: data.anonymous },
-                    { name: 'anonymousNoCard', value: data.anonymous },
-                    { name: 'deliveryType', value: data.deliveryType },
-                    { name: 'sendCard', value: data.sendCard },
-                    { name: 'signedCard', value: data.signedCard },
-                    { name: 'acknowledgeTerms', value: data.acknowledgeTerms },
-                    { name: 'paymentMethod', value: data.paymentMethod },
-                    { name: 'foundUs', value: data.foundUs }
-                ];
-                
-                radios.forEach(radio => {
-                    if (radio.value) {
-                        const element = document.querySelector(`input[name="${radio.name}"][value="${radio.value}"]`);
-                        if (element) {
-                            element.checked = true;
-                            
-                            // Ativar seções conforme necessário
-                            if (radio.name === 'sendCard') {
-                                const cardSection = document.getElementById('cardMessageSection');
-                                const noCardSection = document.getElementById('noCardSection');
-                                
-                                if (radio.value === 'yes') {
-                                    cardSection.classList.remove('hidden');
-                                    noCardSection.classList.add('hidden');
-                                } else {
-                                    cardSection.classList.add('hidden');
-                                    noCardSection.classList.remove('hidden');
-                                }
-                            }
-                            
-                            if ((radio.name === 'anonymous' || radio.name === 'anonymousNoCard') && radio.value === 'yes') {
-                                const anonymousNotes = radio.name === 'anonymous' ? 
-                                    document.getElementById('anonymousNotes') : 
-                                    document.getElementById('anonymousNotesNoCard');
-                                if (anonymousNotes) {
-                                    anonymousNotes.classList.remove('hidden');
-                                }
-                            }
-                        }
-                    }
-                });
-                
-                // Definir padrão para anonimato se não tiver valor
-                if (!data.anonymous && !isFromLink) {
-                    document.getElementById('anonymousNo').checked = true;
-                    document.getElementById('anonymousNoNoCard').checked = true;
-                }
-                
-                if (data.selectedDate) {
-                    selectedDate = new Date(data.selectedDate);
-                    selectedTime = data.selectedTime;
-                    selectedTimeLabel = data.selectedTimeLabel;
-                    
-                    currentMonth = selectedDate.getMonth();
-                    currentYear = selectedDate.getFullYear();
-                }
-                
-                updateProductsSummary();
-                updateRemoveButtons();
-                
-                if (selectedCity) {
-                    updateCityDisplay();
-                }
-                
-                // Restaurar página atual
-                if (data.currentPage) {
-                    const currentPage = parseInt(data.currentPage);
-                    if (currentPage > 1) {
-                        document.querySelectorAll('.form-page').forEach(page => {
-                            page.classList.remove('active');
-                        });
-                        document.getElementById(`page${currentPage}`).classList.add('active');
-                        
-                        // Atualizar progresso
-                        for (let i = 1; i < currentPage; i++) {
-                            document.getElementById(`step${i}`).classList.add('completed');
-                        }
-                        document.getElementById(`step${currentPage}`).classList.add('active');
-                    }
-                }
-                
-            } catch (e) {
-                console.error('Erro ao carregar dados:', e);
-            }
-        }
-        
-        function clearSavedData() {
-            // Limpar localStorage apropriado
-            if (isFromLink) {
-                localStorage.removeItem('mundoCarolFormData_link');
-            } else {
-                localStorage.removeItem('mundoCarolFormData');
-            }
-            
-            // Limpar sessionStorage se for link
-            if (isFromLink) {
-                sessionStorage.removeItem('current_session_link');
-                sessionStorage.removeItem('link_products');
-                sessionStorage.removeItem('link_timestamp');
-            }
-            
-            selectedDate = null;
-            selectedTime = null;
-            selectedTimeLabel = null;
-            currentMonth = new Date().getMonth();
-            currentYear = new Date().getFullYear();
-            nightFeeAmount = 0;
-            isOtherCity = false;
-            calculatedShipping = 0;
-            selectedCity = '';
-            currentDeliveryType = '';
         }
     </script>
 </body>
