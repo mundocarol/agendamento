@@ -67,28 +67,39 @@
             font-size: 14px;
         }
         
-        .product-summary {
+        .products-summary {
             background: linear-gradient(135deg, #e8f5e9 0%, #d4edda 100%);
             padding: 15px;
             border-radius: 10px;
             margin: 15px 0;
             border-left: 4px solid var(--success);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
         }
         
-        .product-summary h3 {
+        .products-summary h3 {
             color: #155724;
             font-size: 16px;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        .product-summary p {
-            color: #333;
-            font-size: 18px;
-            font-weight: 700;
+        .products-list {
+            max-height: 150px;
+            overflow-y: auto;
+            margin: 5px 0;
+        }
+        
+        .product-summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #c3e6cb;
+            font-size: 13px;
+        }
+        
+        .product-summary-item:last-child {
+            border-bottom: none;
         }
         
         .form-page {
@@ -238,12 +249,6 @@
             color: #0c5460;
         }
         
-        .alert-danger {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-        }
-        
         .btn {
             display: inline-block;
             padding: 14px 20px;
@@ -275,26 +280,6 @@
         
         .btn-secondary:hover {
             background: #5a6268;
-            transform: translateY(-2px);
-        }
-        
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: #218838;
-            transform: translateY(-2px);
-        }
-        
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #c82333;
             transform: translateY(-2px);
         }
         
@@ -435,19 +420,6 @@
             border-color: var(--primary);
         }
         
-        .calendar-day.special-day {
-            border-color: #ffc107;
-            background: #fff3cd;
-        }
-        
-        .calendar-day.special-day::after {
-            content: "❤";
-            position: absolute;
-            top: 2px;
-            right: 4px;
-            font-size: 8px;
-        }
-        
         .time-options {
             margin-top: 15px;
         }
@@ -480,10 +452,6 @@
             border-color: #e9ecef;
         }
         
-        .time-option.disabled label {
-            cursor: not-allowed;
-        }
-        
         .checkbox-confirm {
             background: #f8f9fa;
             padding: 15px;
@@ -505,32 +473,6 @@
             width: 18px;
             height: 18px;
             margin-right: 10px;
-        }
-        
-        .status-box {
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            display: none;
-            animation: fadeIn 0.3s;
-        }
-        
-        .status-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .status-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .status-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
         }
         
         .loading {
@@ -772,15 +714,6 @@
             padding-bottom: 0;
         }
         
-        .schedule-day {
-            font-weight: 600;
-            color: #856404;
-        }
-        
-        .schedule-time {
-            color: #333;
-        }
-        
         .link-instructions {
             background-color: #e3f2fd;
             border-left: 4px solid #2196f3;
@@ -816,6 +749,39 @@
             margin-bottom: 10px;
         }
         
+        .product-row {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #dee2e6;
+            position: relative;
+        }
+        
+        .product-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .product-row .form-row {
+            align-items: flex-end;
+        }
+        
+        .product-row .form-group {
+            margin-bottom: 0;
+        }
+        
+        .product-row .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px;
+        }
+        
         .product-locked {
             background-color: #e8f5e9;
             padding: 15px;
@@ -831,33 +797,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-        
-        .product-locked .lock-icon {
-            color: #28a745;
-            font-size: 20px;
-        }
-        
-        .product-locked-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .product-locked-item {
-            flex: 1;
-            min-width: 200px;
-        }
-        
-        .product-locked-item strong {
-            color: #155724;
-            font-size: 14px;
-        }
-        
-        .product-locked-item p {
-            font-size: 16px;
-            font-weight: 600;
-            color: #333;
         }
         
         .expired-message {
@@ -912,7 +851,6 @@
             margin-bottom: 10px;
         }
         
-        /* Botão WhatsApp discreto */
         .whatsapp-discreto {
             background: white;
             border: 2px solid var(--whatsapp);
@@ -952,7 +890,6 @@
             animation: fadeIn 0.3s;
         }
         
-        /* Taxa separada na revisão */
         .taxa-item {
             color: #dc3545;
             font-weight: 600;
@@ -962,103 +899,166 @@
             color: #dc3545;
         }
         
-        /* Modal de Erro */
-        .modal-overlay {
+        .toast-notification {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            padding: 20px;
-        }
-        
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .modal {
-            background: white;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
-            transform: translateY(20px);
-            transition: transform 0.3s;
-        }
-        
-        .modal-overlay.active .modal {
-            transform: translateY(0);
-        }
-        
-        .modal-header {
-            background: var(--primary);
+            bottom: 20px;
+            right: 20px;
+            background: var(--danger);
             color: white;
-            padding: 20px;
-            border-radius: 12px 12px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .modal-header h3 {
-            font-size: 18px;
-            margin: 0;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
             display: flex;
             align-items: center;
             gap: 10px;
+            max-width: 350px;
+            animation: slideIn 0.3s ease;
         }
         
-        .modal-close {
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .toast-notification.success {
+            background: var(--success);
+        }
+        
+        .toast-notification.warning {
+            background: var(--warning);
+            color: #333;
+        }
+        
+        .toast-close {
             background: none;
             border: none;
             color: white;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
-            padding: 0;
-            width: 30px;
-            height: 30px;
+            margin-left: auto;
+        }
+        
+        .field-error {
+            border-color: var(--danger) !important;
+            background-color: #fff5f5 !important;
+        }
+        
+        .error-text {
+            color: var(--danger);
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .error-text.show {
+            display: block;
+        }
+        
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 5px;
+        }
+        
+        .progress-step {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #dee2e6;
+            transition: all 0.3s;
+        }
+        
+        .progress-step.active {
+            background: var(--primary);
+            transform: scale(1.2);
+        }
+        
+        .progress-step.completed {
+            background: var(--success);
+        }
+        
+        .clear-all-btn {
+            background: var(--danger);
+            color: white;
+            margin-top: 10px;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            width: auto;
+            min-width: 180px;
+        }
+        
+        .clear-all-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .clear-section {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+        }
+        
+        .anonymous-notes {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #6c757d;
+        }
+        
+        .anonymous-notes h4 {
+            color: #6c757d;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        
+        .anonymous-notes ul {
+            margin-left: 20px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .anonymous-notes li {
+            margin-bottom: 5px;
+        }
+        
+        .terms-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px dashed #dee2e6;
+            text-align: center;
+        }
+        
+        .terms-box label {
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--primary);
         }
         
-        .modal-content {
-            padding: 25px;
+        .terms-box input {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
         }
         
-        .modal-content h4 {
-            color: var(--danger);
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-        
-        .modal-content ul {
-            margin-left: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .modal-content li {
-            margin-bottom: 8px;
-            color: #555;
-        }
-        
-        .modal-footer {
-            padding: 20px;
-            text-align: center;
-            border-top: 1px solid var(--border);
-        }
-        
-        /* Ajustes para mobile */
         @media (max-width: 480px) {
             .header h1 {
                 font-size: 16px;
@@ -1117,11 +1117,6 @@
                 width: 100%;
             }
             
-            .product-locked-content {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
             .form-row {
                 flex-direction: column;
                 gap: 0;
@@ -1131,14 +1126,25 @@
                 font-size: 16px;
             }
             
-            .product-summary {
+            .products-summary {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 10px;
             }
             
-            .modal {
-                max-height: 85vh;
+            .product-row .form-row {
+                flex-direction: column;
+            }
+            
+            .product-row .form-group {
+                width: 100%;
+            }
+            
+            .toast-notification {
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+                max-width: none;
             }
         }
         
@@ -1146,42 +1152,10 @@
             .container {
                 max-width: 700px;
             }
-            
-            .nav-buttons {
-                flex-direction: row;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            .nav-buttons {
-                flex-direction: column;
-            }
-            
-            .nav-buttons .btn {
-                width: 100%;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Modal de Erro -->
-    <div class="modal-overlay" id="errorModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3><i class="fas fa-exclamation-triangle"></i> Campos Obrigatórios</h3>
-                <button class="modal-close" onclick="closeErrorModal()">&times;</button>
-            </div>
-            <div class="modal-content">
-                <h4>Preencha os seguintes campos antes de avançar:</h4>
-                <ul id="errorList"></ul>
-                <p>Clique fora do modal ou no botão abaixo para fechar e corrigir.</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" onclick="closeErrorModal()">Entendi, vou corrigir</button>
-            </div>
-        </div>
-    </div>
-    
     <div class="container">
         <!-- Mensagem de Link Expirado -->
         <div id="expiredMessage" class="expired-message hidden">
@@ -1193,34 +1167,42 @@
             </button>
         </div>
         
-        <!-- Cabeçalho (só aparece na página 1) -->
+        <!-- Cabeçalho -->
         <div id="mainHeader" class="header">
             <h1><i class="fas fa-calendar-alt"></i> Agendamento - Mundo Carol</h1>
             <p>Preencha os dados abaixo para realizar seu pedido</p>
         </div>
         
-        <!-- Resumo do Produto (visível em todas as páginas quando vem de link) -->
-        <div id="productSummary" class="product-summary hidden">
-            <div>
-                <h3><i class="fas fa-box"></i> Produto Selecionado</h3>
-                <p id="summaryProductName"></p>
-            </div>
-            <div>
-                <h3><i class="fas fa-tag"></i> Valor</h3>
-                <p id="summaryProductPrice"></p>
-            </div>
+        <!-- Indicador de Progresso -->
+        <div class="progress-indicator" id="progressIndicator">
+            <div class="progress-step active" id="step1"></div>
+            <div class="progress-step" id="step2"></div>
+            <div class="progress-step" id="step3"></div>
+            <div class="progress-step" id="step4"></div>
+            <div class="progress-step" id="step5"></div>
+            <div class="progress-step" id="step6"></div>
         </div>
         
-        <!-- Status de Envio -->
-        <div id="sendStatus" class="status-box hidden"></div>
+        <!-- Resumo dos Produtos (visível apenas na página 1 quando veio de link) -->
+        <div id="productsSummary" class="products-summary hidden">
+            <h3><i class="fas fa-box"></i> Produtos Selecionados</h3>
+            <div id="productsList" class="products-list"></div>
+        </div>
         
-        <!-- Página 1: Produto e Dados Básicos -->
+        <!-- Notificação Toast -->
+        <div id="toastNotification" class="toast-notification hidden">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="toastMessage"></span>
+            <button class="toast-close" onclick="closeToast()">&times;</button>
+        </div>
+        
+        <!-- Página 1: Produtos e Dados Básicos -->
         <div id="page1" class="form-page active">
             <div class="section" id="productSection">
                 <div class="section-title">
-                    <span><i class="fas fa-box"></i> Produto Escolhido</span>
-                    <button type="button" class="btn btn-danger btn-small" id="clearProductBtn" onclick="clearProduct()">
-                        <i class="fas fa-trash"></i> Limpar
+                    <span><i class="fas fa-box"></i> Produtos do Pedido</span>
+                    <button type="button" class="btn btn-primary btn-small" id="addProductBtn" onclick="addProductRow()">
+                        <i class="fas fa-plus"></i> Adicionar Produto
                     </button>
                 </div>
                 
@@ -1228,46 +1210,73 @@
                     <p><strong>Frete será calculado após escolha do seu endereço e aparecerá ao final para conferência.</strong></p>
                 </div>
                 
-                <div id="normalProductFields">
-                    <div class="form-group">
-                        <label for="productName">Nome do Produto:</label>
-                        <input type="text" id="productName" class="form-control" placeholder="Digite o nome do produto" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="productPrice">Preço (R$):</label>
-                        <input type="number" id="productPrice" class="form-control" min="0" step="0.01" placeholder="0,00" required>
-                    </div>
-                    
-                    <!-- Gerador de Link (só aparece quando não veio de link) -->
-                    <div id="linkGeneratorSection">
-                        <div class="link-instructions">
-                            <p><strong>📋 Para enviar para cliente:</strong> Preencha acima e clique em "Gerar Link"</p>
+                <div id="productsContainer">
+                    <!-- Primeira linha de produto -->
+                    <div class="product-row" id="productRow1">
+                        <button class="remove-btn" onclick="removeProductRow('productRow1')" style="display: none;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 0.5;">
+                                <label for="productQuantity1">Qtde</label>
+                                <input type="number" id="productQuantity1" class="form-control product-quantity" min="1" value="1" onchange="updateProductsSummary()">
+                            </div>
+                            <div class="form-group" style="flex: 0.8;">
+                                <label for="productCode1">Código</label>
+                                <input type="text" id="productCode1" class="form-control product-code" placeholder="Ex: 060" oninput="updateProductsSummary()">
+                            </div>
+                            <div class="form-group" style="flex: 2;">
+                                <label for="productName1">Descrição</label>
+                                <input type="text" id="productName1" class="form-control product-name" placeholder="Descrição do produto" required oninput="updateProductsSummary()">
+                                <div class="error-text" id="errorProductName1"></div>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label for="productPrice1">Preço (R$)</label>
+                                <input type="number" id="productPrice1" class="form-control product-price" min="0" step="0.01" placeholder="0,00" required onchange="updateProductsSummary()">
+                                <div class="error-text" id="errorProductPrice1"></div>
+                            </div>
                         </div>
-                        <button type="button" class="btn btn-primary" id="generateLinkBtn">Gerar Link para Cliente</button>
+                    </div>
+                </div>
+                
+                <!-- Botão Limpar Tudo (só aparece quando não veio de link) -->
+                <div id="clearAllSection" class="clear-section">
+                    <button type="button" class="clear-all-btn" onclick="clearAllData()">
+                        <i class="fas fa-trash-alt"></i> Limpar Todos os Dados
+                    </button>
+                    <p style="font-size: 12px; color: #666; margin-top: 8px;">
+                        Apaga produtos e todos os dados preenchidos
+                    </p>
+                </div>
+                
+                <!-- Gerador de Link (só aparece quando não veio de link) -->
+                <div id="linkGeneratorSection">
+                    <div class="link-instructions">
+                        <p><strong>📋 Para enviar para cliente:</strong> Preencha os produtos e clique em "Gerar Link"</p>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="generateLinkBtn" onclick="generateClientLink()">Gerar Link para Cliente</button>
+                    
+                    <div id="generatedLinkContainer" class="generated-link-container hidden">
+                        <div class="multi-method-notice">
+                            <p><strong>🎯 Link para enviar ao cliente:</strong></p>
+                            <p>O cliente receberá os produtos já pré-selecionados e não poderá alterá-los.</p>
+                            <p><strong>Validade:</strong> 24 horas ou até ser usado</p>
+                        </div>
                         
-                        <div id="generatedLinkContainer" class="generated-link-container hidden">
-                            <div class="multi-method-notice">
-                                <p><strong>🎯 Link para enviar ao cliente:</strong></p>
-                                <p>O cliente receberá o produto e valor já pré-selecionados e não poderá alterá-los.</p>
-                                <p><strong>Validade:</strong> 24 horas ou até ser usado</p>
-                            </div>
-                            
-                            <h3 class="section-title">Link Gerado:</h3>
-                            <div id="generatedLink" class="generated-link"></div>
-                            <button type="button" id="copyLinkBtn" class="btn copy-btn">Copiar Link</button>
-                            
-                            <div class="alert alert-warning" style="margin-top: 15px;">
-                                <p><strong>Instruções:</strong></p>
-                                <p>1. Copie o link acima</p>
-                                <p>2. Envie para seu cliente via WhatsApp ou outro app</p>
-                                <p>3. O link é válido por 24 horas ou até ser usado</p>
-                                <p>4. O cliente verá produto/valor já preenchidos</p>
-                                <p>5. Ele só precisará completar seus dados e endereço</p>
-                            </div>
-                            
-                            <p class="copy-success" id="copySuccess">✅ Link copiado com sucesso!</p>
+                        <h3 class="section-title">Link Gerado:</h3>
+                        <div id="generatedLink" class="generated-link"></div>
+                        <button type="button" id="copyLinkBtn" class="btn copy-btn" onclick="copyLinkAgain()">Copiar Link</button>
+                        
+                        <div class="alert alert-warning" style="margin-top: 15px;">
+                            <p><strong>Instruções:</strong></p>
+                            <p>1. O link foi copiado automaticamente</p>
+                            <p>2. Envie para seu cliente via WhatsApp ou outro app</p>
+                            <p>3. O link é válido por 24 horas ou até ser usado</p>
+                            <p>4. O cliente verá produtos já preenchidos</p>
+                            <p>5. Ele só precisará completar seus dados e endereço</p>
                         </div>
+                        
+                        <p class="copy-success" id="copySuccess">✅ Link copiado automaticamente!</p>
                     </div>
                 </div>
             </div>
@@ -1278,12 +1287,14 @@
                 <div class="form-group">
                     <label for="buyerName">Nome do Comprador:</label>
                     <input type="text" id="buyerName" class="form-control" required>
+                    <div class="error-text" id="errorBuyerName"></div>
                 </div>
                 
                 <div class="form-group">
                     <label for="buyerPhone">Telefone:</label>
                     <input type="text" id="buyerPhone" class="form-control" placeholder="Ex: (31) 98323-8087 ou 31983238087" required>
                     <small style="color: #666; font-size: 12px;">Qualquer formato de telefone é aceito</small>
+                    <div class="error-text" id="errorBuyerPhone"></div>
                 </div>
             </div>
             
@@ -1297,27 +1308,14 @@
                 <div class="form-group">
                     <label for="giftedName">Nome da Pessoa Presenteada:</label>
                     <input type="text" id="giftedName" class="form-control" required>
+                    <div class="error-text" id="errorGiftedName"></div>
                 </div>
                 
                 <div class="form-group">
                     <label for="giftedPhone">Telefone do Presenteado:</label>
-                    <input type="text" id="giftedPhone" class="form-control" placeholder="Ex: (31) 98323-8087 ou 31983238087">
+                    <input type="text" id="giftedPhone" class="form-control" placeholder="Ex: (31) 98323-8087 ou 31983238087" required>
                     <small style="color: #666; font-size: 12px;">Qualquer formato de telefone é aceito</small>
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2 class="section-title"><i class="fas fa-eye-slash"></i> Confidencialidade</h2>
-                <div class="radio-group">
-                    <p>Quer seu nome aparecendo no seu Pedido?</p>
-                    <div class="radio-option">
-                        <input type="radio" name="anonymous" id="anonymousNo" value="no">
-                        <label for="anonymousNo">Sim, sem problemas</label>
-                    </div>
-                    <div class="radio-option">
-                        <input type="radio" name="anonymous" id="anonymousYes" value="yes">
-                        <label for="anonymousYes">Quero uma compra Anônima</label>
-                    </div>
+                    <div class="error-text" id="errorGiftedPhone"></div>
                 </div>
             </div>
             
@@ -1334,6 +1332,7 @@
                         <label for="pickup">Vou retirar na loja (Bairro São Geraldo - BH)</label>
                     </div>
                 </div>
+                <div class="error-text" id="errorDeliveryType"></div>
             </div>
             
             <div class="nav-buttons">
@@ -1342,9 +1341,9 @@
             </div>
         </div>
         
-        <!-- Página 2: Endereço e Data -->
+        <!-- Página 2: Endereço -->
         <div id="page2" class="form-page">
-            <div id="citySection" class="section">
+            <div class="section">
                 <h2 class="section-title"><i class="fas fa-map-marker-alt"></i> Endereço de Entrega</h2>
                 
                 <div class="form-group">
@@ -1361,9 +1360,9 @@
                         <option value="Vespasiano">Vespasiano</option>
                         <option value="Lagoa Santa">Lagoa Santa</option>
                         <option value="Nova Lima">Nova Lima</option>
-                        <option value="Vila da Serra (Nova Lima)">Vila da Serra (Nova Lima)</option>
                         <option value="other">Outra Localidade ou Cidade</option>
                     </select>
+                    <div class="error-text" id="errorDeliveryCity"></div>
                     <div id="shippingInfo" class="frete-display hidden">
                         <span>Frete: <span id="freteValue" class="frete-value"></span></span>
                     </div>
@@ -1374,11 +1373,13 @@
                         <div class="form-group">
                             <label for="street">Rua:</label>
                             <input type="text" id="street" class="form-control" placeholder="Ex: Rua das Flores" required>
+                            <div class="error-text" id="errorStreet"></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="number">Número:</label>
                             <input type="text" id="number" class="form-control" placeholder="Ex: 123" required>
+                            <div class="error-text" id="errorNumber"></div>
                         </div>
                     </div>
                     
@@ -1391,6 +1392,7 @@
                     <div class="form-group">
                         <label for="neighborhood">Bairro:</label>
                         <input type="text" id="neighborhood" class="form-control" required>
+                        <div class="error-text" id="errorNeighborhood"></div>
                     </div>
                     
                     <div class="form-group">
@@ -1398,10 +1400,6 @@
                         <input type="text" id="referencePoint" class="form-control" placeholder="Ex: Próximo ao supermercado X ou 30130-000">
                     </div>
                 </div>
-            </div>
-            
-            <div id="calendarSection" class="section">
-                <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Data de Entrega</h2>
                 
                 <div id="otherCityMessage" class="alert alert-info hidden">
                     <h3><i class="fas fa-truck-loading"></i> Entrega para Outra Cidade</h3>
@@ -1409,6 +1407,18 @@
                     <p>Os envios são feitos por Correios e Transportadoras, portanto temos prazos aproximados, mas não temos entregas agendadas.</p>
                     <p>Após a confirmação do pagamento, nossa equipe entrará em contato para informar o prazo de entrega estimado.</p>
                 </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button type="button" class="btn btn-secondary" onclick="prevPage(2, 1)"><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button type="button" class="btn btn-primary" onclick="nextPage(2, 3)">Próxima <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Página 3: Calendário -->
+        <div id="page3" class="form-page">
+            <div class="section">
+                <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Data de Entrega/Retirada</h2>
                 
                 <div id="calendarContainer" class="calendar-container">
                     <div class="calendar-nav-container">
@@ -1427,17 +1437,18 @@
                 <div id="timeOptions" class="time-options hidden">
                     <h3 class="section-title"><i class="fas fa-clock"></i> Horários Disponíveis</h3>
                     <div id="deliveryOptionsContainer"></div>
+                    <div class="error-text" id="errorDeliveryTime"></div>
                 </div>
             </div>
             
             <div class="nav-buttons">
-                <button type="button" class="btn btn-secondary" onclick="prevPage(2, 1)"><i class="fas fa-arrow-left"></i> Anterior</button>
-                <button type="button" class="btn btn-primary" onclick="nextPage(2, 3)" id="nextPage2Button" disabled>Próxima <i class="fas fa-arrow-right"></i></button>
+                <button type="button" class="btn btn-secondary" onclick="prevPage(3, 2)"><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button type="button" class="btn btn-primary" onclick="nextPage(3, 4)">Próxima <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
         
-        <!-- Página 3: Cartão de Mensagem -->
-        <div id="page3" class="form-page">
+        <!-- Página 4: Cartão de Mensagem -->
+        <div id="page4" class="form-page">
             <div class="section">
                 <h2 class="section-title"><i class="fas fa-envelope"></i> Cartão de Mensagem</h2>
                 
@@ -1452,43 +1463,105 @@
                         <label for="sendCardNo">Não, não quero cartão</label>
                     </div>
                 </div>
+                <div class="error-text" id="errorSendCard"></div>
                 
-                <div id="cardMessageSection">
+                <!-- Seção que aparece quando NÃO quer cartão -->
+                <div id="noCardSection" class="hidden">
+                    <div class="radio-group">
+                        <p>Como será a compra?</p>
+                        <div class="radio-option">
+                            <input type="radio" name="anonymousNoCard" id="anonymousNoNoCard" value="no" checked>
+                            <label for="anonymousNoNoCard">Sim, sem problemas (nome aparecendo)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="anonymousNoCard" id="anonymousYesNoCard" value="yes">
+                            <label for="anonymousYesNoCard">Quero uma compra Anônima</label>
+                        </div>
+                    </div>
+                    <div class="error-text" id="errorAnonymousNoCard"></div>
+                    
+                    <div id="anonymousNotesNoCard" class="anonymous-notes hidden">
+                        <h4><i class="fas fa-info-circle"></i> Observações importantes para compra anônima:</h4>
+                        <ul>
+                            <li>Informe todas as particularidades para que não tenha falhas na entrega</li>
+                            <li>Como será feita a identificação no endereço?</li>
+                            <li>Alguma informação especial que o entregador deve saber?</li>
+                            <li>Como o presenteado saberá quem enviou?</li>
+                        </ul>
+                        <div class="form-group">
+                            <label for="anonymousNotesTextNoCard">Observações do anonimato (obrigatório):</label>
+                            <textarea id="anonymousNotesTextNoCard" class="form-control" rows="3" placeholder="Descreva todas as informações necessárias para uma entrega perfeita..."></textarea>
+                            <div class="error-text" id="errorAnonymousNotesNoCard"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Seção que aparece quando QUER cartão -->
+                <div id="cardMessageSection" class="hidden">
                     <div class="form-group">
-                        <label for="cardMessage">Escreva o Texto do seu Cartão:</label>
+                        <label for="cardMessage">Escreva o Texto do seu Cartão: (não esqueça de assinar caso não seja anônimo)</label>
                         <textarea id="cardMessage" class="form-control" rows="5" placeholder="Digite sua mensagem aqui..."></textarea>
+                        <div class="error-text" id="errorCardMessage"></div>
                     </div>
                     
                     <div class="radio-group">
                         <p>Você lembrou de assinar seu cartão na mensagem acima?</p>
                         <div class="radio-option">
                             <input type="radio" name="signedCard" value="yes" id="signedCardYes">
-                            <label for="signedCardYes">Sim, assinei</label>
+                            <label for="signedCardYes">Sei que a assinatura deve constar no final da mensagem acima preenchida, e se eu não colocar é porque realmente não quero minha assinatura</label>
+                        </div>
+                    </div>
+                    <div class="error-text" id="errorSignedCard"></div>
+                    
+                    <div class="radio-group">
+                        <p>Como será a compra?</p>
+                        <div class="radio-option">
+                            <input type="radio" name="anonymous" id="anonymousNo" value="no" checked>
+                            <label for="anonymousNo">Sim, sem problemas (nome aparecendo)</label>
                         </div>
                         <div class="radio-option">
-                            <input type="radio" name="signedCard" value="no" id="signedCardNo">
-                            <label for="signedCardNo">Não, não quero assinar</label>
+                            <input type="radio" name="anonymous" id="anonymousYes" value="yes">
+                            <label for="anonymousYes">Quero uma compra Anônima</label>
+                        </div>
+                    </div>
+                    <div class="error-text" id="errorAnonymous"></div>
+                    
+                    <div id="anonymousNotes" class="anonymous-notes hidden">
+                        <h4><i class="fas fa-info-circle"></i> Observações importantes para compra anônima:</h4>
+                        <ul>
+                            <li>Informe todas as particularidades para que não tenha falhas na entrega</li>
+                            <li>Como será feita a identificação no endereço?</li>
+                            <li>Alguma informação especial que o entregador deve saber?</li>
+                            <li>Como o presenteado saberá quem enviou?</li>
+                        </ul>
+                        <div class="form-group">
+                            <label for="anonymousNotesText">Observações do anonimato (obrigatório):</label>
+                            <textarea id="anonymousNotesText" class="form-control" rows="3" placeholder="Descreva todas as informações necessárias para uma entrega perfeita..."></textarea>
+                            <div class="error-text" id="errorAnonymousNotes"></div>
                         </div>
                     </div>
                     
-                    <div class="alert alert-warning">
-                        <p><strong>Termo de Ciência:</strong> Todas as mensagens para o cartão não podem ser corrigidas ou alteradas, por se tratar de algo particular. <strong>Então se atente à gramática.</strong></p>
-                        <div class="radio-option">
+                    <div class="terms-box">
+                        <label>
                             <input type="radio" name="acknowledgeTerms" value="yes" id="acknowledgeTermsYes">
-                            <label for="acknowledgeTermsYes">Sim, estou ciente e concordo</label>
-                        </div>
+                            Termo de Ciência
+                        </label>
+                        <p style="margin-top: 10px; font-size: 13px; color: #666;">
+                            Todas as mensagens para o cartão não podem ser corrigidas ou alteradas, por se tratar de algo particular. <strong>Então se atente à gramática.</strong>
+                        </p>
                     </div>
+                    <div class="error-text" id="errorAcknowledgeTerms"></div>
                 </div>
             </div>
             
             <div class="nav-buttons">
-                <button type="button" class="btn btn-secondary" onclick="prevPage(3, 2)"><i class="fas fa-arrow-left"></i> Anterior</button>
-                <button type="button" class="btn btn-primary" onclick="nextPage(3, 4)">Próxima <i class="fas fa-arrow-right"></i></button>
+                <button type="button" class="btn btn-secondary" onclick="prevPage(4, 3)"><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button type="button" class="btn btn-primary" onclick="nextPage(4, 5)">Próxima <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
         
-        <!-- Página 4: Pagamento e Revisão -->
-        <div id="page4" class="form-page">
+        <!-- Página 5: Pagamento -->
+        <div id="page5" class="form-page">
             <div class="section">
                 <h2 class="section-title"><i class="fas fa-credit-card"></i> Forma de Pagamento</h2>
                 
@@ -1503,6 +1576,7 @@
                         <label for="paymentCreditCard">Link de Cartão de Crédito online (enviaremos o link)</label>
                     </div>
                 </div>
+                <div class="error-text" id="errorPaymentMethod"></div>
             </div>
             
             <div class="section">
@@ -1535,8 +1609,17 @@
                         <label for="foundUsOutro">Outro</label>
                     </div>
                 </div>
+                <div class="error-text" id="errorFoundUs"></div>
             </div>
             
+            <div class="nav-buttons">
+                <button type="button" class="btn btn-secondary" onclick="prevPage(5, 4)"><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button type="button" class="btn btn-primary" onclick="nextPage(5, 6)">Revisar e Enviar <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Página 6: Revisão -->
+        <div id="page6" class="form-page">
             <div class="section">
                 <h2 class="section-title"><i class="fas fa-clipboard-check"></i> Revise seu Pedido</h2>
                 
@@ -1551,25 +1634,16 @@
                     <p><strong>Após enviar seus dados, aparecerão as informações para pagamento.</strong></p>
                 </div>
                 
-                <div class="checkbox-confirm">
-                    <label>
-                        <input type="checkbox" id="confirmData">
-                        <span>Revisei e confirmo que todos os dados estão corretos</span>
-                    </label>
-                </div>
-                
                 <!-- Status de Envio -->
                 <div class="loading" id="loadingSection">
                     <div class="spinner"></div>
                     <p>Enviando dados para a planilha...</p>
                 </div>
-                
-                <div id="statusBox" class="status-box"></div>
             </div>
             
             <div class="nav-buttons">
-                <button type="button" class="btn btn-secondary" onclick="prevPage(4, 3)"><i class="fas fa-arrow-left"></i> Anterior</button>
-                <button type="button" class="btn btn-primary" onclick="submitForm()" id="submitButton" disabled>Enviar Pedido <i class="fas fa-paper-plane"></i></button>
+                <button type="button" class="btn btn-secondary" onclick="prevPage(6, 5)"><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button type="button" class="btn btn-primary" onclick="submitForm()" id="submitButton">Enviar Pedido <i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
         
@@ -1738,8 +1812,6 @@
         let holidays = [];
         let avulsoDates = [];
         let noDeliveryDates = [];
-        let originalTotal = 0;
-        let nightFeeAdded = false;
         let nightFeeAmount = 0;
         let isOtherCity = false;
         let calculatedShipping = 0;
@@ -1749,73 +1821,70 @@
         
         // IMPORTANTE: Controla se veio de link (produto bloqueado)
         let isFromLink = false;
-        let lockedProductName = '';
-        let lockedProductPrice = '';
+        let lockedProducts = [];
         let linkExpiration = null;
         
+        // Sistema de múltiplos produtos
+        let productRows = 1;
+        
         // ============================================
-        // TABELA DE FRETES ATUALIZADA
+        // TABELA DE FRETES
         // ============================================
         const shippingRates = {
             'Belo Horizonte': [
                 { min: 1, max: 119.99, cost: 19.90 },
                 { min: 120, max: 179.99, cost: 14.90 },
-                { min: 179, max: 99999, cost: 0.00 }
+                { min: 180, max: 99999, cost: 0.00 }
             ],
             'Betim': [
                 { min: 1, max: 119.99, cost: 69.90 },
                 { min: 120, max: 179.99, cost: 54.90 },
-                { min: 179, max: 99999, cost: 44.90 }
+                { min: 180, max: 99999, cost: 44.90 }
             ],
             'Contagem': [
                 { min: 1, max: 119.99, cost: 29.90 },
                 { min: 120, max: 179.99, cost: 24.90 },
-                { min: 179, max: 99999, cost: 19.90 }
+                { min: 180, max: 99999, cost: 19.90 }
             ],
             'Sabará': [
                 { min: 1, max: 119.99, cost: 29.90 },
                 { min: 120, max: 179.99, cost: 26.90 },
-                { min: 179, max: 99999, cost: 22.90 }
+                { min: 180, max: 99999, cost: 22.90 }
             ],
             'Ibirité': [
                 { min: 1, max: 119.99, cost: 69.90 },
                 { min: 120, max: 179.99, cost: 59.90 },
-                { min: 179, max: 99999, cost: 44.90 }
+                { min: 180, max: 99999, cost: 44.90 }
             ],
             'Ribeirão das Neves': [
                 { min: 1, max: 119.99, cost: 59.90 },
                 { min: 120, max: 179.99, cost: 54.90 },
-                { min: 179, max: 99999, cost: 44.90 }
+                { min: 180, max: 99999, cost: 44.90 }
             ],
             'Santa Luzia': [
                 { min: 1, max: 119.99, cost: 49.90 },
                 { min: 120, max: 179.99, cost: 44.90 },
-                { min: 179, max: 99999, cost: 39.90 }
+                { min: 180, max: 99999, cost: 39.90 }
             ],
             'Vespasiano': [
                 { min: 1, max: 119.99, cost: 59.90 },
                 { min: 120, max: 179.99, cost: 49.90 },
-                { min: 179, max: 99999, cost: 39.90 }
+                { min: 180, max: 99999, cost: 39.90 }
             ],
             'Lagoa Santa': [
                 { min: 1, max: 119.99, cost: 59.90 },
                 { min: 120, max: 179.99, cost: 54.90 },
-                { min: 179, max: 99999, cost: 44.90 }
+                { min: 180, max: 99999, cost: 44.90 }
             ],
             'Nova Lima': [
                 { min: 1, max: 119.99, cost: 69.90 },
                 { min: 120, max: 179.99, cost: 59.90 },
-                { min: 179, max: 99999, cost: 49.90 }
-            ],
-              'Vila da Serra (Nova Lima)': [
-                { min: 1, max: 119.99, cost: 39.90 },
-                { min: 120, max: 179.99, cost: 29.90 },
-                { min: 179, max: 99999, cost: 19.90 }
+                { min: 180, max: 99999, cost: 49.90 }
             ]
         };
         
         // ============================================
-        // HORÁRIOS ATUALIZADOS
+        // HORÁRIOS
         // ============================================
         const routeTimes = {
             weekday: [
@@ -1846,36 +1915,62 @@
         };
         
         // ============================================
-        // INICIALIZAÇÃO - VERIFICA SE VEIO DE LINK
+        // INICIALIZAÇÃO
         // ============================================
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Sistema de Pedidos inicializado');
+            console.log('🚀 Sistema de Agendamento - Mundo Carol');
             
-            // Verificar se veio de link compartilhado
-            checkIfFromLink();
+            // Verificar sessionStorage primeiro
+            const sessionKey = 'current_session_link';
+            if (sessionStorage.getItem(sessionKey) === 'valid') {
+                loadFromSessionStorage();
+            } else {
+                checkIfFromLink();
+            }
             
-            // Configurar eventos da página 1
-            document.getElementById('productPrice').addEventListener('input', calculateProductTotal);
+            // Configurar eventos
+            setupEventListeners();
             
-            // Configurar eventos da página 2
+            // Carregar dados salvos
+            loadSavedData();
+            
+            // Renderizar calendário inicial
+            renderCalendar(currentMonth, currentYear);
+            
+            // Configurar botões de cartão
+            setupCardSection();
+            
+            // Atualizar resumo inicial
+            updateProductsSummary();
+            
+            // Configurar salvamento automático
+            setupAutoSave();
+            
+            // Ocultar seções desnecessárias se veio de link
+            if (isFromLink) {
+                document.getElementById('productSection').style.display = 'none';
+                document.getElementById('clearAllSection').style.display = 'none';
+            }
+        });
+        
+        function setupEventListeners() {
+            // Cidade
             document.getElementById('deliveryCity').addEventListener('change', function() {
                 selectedCity = this.value;
                 isOtherCity = this.value === 'other';
-                
                 updateCityDisplay();
                 saveData();
             });
             
-            // Configurar eventos do tipo de entrega
+            // Tipo de entrega
             document.querySelectorAll('input[name="deliveryType"]').forEach(radio => {
                 radio.addEventListener('change', function() {
                     currentDeliveryType = this.value;
-                    updateDeliveryTypeDisplay();
                     saveData();
                 });
             });
             
-            // Configurar calendário
+            // Calendário
             document.getElementById('prevMonth').addEventListener('click', function() {
                 currentMonth--;
                 if (currentMonth < 0) {
@@ -1894,196 +1989,455 @@
                 renderCalendar(currentMonth, currentYear);
             });
             
-            // Configurar confirmação
-            document.getElementById('confirmData').addEventListener('change', function() {
-                document.getElementById('submitButton').disabled = !this.checked;
-                saveData();
-            });
-            
-            // Event listeners para gerar link
-            document.getElementById('generateLinkBtn').addEventListener('click', generateClientLink);
-            document.getElementById('copyLinkBtn').addEventListener('click', function() {
-                copyToClipboard(document.getElementById('generatedLink').textContent, 'link');
-            });
-            
-            // Carregar dados salvos
-            loadSavedData();
-            
-            // Renderizar calendário inicial
-            renderCalendar(currentMonth, currentYear);
-            
-            // Inicializar tipo de entrega
-            const deliveryTypeRadio = document.querySelector('input[name="deliveryType"]:checked');
-            if (deliveryTypeRadio) {
-                currentDeliveryType = deliveryTypeRadio.value;
-                updateDeliveryTypeDisplay();
-            }
-            
-            // Esconder cabeçalho nas outras páginas
-            hideHeaderOnOtherPages();
-            
-            // Fechar modal ao clicar fora
-            document.getElementById('errorModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeErrorModal();
-                }
-            });
-            
-            // Fechar modal com ESC
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeErrorModal();
-                }
-            });
-        });
+            // Configurar autosave para todos os inputs
+            setupAutosaveForAllInputs();
+        }
         
-        // ============================================
-        // FUNÇÕES AUXILIARES
-        // ============================================
-        function hideHeaderOnOtherPages() {
-            // Observar mudanças nas páginas
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                        const currentPage = document.querySelector('.form-page.active');
-                        if (currentPage && currentPage.id !== 'page1') {
-                            document.getElementById('mainHeader').style.display = 'none';
-                        } else if (currentPage && currentPage.id === 'page1') {
-                            document.getElementById('mainHeader').style.display = 'block';
-                        }
+        function setupAutosaveForAllInputs() {
+            // Todos os inputs de texto
+            document.querySelectorAll('input[type="text"], input[type="number"], textarea, select').forEach(input => {
+                input.addEventListener('input', saveData);
+                input.addEventListener('change', saveData);
+            });
+            
+            // Todos os radios
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', saveData);
+            });
+        }
+        
+        function setupAutoSave() {
+            // Salvar dados a cada 5 segundos
+            setInterval(saveData, 5000);
+            
+            // Salvar ao sair da página
+            window.addEventListener('beforeunload', saveData);
+        }
+        
+        function setupCardSection() {
+            // Configurar eventos para cartão
+            document.querySelectorAll('input[name="sendCard"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const cardSection = document.getElementById('cardMessageSection');
+                    const noCardSection = document.getElementById('noCardSection');
+                    
+                    if (this.value === 'yes') {
+                        cardSection.classList.remove('hidden');
+                        noCardSection.classList.add('hidden');
+                    } else {
+                        cardSection.classList.add('hidden');
+                        noCardSection.classList.remove('hidden');
                     }
+                    saveData();
                 });
             });
             
-            // Observar todas as páginas
-            document.querySelectorAll('.form-page').forEach(page => {
-                observer.observe(page, { attributes: true });
+            // Configurar eventos para anonimato (com cartão)
+            document.querySelectorAll('input[name="anonymous"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const anonymousNotes = document.getElementById('anonymousNotes');
+                    if (this.value === 'yes') {
+                        anonymousNotes.classList.remove('hidden');
+                    } else {
+                        anonymousNotes.classList.add('hidden');
+                    }
+                    saveData();
+                });
+            });
+            
+            // Configurar eventos para anonimato (sem cartão)
+            document.querySelectorAll('input[name="anonymousNoCard"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const anonymousNotes = document.getElementById('anonymousNotesNoCard');
+                    if (this.value === 'yes') {
+                        anonymousNotes.classList.remove('hidden');
+                    } else {
+                        anonymousNotes.classList.add('hidden');
+                    }
+                    saveData();
+                });
             });
         }
         
-        function clearProduct() {
-            document.getElementById('productName').value = '';
-            document.getElementById('productPrice').value = '';
-            document.getElementById('generatedLinkContainer').classList.add('hidden');
-            hideProductSummary();
+        // ============================================
+        // SISTEMA DE MÚLTIPLOS PRODUTOS
+        // ============================================
+        function addProductRow() {
+            productRows++;
+            const container = document.getElementById('productsContainer');
             
-            // Mostrar mensagem de confirmação
-            showSuccessMessage('✅ Produto limpo com sucesso!');
-        }
-        
-        function showSuccessMessage(message) {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-warning';
-            alertDiv.innerHTML = `<p>${message}</p>`;
-            alertDiv.style.animation = 'fadeIn 0.3s';
+            const newRow = document.createElement('div');
+            newRow.className = 'product-row';
+            newRow.id = `productRow${productRows}`;
             
-            const productSection = document.getElementById('productSection');
-            productSection.insertBefore(alertDiv, productSection.firstChild);
+            newRow.innerHTML = `
+                <button class="remove-btn" onclick="removeProductRow('productRow${productRows}')">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 0.5;">
+                        <label for="productQuantity${productRows}">Qtde</label>
+                        <input type="number" id="productQuantity${productRows}" class="form-control product-quantity" min="1" value="1" onchange="updateProductsSummary()">
+                    </div>
+                    <div class="form-group" style="flex: 0.8;">
+                        <label for="productCode${productRows}">Código</label>
+                        <input type="text" id="productCode${productRows}" class="form-control product-code" placeholder="Ex: 060" oninput="updateProductsSummary()">
+                    </div>
+                    <div class="form-group" style="flex: 2;">
+                        <label for="productName${productRows}">Descrição</label>
+                        <input type="text" id="productName${productRows}" class="form-control product-name" placeholder="Descrição do produto" required oninput="updateProductsSummary()">
+                        <div class="error-text" id="errorProductName${productRows}"></div>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="productPrice${productRows}">Preço (R$)</label>
+                        <input type="number" id="productPrice${productRows}" class="form-control product-price" min="0" step="0.01" placeholder="0,00" required onchange="updateProductsSummary()">
+                        <div class="error-text" id="errorProductPrice${productRows}"></div>
+                    </div>
+                </div>
+            `;
             
-            setTimeout(() => {
-                alertDiv.style.opacity = '0';
-                alertDiv.style.transition = 'opacity 0.5s';
-                setTimeout(() => {
-                    if (alertDiv.parentNode) {
-                        alertDiv.parentNode.removeChild(alertDiv);
-                    }
-                }, 500);
-            }, 3000);
+            container.appendChild(newRow);
+            updateRemoveButtons();
+            updateProductsSummary();
+            saveData();
         }
         
-        function showProductSummary() {
-            document.getElementById('productSummary').classList.remove('hidden');
+        function removeProductRow(rowId) {
+            const row = document.getElementById(rowId);
+            if (row && productRows > 1) {
+                row.remove();
+                productRows--;
+                updateRemoveButtons();
+                updateProductsSummary();
+                saveData();
+            }
         }
         
-        function hideProductSummary() {
-            document.getElementById('productSummary').classList.add('hidden');
+        function updateRemoveButtons() {
+            const rows = document.querySelectorAll('.product-row');
+            const removeButtons = document.querySelectorAll('.remove-btn');
+            
+            removeButtons.forEach(btn => {
+                btn.style.display = rows.length > 1 ? 'block' : 'none';
+            });
         }
         
-        function updateProductSummary() {
-            if (isFromLink) {
-                document.getElementById('summaryProductName').textContent = lockedProductName;
-                document.getElementById('summaryProductPrice').textContent = `R$ ${parseFloat(lockedProductPrice).toFixed(2).replace('.', ',')}`;
-                showProductSummary();
-            } else if (document.getElementById('productName').value && document.getElementById('productPrice').value) {
-                const productName = document.getElementById('productName').value;
-                const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
-                document.getElementById('summaryProductName').textContent = productName;
-                document.getElementById('summaryProductPrice').textContent = `R$ ${productPrice.toFixed(2).replace('.', ',')}`;
-                showProductSummary();
+        function getAllProducts() {
+            const products = [];
+            let total = 0;
+            
+            for (let i = 1; i <= productRows; i++) {
+                const quantity = parseInt(document.getElementById(`productQuantity${i}`)?.value) || 0;
+                const code = document.getElementById(`productCode${i}`)?.value || '';
+                const name = document.getElementById(`productName${i}`)?.value || '';
+                const price = parseFloat(document.getElementById(`productPrice${i}`)?.value) || 0;
+                
+                if (name && price > 0) {
+                    products.push({
+                        quantity,
+                        code,
+                        name,
+                        price,
+                        total: quantity * price
+                    });
+                    total += quantity * price;
+                }
+            }
+            
+            return { products, total };
+        }
+        
+        function updateProductsSummary() {
+            const { products, total } = getAllProducts();
+            
+            // Atualizar resumo para link
+            if (isFromLink || document.getElementById('page1').classList.contains('active')) {
+                updateProductsSummaryDisplay(products);
+            }
+            
+            // Calcular frete se necessário
+            if (selectedCity && selectedCity !== 'other' && currentDeliveryType === 'delivery') {
+                calculateShipping();
+            }
+            
+            saveData();
+        }
+        
+        function updateProductsSummaryDisplay(products) {
+            const productsList = document.getElementById('productsList');
+            const productsSummary = document.getElementById('productsSummary');
+            
+            if (products.length > 0) {
+                let html = '';
+                products.forEach((product, index) => {
+                    html += `
+                        <div class="product-summary-item">
+                            <span>${product.quantity}x ${product.code ? product.code + ' - ' : ''}${product.name}</span>
+                            <span>R$ ${product.total.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                    `;
+                });
+                
+                productsList.innerHTML = html;
+                productsSummary.classList.remove('hidden');
             } else {
-                hideProductSummary();
+                productsSummary.classList.add('hidden');
             }
         }
         
         // ============================================
-        // VERIFICAR SE VEIO DE LINK COMPARTILHADO
+        // FUNÇÃO LIMPAR TUDO
+        // ============================================
+        function clearAllData() {
+            if (confirm('Tem certeza que deseja limpar todos os dados? Isso apagará todos os produtos e informações preenchidas.')) {
+                // Limpar produtos
+                document.getElementById('productsContainer').innerHTML = '';
+                productRows = 1;
+                
+                // Adicionar primeira linha de produto vazia
+                const container = document.getElementById('productsContainer');
+                const newRow = document.createElement('div');
+                newRow.className = 'product-row';
+                newRow.id = `productRow1`;
+                newRow.innerHTML = `
+                    <button class="remove-btn" onclick="removeProductRow('productRow1')" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 0.5;">
+                            <label for="productQuantity1">Qtde</label>
+                            <input type="number" id="productQuantity1" class="form-control product-quantity" min="1" value="1" onchange="updateProductsSummary()">
+                        </div>
+                        <div class="form-group" style="flex: 0.8;">
+                            <label for="productCode1">Código</label>
+                            <input type="text" id="productCode1" class="form-control product-code" placeholder="Ex: 060" oninput="updateProductsSummary()">
+                        </div>
+                        <div class="form-group" style="flex: 2;">
+                            <label for="productName1">Descrição</label>
+                            <input type="text" id="productName1" class="form-control product-name" placeholder="Descrição do produto" required oninput="updateProductsSummary()">
+                            <div class="error-text" id="errorProductName1"></div>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="productPrice1">Preço (R$)</label>
+                            <input type="number" id="productPrice1" class="form-control product-price" min="0" step="0.01" placeholder="0,00" required onchange="updateProductsSummary()">
+                            <div class="error-text" id="errorProductPrice1"></div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(newRow);
+                
+                // Limpar outros campos
+                document.getElementById('buyerName').value = '';
+                document.getElementById('buyerPhone').value = '';
+                document.getElementById('giftedName').value = '';
+                document.getElementById('giftedPhone').value = '';
+                document.getElementById('deliveryCity').value = '';
+                document.getElementById('street').value = '';
+                document.getElementById('number').value = '';
+                document.getElementById('complement').value = '';
+                document.getElementById('neighborhood').value = '';
+                document.getElementById('referencePoint').value = '';
+                document.getElementById('cardMessage').value = '';
+                document.getElementById('anonymousNotesText').value = '';
+                document.getElementById('anonymousNotesTextNoCard').value = '';
+                
+                // Desmarcar radios
+                document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                    radio.checked = false;
+                });
+                
+                // Resetar variáveis
+                selectedDate = null;
+                selectedTime = null;
+                selectedTimeLabel = null;
+                nightFeeAmount = 0;
+                isOtherCity = false;
+                calculatedShipping = 0;
+                selectedCity = '';
+                currentDeliveryType = '';
+                
+                // Resetar calendário
+                currentMonth = new Date().getMonth();
+                currentYear = new Date().getFullYear();
+                renderCalendar(currentMonth, currentYear);
+                
+                // Ocultar seções
+                document.getElementById('cardMessageSection').classList.add('hidden');
+                document.getElementById('noCardSection').classList.add('hidden');
+                document.getElementById('anonymousNotes').classList.add('hidden');
+                document.getElementById('anonymousNotesNoCard').classList.add('hidden');
+                
+                // Limpar localStorage
+                localStorage.removeItem('mundoCarolFormData');
+                if (isFromLink) {
+                    localStorage.removeItem('mundoCarolFormData_link');
+                }
+                
+                // Atualizar display
+                updateProductsSummary();
+                showToast('Todos os dados foram limpos com sucesso!', 'success');
+                
+                // Voltar para primeira página
+                document.querySelectorAll('.form-page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.getElementById('page1').classList.add('active');
+                
+                // Resetar progresso
+                document.querySelectorAll('.progress-step').forEach(step => {
+                    step.classList.remove('active', 'completed');
+                });
+                document.getElementById('step1').classList.add('active');
+            }
+        }
+        
+        // ============================================
+        // LINK COMPARTILHADO (FORMATO CURTO)
         // ============================================
         function checkIfFromLink() {
             const urlParams = new URLSearchParams(window.location.search);
-            const product = urlParams.get('product');
-            const price = urlParams.get('price');
+            const productsData = urlParams.get('p');
             const timestamp = urlParams.get('t');
-            const used = urlParams.get('used');
             
-            if (product && price) {
-                // Verificar se o link expirou
+            if (productsData) {
+                // Verificar se expirou
                 if (timestamp) {
                     const linkTime = parseInt(timestamp);
                     const now = Date.now();
                     const hoursDiff = (now - linkTime) / (1000 * 60 * 60);
                     
-                    if (hoursDiff > 24 || used === 'true') {
-                        // Link expirado ou já usado
+                    if (hoursDiff > 24) {
                         showExpiredMessage();
                         return;
                     }
                 }
                 
-                // Verificar se já foi usado (marcado no localStorage)
-                const linkKey = `link_used_${product}_${price}_${timestamp}`;
-                if (localStorage.getItem(linkKey) === 'true') {
+                // Marcar como válido
+                sessionStorage.setItem('current_session_link', 'valid');
+                isFromLink = true;
+                
+                // Decodificar produtos (formato curto)
+                try {
+                    lockedProducts = decodeShortProducts(productsData);
+                    sessionStorage.setItem('link_products', productsData);
+                    sessionStorage.setItem('link_timestamp', timestamp || '');
+                    setupFromLink();
+                    
+                } catch (error) {
+                    console.error('Erro ao decodificar produtos:', error);
                     showExpiredMessage();
-                    return;
                 }
                 
-                // Veio de link válido - bloquear produto
-                isFromLink = true;
-                lockedProductName = decodeURIComponent(product);
-                lockedProductPrice = decodeURIComponent(price);
-                linkExpiration = timestamp ? parseInt(timestamp) + (24 * 60 * 60 * 1000) : null;
-                
-                // Marcar como usado no localStorage
-                localStorage.setItem(linkKey, 'true');
-                
-                console.log('📌 Carregado de link válido:', lockedProductName, lockedProductPrice);
-                
-                // Ocultar botão limpar
-                document.getElementById('clearProductBtn').style.display = 'none';
-                
-                // Ocultar campos de produto e gerador de link
-                document.getElementById('normalProductFields').style.display = 'none';
-                document.getElementById('linkGeneratorSection').style.display = 'none';
-                
-                // Preencher campos (readonly)
-                document.getElementById('productName').value = lockedProductName;
-                document.getElementById('productPrice').value = lockedProductPrice;
-                
-                // Tornar campos somente leitura
-                document.getElementById('productName').readOnly = true;
-                document.getElementById('productPrice').readOnly = true;
-                
-                // Estilizar campos como bloqueados
-                document.getElementById('productName').style.backgroundColor = '#f8f9fa';
-                document.getElementById('productName').style.cursor = 'not-allowed';
-                document.getElementById('productPrice').style.backgroundColor = '#f8f9fa';
-                document.getElementById('productPrice').style.cursor = 'not-allowed';
-                
-                // Atualizar resumo do produto
-                updateProductSummary();
-                
-                // Calcular total inicial
-                calculateProductTotal();
+            } else {
+                sessionStorage.removeItem('current_session_link');
             }
+        }
+        
+        function decodeShortProducts(shortData) {
+            // Formato: 2x050-asdfa-10-00-3x080adfasdfasdfa-50-00
+            const products = [];
+            const parts = shortData.split('-');
+            
+            for (let i = 0; i < parts.length; i += 4) {
+                if (i + 3 < parts.length) {
+                    const qtyCode = parts[i]; // Ex: 2x050
+                    const qtyCodeMatch = qtyCode.match(/(\d+)x(\d*)/);
+                    
+                    if (qtyCodeMatch) {
+                        const quantity = parseInt(qtyCodeMatch[1]);
+                        const code = qtyCodeMatch[2] || '';
+                        const name = parts[i + 1];
+                        const price = parseFloat(parts[i + 2] + '.' + parts[i + 3]);
+                        
+                        products.push({
+                            quantity,
+                            code,
+                            name,
+                            price,
+                            total: quantity * price
+                        });
+                    }
+                }
+            }
+            
+            return products;
+        }
+        
+        function encodeProductsForLink(products) {
+            // Formato curto: 2x050-asdfa-10-00-3x080adfasdfasdfa-50-00
+            let encoded = '';
+            
+            products.forEach((product, index) => {
+                if (index > 0) encoded += '-';
+                encoded += `${product.quantity}x${product.code || ''}-`;
+                encoded += `${product.name}-`;
+                
+                const priceParts = product.price.toFixed(2).split('.');
+                encoded += `${priceParts[0]}-${priceParts[1]}`;
+            });
+            
+            return encoded;
+        }
+        
+        function loadFromSessionStorage() {
+            const productsData = sessionStorage.getItem('link_products');
+            
+            if (productsData) {
+                try {
+                    lockedProducts = decodeShortProducts(productsData);
+                    isFromLink = true;
+                    setupFromLink();
+                } catch (error) {
+                    console.error('Erro ao carregar produtos:', error);
+                }
+            }
+        }
+        
+        function setupFromLink() {
+            console.log('📌 Carregado de link:', lockedProducts);
+            
+            // Ocultar botão de adicionar produto
+            document.getElementById('addProductBtn').style.display = 'none';
+            document.getElementById('linkGeneratorSection').style.display = 'none';
+            document.getElementById('clearAllSection').style.display = 'none';
+            document.getElementById('productsContainer').innerHTML = '';
+            productRows = 0;
+            
+            // Adicionar produtos bloqueados
+            lockedProducts.forEach((product, index) => {
+                productRows++;
+                const container = document.getElementById('productsContainer');
+                
+                const newRow = document.createElement('div');
+                newRow.className = 'product-row';
+                newRow.id = `productRow${productRows}`;
+                newRow.style.backgroundColor = '#f8f9fa';
+                
+                newRow.innerHTML = `
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 0.5;">
+                            <label for="productQuantity${productRows}">Qtde</label>
+                            <input type="number" id="productQuantity${productRows}" class="form-control product-quantity" min="1" value="${product.quantity}" readonly style="background: #e9ecef;">
+                        </div>
+                        <div class="form-group" style="flex: 0.8;">
+                            <label for="productCode${productRows}">Código</label>
+                            <input type="text" id="productCode${productRows}" class="form-control product-code" value="${product.code || ''}" readonly style="background: #e9ecef;">
+                        </div>
+                        <div class="form-group" style="flex: 2;">
+                            <label for="productName${productRows}">Descrição</label>
+                            <input type="text" id="productName${productRows}" class="form-control product-name" value="${product.name}" readonly style="background: #e9ecef;">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="productPrice${productRows}">Preço (R$)</label>
+                            <input type="number" id="productPrice${productRows}" class="form-control product-price" value="${product.price}" readonly style="background: #e9ecef;">
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(newRow);
+            });
+            
+            updateProductsSummary();
         }
         
         function showExpiredMessage() {
@@ -2099,44 +2453,62 @@
         }
         
         // ============================================
-        // GERADOR DE LINKS COM VALIDADE
+        // GERADOR DE LINKS (FORMATO CURTO)
         // ============================================
         function generateClientLink() {
-            const productName = document.getElementById('productName').value;
-            const productPrice = document.getElementById('productPrice').value;
+            const { products, total } = getAllProducts();
             
-            if (!productName || !productPrice) {
-                showModalError('Por favor, preencha todos os campos do produto antes de gerar o link.');
+            if (products.length === 0) {
+                showToast('Adicione pelo menos um produto antes de gerar o link', 'warning');
                 return;
             }
             
-            // Codificar os valores para URL
-            const encodedProductName = encodeURIComponent(productName);
-            const encodedProductPrice = encodeURIComponent(productPrice);
+            // Codificar produtos no formato curto
+            const encodedProducts = encodeProductsForLink(products);
             const timestamp = Date.now();
             
-            // Criar URL com parâmetros (incluindo timestamp para validade)
+            // Criar URL com parâmetros curtos
             const baseUrl = window.location.origin + window.location.pathname;
-            const clientLink = `${baseUrl}?product=${encodedProductName}&price=${encodedProductPrice}&t=${timestamp}`;
+            const clientLink = `${baseUrl}?p=${encodedProducts}&t=${timestamp}`;
             
             // Mostrar link
             document.getElementById('generatedLink').textContent = clientLink;
             document.getElementById('generatedLinkContainer').classList.remove('hidden');
-            document.getElementById('copySuccess').classList.remove('show');
             
-            // Não fazer scroll, apenas mostrar no lugar atual
-            showSuccessMessage('✅ Link gerado com sucesso! Válido por 24 horas ou até ser usado.');
+            // Copiar automaticamente
+            copyToClipboard(clientLink, 'link');
+            
+            // Mostrar mensagem
+            const copySuccess = document.getElementById('copySuccess');
+            copySuccess.textContent = '✅ Link copiado automaticamente!';
+            copySuccess.classList.add('show');
+            
+            setTimeout(() => {
+                copySuccess.classList.remove('show');
+            }, 5000);
+            
+            showToast('✅ Link gerado e copiado com sucesso!', 'success');
         }
         
-        // Função para copiar para clipboard
+        function copyLinkAgain() {
+            const link = document.getElementById('generatedLink').textContent;
+            if (link) {
+                copyToClipboard(link, 'link');
+                const copySuccess = document.getElementById('copySuccess');
+                copySuccess.textContent = '✅ Link copiado novamente!';
+                copySuccess.classList.add('show');
+                
+                setTimeout(() => {
+                    copySuccess.classList.remove('show');
+                }, 3000);
+            }
+        }
+        
         function copyToClipboard(text, type) {
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text).then(() => {
                     if (type === 'link') {
-                        document.getElementById('copySuccess').classList.add('show');
-                        setTimeout(() => {
-                            document.getElementById('copySuccess').classList.remove('show');
-                        }, 3000);
+                        showToast('Link copiado para a área de transferência!', 'success');
                     }
                 }).catch(err => {
                     copyUsingExecCommand(text, type);
@@ -2159,189 +2531,233 @@
             try {
                 document.execCommand('copy');
                 if (type === 'link') {
-                    document.getElementById('copySuccess').classList.add('show');
-                    setTimeout(() => {
-                        document.getElementById('copySuccess').classList.remove('show');
-                    }, 3000);
+                    showToast('Link copiado para a área de transferência!', 'success');
                 }
             } catch (err) {
-                alert('⚠️ Não foi possível copiar. Por favor, anote: ' + text);
+                showToast('⚠️ Não foi possível copiar. Por favor, anote: ' + text.substring(0, 50) + '...', 'warning');
             } finally {
                 document.body.removeChild(textArea);
             }
         }
         
         // ============================================
-        // MODAL DE ERRO
+        // NOTIFICAÇÕES TOAST
         // ============================================
-        function showModalError(message, errors = []) {
-            const modal = document.getElementById('errorModal');
-            const errorList = document.getElementById('errorList');
+        function showToast(message, type = 'warning') {
+            const toast = document.getElementById('toastNotification');
+            const toastMessage = document.getElementById('toastMessage');
             
-            errorList.innerHTML = '';
+            toastMessage.textContent = message;
+            toast.className = 'toast-notification';
+            toast.classList.add(type);
+            toast.classList.remove('hidden');
             
-            if (errors.length > 0) {
-                errors.forEach(error => {
-                    const li = document.createElement('li');
-                    li.textContent = error;
-                    errorList.appendChild(li);
-                });
-            } else {
-                const li = document.createElement('li');
-                li.textContent = message;
-                errorList.appendChild(li);
-            }
-            
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            // Auto-fechar após 5 segundos
+            setTimeout(() => {
+                closeToast();
+            }, 5000);
         }
         
-        function closeErrorModal() {
-            const modal = document.getElementById('errorModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
+        function closeToast() {
+            document.getElementById('toastNotification').classList.add('hidden');
         }
         
         // ============================================
-        // FUNÇÕES DE NAVEGAÇÃO COM VALIDAÇÃO
+        // NAVEGAÇÃO COM VALIDAÇÃO
         // ============================================
         function nextPage(current, next) {
-            let validationResult = true;
-            let errorMessages = [];
+            clearErrors();
             
-            if (current === 1) {
-                validationResult = validatePage1();
-                if (!validationResult.valid) {
-                    errorMessages = validationResult.errors;
-                    showModalError('Preencha os seguintes campos antes de avançar:', errorMessages);
-                    return;
-                }
-            } else if (current === 2) {
-                validationResult = validatePage2();
-                if (!validationResult.valid) {
-                    errorMessages = validationResult.errors;
-                    showModalError('Preencha os seguintes campos antes de avançar:', errorMessages);
-                    return;
-                }
-            } else if (current === 3) {
-                validationResult = validatePage3();
-                if (!validationResult.valid) {
-                    errorMessages = validationResult.errors;
-                    showModalError('Preencha os seguintes campos antes de avançar:', errorMessages);
-                    return;
-                }
-            } else if (current === 4) {
-                validationResult = validatePage4();
-                if (!validationResult.valid) {
-                    errorMessages = validationResult.errors;
-                    showModalError('Preencha os seguintes campos antes de avançar:', errorMessages);
-                    return;
-                }
+            let validationResult = validatePage(current);
+            if (!validationResult.valid) {
+                showErrors(validationResult.errors);
+                showToast('Preencha todos os campos obrigatórios', 'warning');
+                return;
             }
             
-            if (next === 4) {
-                updateReviewData();
-            }
+            // Atualizar progresso
+            updateProgress(current, next);
             
+            // Ir para próxima página
             document.getElementById(`page${current}`).classList.remove('active');
             document.getElementById(`page${next}`).classList.add('active');
             
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Atualizar revisão na última página
+            if (next === 6) {
+                updateReviewData();
+            }
             
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             saveData();
         }
         
         function prevPage(current, prev) {
             document.getElementById(`page${current}`).classList.remove('active');
             document.getElementById(`page${prev}`).classList.add('active');
-            
+            updateProgress(current, prev, false);
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            
             saveData();
         }
         
-        // ============================================
-        // FUNÇÕES DE VALIDAÇÃO DETALHADA
-        // ============================================
-        function validatePage1() {
-            const errors = [];
+        function updateProgress(current, next, forward = true) {
+            const steps = document.querySelectorAll('.progress-step');
             
-            if (!document.getElementById('productName').value.trim()) {
-                errors.push('Nome do Produto');
+            if (forward) {
+                // Marcar atual como completado e próxima como ativa
+                steps[current - 1].classList.add('completed');
+                steps[current - 1].classList.remove('active');
+                if (next <= steps.length) {
+                    steps[next - 1].classList.add('active');
+                }
+            } else {
+                // Voltar: remover completado da atual
+                steps[current - 1].classList.remove('completed');
+                steps[current - 1].classList.remove('active');
+                steps[prev - 1].classList.add('active');
             }
-            
-            if (!document.getElementById('productPrice').value.trim()) {
-                errors.push('Preço do Produto');
-            }
-            
-            if (!document.getElementById('buyerName').value.trim()) {
-                errors.push('Nome do Comprador');
-            }
-            
-            if (!document.getElementById('buyerPhone').value.trim()) {
-                errors.push('Telefone do Comprador');
-            }
-            
-            if (!document.getElementById('giftedName').value.trim()) {
-                errors.push('Nome do Presenteado');
-            }
-            
-            if (!document.querySelector('input[name="anonymous"]:checked')) {
-                errors.push('Escolha se quer compra anônima ou não');
-            }
-            
-            if (!document.querySelector('input[name="deliveryType"]:checked')) {
-                errors.push('Escolha o tipo de entrega');
-            }
-            
-            return {
-                valid: errors.length === 0,
-                errors: errors
-            };
         }
         
-        function validatePage2() {
+        // ============================================
+        // VALIDAÇÃO COM ERROS VISUAIS
+        // ============================================
+        function validatePage(page) {
             const errors = [];
-            const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
             
-            if (deliveryType === 'delivery') {
-                const city = document.getElementById('deliveryCity').value;
-                if (!city) {
-                    errors.push('Cidade de entrega');
+            if (page === 1) {
+                const { products } = getAllProducts();
+                
+                if (products.length === 0) {
+                    errors.push({ field: 'products', message: 'Adicione pelo menos um produto' });
                 }
                 
-                if (city !== 'other') {
-                    if (!document.getElementById('street').value.trim()) {
-                        errors.push('Rua');
+                // Verificar cada produto
+                products.forEach((product, index) => {
+                    if (!product.name || product.name.trim() === '') {
+                        errors.push({ field: `productName${index + 1}`, message: 'Descrição obrigatória' });
+                    }
+                    if (!product.price || product.price <= 0) {
+                        errors.push({ field: `productPrice${index + 1}`, message: 'Preço obrigatório' });
+                    }
+                });
+                
+                if (!document.getElementById('buyerName').value.trim()) {
+                    errors.push({ field: 'buyerName', message: 'Nome do comprador obrigatório' });
+                }
+                
+                if (!document.getElementById('buyerPhone').value.trim()) {
+                    errors.push({ field: 'buyerPhone', message: 'Telefone obrigatório' });
+                }
+                
+                if (!document.getElementById('giftedName').value.trim()) {
+                    errors.push({ field: 'giftedName', message: 'Nome do presenteado obrigatório' });
+                }
+                
+                if (!document.getElementById('giftedPhone').value.trim()) {
+                    errors.push({ field: 'giftedPhone', message: 'Telefone do presenteado obrigatório' });
+                }
+                
+                if (!document.querySelector('input[name="deliveryType"]:checked')) {
+                    errors.push({ field: 'deliveryType', message: 'Selecione o tipo de entrega' });
+                }
+                
+            } else if (page === 2) {
+                const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
+                
+                if (deliveryType === 'delivery') {
+                    const city = document.getElementById('deliveryCity').value;
+                    if (!city) {
+                        errors.push({ field: 'deliveryCity', message: 'Selecione a cidade' });
                     }
                     
-                    if (!document.getElementById('number').value.trim()) {
-                        errors.push('Número');
-                    }
-                    
-                    if (!document.getElementById('neighborhood').value.trim()) {
-                        errors.push('Bairro');
+                    if (city !== 'other') {
+                        if (!document.getElementById('street').value.trim()) {
+                            errors.push({ field: 'street', message: 'Rua obrigatória' });
+                        }
+                        
+                        if (!document.getElementById('number').value.trim()) {
+                            errors.push({ field: 'number', message: 'Número obrigatório' });
+                        }
+                        
+                        if (!document.getElementById('neighborhood').value.trim()) {
+                            errors.push({ field: 'neighborhood', message: 'Bairro obrigatório' });
+                        }
                     }
                 }
                 
-                if (!isOtherCity && deliveryType === 'delivery') {
+            } else if (page === 3) {
+                const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
+                
+                if (deliveryType === 'pickup') {
                     if (!selectedDate) {
-                        errors.push('Data de entrega');
+                        errors.push({ field: 'deliveryTime', message: 'Selecione uma data' });
                     }
                     
                     if (!document.querySelector('input[name="deliveryTime"]:checked')) {
-                        errors.push('Horário de entrega');
+                        errors.push({ field: 'deliveryTime', message: 'Selecione um horário' });
+                    }
+                } else {
+                    const city = document.getElementById('deliveryCity').value;
+                    if (city !== 'other') {
+                        if (!selectedDate) {
+                            errors.push({ field: 'deliveryTime', message: 'Selecione uma data' });
+                        }
+                        
+                        if (!document.querySelector('input[name="deliveryTime"]:checked')) {
+                            errors.push({ field: 'deliveryTime', message: 'Selecione um horário' });
+                        }
                     }
                 }
-            }
-            
-            if (deliveryType === 'pickup') {
-                if (!selectedDate) {
-                    errors.push('Data de retirada');
+                
+            } else if (page === 4) {
+                if (!document.querySelector('input[name="sendCard"]:checked')) {
+                    errors.push({ field: 'sendCard', message: 'Selecione se quer cartão' });
                 }
                 
-                if (!document.querySelector('input[name="deliveryTime"]:checked')) {
-                    errors.push('Horário de retirada');
+                const sendCard = document.querySelector('input[name="sendCard"]:checked')?.value;
+                if (sendCard === 'yes') {
+                    if (!document.getElementById('cardMessage').value.trim()) {
+                        errors.push({ field: 'cardMessage', message: 'Mensagem do cartão obrigatória' });
+                    }
+                    
+                    if (!document.querySelector('input[name="acknowledgeTerms"]:checked')) {
+                        errors.push({ field: 'acknowledgeTerms', message: 'Aceite o Termo de Ciência' });
+                    }
+                    
+                    if (!document.querySelector('input[name="signedCard"]:checked')) {
+                        errors.push({ field: 'signedCard', message: 'Confirme sobre assinatura' });
+                    }
+                    
+                    if (!document.querySelector('input[name="anonymous"]:checked')) {
+                        errors.push({ field: 'anonymous', message: 'Selecione se quer anônimo' });
+                    }
+                    
+                    const anonymous = document.querySelector('input[name="anonymous"]:checked')?.value;
+                    if (anonymous === 'yes') {
+                        if (!document.getElementById('anonymousNotesText').value.trim()) {
+                            errors.push({ field: 'anonymousNotesText', message: 'Observações do anonimato obrigatórias' });
+                        }
+                    }
+                } else {
+                    // Não quer cartão, mas precisa responder sobre anonimato
+                    if (!document.querySelector('input[name="anonymousNoCard"]:checked')) {
+                        errors.push({ field: 'anonymousNoCard', message: 'Selecione se quer anônimo' });
+                    }
+                    
+                    const anonymous = document.querySelector('input[name="anonymousNoCard"]:checked')?.value;
+                    if (anonymous === 'yes') {
+                        if (!document.getElementById('anonymousNotesTextNoCard').value.trim()) {
+                            errors.push({ field: 'anonymousNotesTextNoCard', message: 'Observações do anonimato obrigatórias' });
+                        }
+                    }
+                }
+                
+            } else if (page === 5) {
+                if (!document.querySelector('input[name="paymentMethod"]:checked')) {
+                    errors.push({ field: 'paymentMethod', message: 'Selecione a forma de pagamento' });
+                }
+                
+                if (!document.querySelector('input[name="foundUs"]:checked')) {
+                    errors.push({ field: 'foundUs', message: 'Nos informe como nos encontrou' });
                 }
             }
             
@@ -2351,146 +2767,70 @@
             };
         }
         
-        function validatePage3() {
-            const errors = [];
-            
-            if (!document.querySelector('input[name="sendCard"]:checked')) {
-                errors.push('Escolha se quer enviar cartão ou não');
-            }
-            
-            const sendCard = document.querySelector('input[name="sendCard"]:checked')?.value;
-            if (sendCard === 'yes') {
-                if (!document.getElementById('cardMessage').value.trim()) {
-                    errors.push('Mensagem do cartão');
+        function showErrors(errors) {
+            errors.forEach(error => {
+                const field = document.getElementById(error.field);
+                const errorElement = document.getElementById(`error${error.field.charAt(0).toUpperCase() + error.field.slice(1)}`);
+                
+                if (field) {
+                    field.classList.add('field-error');
+                    
+                    // Rolar até o primeiro erro
+                    if (errors[0] === error) {
+                        field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
                 }
                 
-                if (!document.querySelector('input[name="signedCard"]:checked')) {
-                    errors.push('Confirme se assinou o cartão');
+                if (errorElement) {
+                    errorElement.textContent = error.message;
+                    errorElement.classList.add('show');
                 }
-            }
-            
-            if (!document.querySelector('input[name="acknowledgeTerms"]:checked')) {
-                errors.push('Aceite os termos de ciência');
-            }
-            
-            return {
-                valid: errors.length === 0,
-                errors: errors
-            };
+            });
         }
         
-        function validatePage4() {
-            const errors = [];
+        function clearErrors() {
+            // Remover classes de erro
+            document.querySelectorAll('.field-error').forEach(el => {
+                el.classList.remove('field-error');
+            });
             
-            if (!document.querySelector('input[name="paymentMethod"]:checked')) {
-                errors.push('Escolha a forma de pagamento');
-            }
-            
-            if (!document.querySelector('input[name="foundUs"]:checked')) {
-                errors.push('Nos informe como nos encontrou');
-            }
-            
-            if (!document.getElementById('confirmData').checked) {
-                errors.push('Confirme que todos os dados estão corretos');
-            }
-            
-            return {
-                valid: errors.length === 0,
-                errors: errors
-            };
+            // Esconder mensagens de erro
+            document.querySelectorAll('.error-text').forEach(el => {
+                el.classList.remove('show');
+            });
         }
         
         // ============================================
-        // FUNÇÕES DE ATUALIZAÇÃO DE DISPLAY
+        // FUNÇÕES DE DISPLAY
         // ============================================
-        function updateDeliveryTypeDisplay() {
-            const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
-            const citySection = document.getElementById('citySection');
-            const calendarSection = document.getElementById('calendarSection');
-            
-            if (deliveryType === 'pickup') {
-                citySection.style.display = 'none';
-                calendarSection.style.display = 'block';
-                calculatedShipping = 0;
-                selectedDate = null;
-                selectedTime = null;
-                isOtherCity = false;
-            } else {
-                citySection.style.display = 'block';
-                calendarSection.style.display = 'block';
-                
-                if (selectedCity && selectedCity !== 'other') {
-                    calculateShipping();
-                }
-            }
-            
-            const nextButton = document.getElementById('nextPage2Button');
-            if (deliveryType === 'pickup') {
-                nextButton.disabled = !(selectedDate && document.querySelector('input[name="deliveryTime"]:checked'));
-            } else if (deliveryType === 'delivery' && isOtherCity) {
-                nextButton.disabled = false;
-            } else if (deliveryType === 'delivery') {
-                nextButton.disabled = true;
-            }
-        }
-        
         function updateCityDisplay() {
             const otherCityMessage = document.getElementById('otherCityMessage');
-            const calendarContainer = document.getElementById('calendarContainer');
-            const timeOptions = document.getElementById('timeOptions');
             const shippingInfo = document.getElementById('shippingInfo');
-            const nextButton = document.getElementById('nextPage2Button');
+            const addressFields = document.getElementById('addressFields');
             
             if (isOtherCity) {
                 otherCityMessage.classList.remove('hidden');
-                calendarContainer.classList.add('hidden');
-                timeOptions.classList.add('hidden');
                 shippingInfo.classList.add('hidden');
+                addressFields.style.display = 'none';
                 calculatedShipping = 0;
-                selectedDate = null;
-                selectedTime = null;
-                selectedTimeLabel = null;
-                if (currentDeliveryType === 'delivery') {
-                    nextButton.disabled = false;
-                }
             } else {
                 otherCityMessage.classList.add('hidden');
-                calendarContainer.classList.remove('hidden');
-                if (selectedCity && currentDeliveryType === 'delivery') {
-                    shippingInfo.classList.remove('hidden');
-                }
-                nextButton.disabled = true;
+                addressFields.style.display = 'block';
                 
                 if (selectedCity && currentDeliveryType === 'delivery') {
+                    shippingInfo.classList.remove('hidden');
                     calculateShipping();
                 }
             }
         }
         
-        // ============================================
-        // FUNÇÕES DE CÁLCULO
-        // ============================================
-        function calculateProductTotal() {
-            const price = parseFloat(document.getElementById('productPrice').value) || 0;
-            originalTotal = price;
-            
-            // Atualizar resumo do produto
-            updateProductSummary();
-            
-            if (selectedCity && selectedCity !== 'other' && currentDeliveryType === 'delivery') {
-                calculateShipping();
-            }
-            
-            saveData();
-        }
-        
         function calculateShipping() {
-            const price = parseFloat(document.getElementById('productPrice').value) || 0;
+            const { total } = getAllProducts();
             const cityRates = shippingRates[selectedCity];
             
             if (cityRates) {
                 for (const rate of cityRates) {
-                    if (price >= rate.min && price <= rate.max) {
+                    if (total >= rate.min && total <= rate.max) {
                         calculatedShipping = rate.cost;
                         document.getElementById('freteValue').textContent = `R$ ${rate.cost.toFixed(2)}`;
                         break;
@@ -2502,55 +2842,16 @@
         }
         
         function getTotalWithShipping() {
-            const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
-            const total = productPrice + calculatedShipping + (nightFeeAmount || 0);
-            return total;
+            const { total } = getAllProducts();
+            return total + calculatedShipping + (nightFeeAmount || 0);
         }
         
-        // IMPORTANTE: Para planilha, taxas são somadas ao frete
         function getShippingForSpreadsheet() {
-            // Retorna frete + taxas para a planilha
             return calculatedShipping + (nightFeeAmount || 0);
         }
         
-        function addNightFee(amount) {
-            nightFeeAmount = amount;
-            nightFeeAdded = true;
-            
-            // CORREÇÃO: Atualizar o botão de próxima página
-            updateNextButtonState();
-            saveData();
-        }
-        
-        function removeNightFee() {
-            nightFeeAmount = 0;
-            nightFeeAdded = false;
-            
-            // CORREÇÃO: Atualizar o botão de próxima página
-            updateNextButtonState();
-            saveData();
-        }
-        
-        // CORREÇÃO: Função para atualizar estado do botão de próxima página
-        function updateNextButtonState() {
-            const nextButton = document.getElementById('nextPage2Button');
-            const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
-            
-            if (deliveryType === 'pickup') {
-                nextButton.disabled = !(selectedDate && document.querySelector('input[name="deliveryTime"]:checked'));
-            } else if (deliveryType === 'delivery' && isOtherCity) {
-                nextButton.disabled = false;
-            } else if (deliveryType === 'delivery') {
-                const street = document.getElementById('street').value.trim();
-                const number = document.getElementById('number').value.trim();
-                const neighborhood = document.getElementById('neighborhood').value.trim();
-                
-                nextButton.disabled = !(street && number && neighborhood && selectedDate && selectedTime);
-            }
-        }
-        
         // ============================================
-        // CALENDÁRIO E HORÁRIOS (COM CORREÇÃO)
+        // CALENDÁRIO E HORÁRIOS
         // ============================================
         function renderCalendar(month, year) {
             const calendar = document.getElementById('calendar');
@@ -2588,31 +2889,14 @@
                 dayElement.textContent = day;
                 
                 const currentDate = new Date(year, month, day);
-                const dateString = currentDate.toISOString().split('T')[0];
-                const monthDay = `${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                
-                let isSpecialDate = specialDates.includes(monthDay);
-                let isHoliday = holidays.some(h => 
-                    h.getDate() === day && h.getMonth() === month && h.getFullYear() === year
-                );
-                let isAvulsoDate = avulsoDates.includes(dateString);
-                let isNoDeliveryDate = noDeliveryDates.some(nd => 
-                    nd.getDate() === day && nd.getMonth() === month && nd.getFullYear() === year
-                );
                 
                 if (currentDate < today) {
-                    dayElement.classList.add('disabled');
-                } else if (isSpecialDate) {
-                    dayElement.classList.add('special-day');
-                } else if (isHoliday) {
-                    dayElement.classList.add('disabled');
-                } else if (isNoDeliveryDate) {
                     dayElement.classList.add('disabled');
                 }
                 
                 if (!dayElement.classList.contains('disabled')) {
                     dayElement.addEventListener('click', function() {
-                        selectDate(currentDate, isSpecialDate, isHoliday, isNoDeliveryDate, isAvulsoDate);
+                        selectDate(currentDate);
                     });
                 }
                 
@@ -2627,7 +2911,7 @@
             }
         }
         
-        function selectDate(date, isSpecialDate, isHoliday, isNoDeliveryDate, isAvulsoDate) {
+        function selectDate(date) {
             selectedDate = date;
             
             document.querySelectorAll('.calendar-day').forEach(day => {
@@ -2641,29 +2925,13 @@
                 }
             });
             
-            if (isNoDeliveryDate) {
-                document.getElementById('noDeliveryMessage').classList.remove('hidden');
-                document.getElementById('timeOptions').classList.add('hidden');
-                document.getElementById('nextPage2Button').disabled = true;
-                return;
-            } else {
-                document.getElementById('noDeliveryMessage').classList.add('hidden');
-                document.getElementById('timeOptions').classList.remove('hidden');
-                
-                if (currentDeliveryType === 'pickup') {
-                    document.getElementById('nextPage2Button').disabled = false;
-                } else if (currentDeliveryType === 'delivery' && !isOtherCity) {
-                    document.getElementById('nextPage2Button').disabled = true;
-                }
-            }
-            
             const dayOfWeek = date.getDay();
             const optionsContainer = document.getElementById('deliveryOptionsContainer');
             optionsContainer.innerHTML = '';
             
             selectedTime = null;
             selectedTimeLabel = null;
-            removeNightFee();
+            nightFeeAmount = 0;
             
             const today = new Date();
             const isToday = date.getDate() === today.getDate() && 
@@ -2675,13 +2943,7 @@
             let routes = [];
             let routeType = '';
             
-            if (isAvulsoDate) {
-                routes = routeTimes.avulso;
-                routeType = 'avulso';
-            } else if (isSpecialDate) {
-                routes = routeTimes.special;
-                routeType = 'special';
-            } else if (dayOfWeek === 0) {
+            if (dayOfWeek === 0) {
                 routes = routeTimes.sunday;
                 routeType = 'sunday';
             } else if (dayOfWeek === 6) {
@@ -2700,28 +2962,6 @@
                     const startTimeInMinutes = startHour * 60 + startMinute;
                     const currentTimeInMinutes = currentHour * 60 + now.getMinutes();
                     const timeUntilStart = startTimeInMinutes - currentTimeInMinutes;
-                    
-                    if (dayOfWeek >= 1 && dayOfWeek <= 5 && currentHour >= 17) {
-                        if (route.start === '07:30') {
-                            const tomorrow = new Date(today);
-                            tomorrow.setDate(tomorrow.getDate() + 1);
-                            if (date.getDate() === tomorrow.getDate()) {
-                                isRouteAvailable = false;
-                            }
-                        }
-                    }
-                    
-                    if (dayOfWeek === 6 && currentHour >= 12) {
-                        if (routeType === 'sunday' || (routeType === 'weekday' && route.start === '07:30')) {
-                            isRouteAvailable = false;
-                        }
-                    }
-                    
-                    if (dayOfWeek === 0) {
-                        if (routeType === 'weekday' && route.start === '07:30') {
-                            isRouteAvailable = false;
-                        }
-                    }
                     
                     if (timeUntilStart < 30) {
                         isRouteAvailable = false;
@@ -2744,7 +2984,6 @@
                 input.dataset.label = route.label;
                 input.dataset.nightfee = route.nightFee || false;
                 input.dataset.fee = route.fee || 0;
-                input.dataset.avulsonightfee = route.avulsoNightFee || false;
                 input.dataset.sundayfee = route.sundayFee || false;
                 
                 const label = document.createElement('label');
@@ -2766,24 +3005,22 @@
                     selectedTimeLabel = this.getAttribute('data-label');
                     
                     const hasNightFee = this.getAttribute('data-nightfee') === 'true';
-                    const hasAvulsoNightFee = this.getAttribute('data-avulsonightfee') === 'true';
                     const hasSundayFee = this.getAttribute('data-sundayfee') === 'true';
                     const feeAmount = parseFloat(this.getAttribute('data-fee')) || 0;
                     
-                    removeNightFee();
+                    nightFeeAmount = 0;
                     
-                    if (hasNightFee || hasAvulsoNightFee || hasSundayFee) {
-                        addNightFee(feeAmount);
+                    if (hasNightFee || hasSundayFee) {
+                        nightFeeAmount = feeAmount;
                     }
                     
-                    // CORREÇÃO: Chamar função de atualização de estado
-                    updateNextButtonState();
                     saveData();
                 });
                 
                 optionsContainer.appendChild(routeElement);
             });
             
+            document.getElementById('timeOptions').classList.remove('hidden');
             saveData();
         }
         
@@ -2793,18 +3030,17 @@
             selectedDate = null;
             selectedTime = null;
             selectedTimeLabel = null;
-            removeNightFee();
+            nightFeeAmount = 0;
             
             document.querySelectorAll('.calendar-day').forEach(day => {
                 day.classList.remove('selected');
             });
             
-            document.getElementById('nextPage2Button').disabled = true;
             saveData();
         }
         
         // ============================================
-        // REVISÃO DE DADOS COM TAXAS SEPARADAS
+        // REVISÃO DE DADOS
         // ============================================
         function updateReviewData() {
             const reviewDiv = document.getElementById('reviewData');
@@ -2830,19 +3066,24 @@
                 });
             };
             
-            // Produto
+            // Produtos
+            const { products, total } = getAllProducts();
+            
             html += '<div class="review-item">';
-            html += '<div class="review-label">Produto</div>';
-            html += `<div class="review-value">${document.getElementById('productName').value}</div>`;
+            html += '<div class="review-label">Produtos</div>';
+            html += '<div class="review-value">';
+            products.forEach((product, index) => {
+                html += `${product.quantity}x ${product.code ? product.code + ' - ' : ''}${product.name}<br>`;
+            });
+            html += '</div>';
             html += '</div>';
             
             // Valores
-            const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
             const finalTotal = getTotalWithShipping();
             
             html += '<div class="review-item">';
-            html += '<div class="review-label">Valor do Produto</div>';
-            html += `<div class="review-value">${formatCurrency(productPrice)}</div>`;
+            html += '<div class="review-label">Valor dos Produtos</div>';
+            html += `<div class="review-value">${formatCurrency(total)}</div>`;
             html += '</div>';
             
             // Frete
@@ -2854,20 +3095,12 @@
                 html += '</div>';
             }
             
-            // Taxas adicionais (mostradas separadamente na revisão)
-            if (nightFeeAdded) {
+            // Taxas
+            if (nightFeeAmount > 0) {
                 html += '<div class="review-item">';
                 html += '<div class="review-label taxa-label">Taxa Noturna/Domingo</div>';
                 html += `<div class="review-value taxa-item">${formatCurrency(nightFeeAmount)}</div>`;
                 html += '</div>';
-                
-                // Adiciona descrição da taxa
-                if (selectedTimeLabel) {
-                    html += '<div class="review-item" style="font-size: 12px; color: #666;">';
-                    html += '<div class="review-label"></div>';
-                    html += `<div class="review-value">(${selectedTimeLabel})</div>`;
-                    html += '</div>';
-                }
             }
             
             // Dados pessoais
@@ -2922,14 +3155,30 @@
                 html += '<div class="review-label">Cartão</div>';
                 html += `<div class="review-value">${document.getElementById('cardMessage').value.substring(0, 50)}...</div>`;
                 html += '</div>';
+                
+                const anonymous = document.querySelector('input[name="anonymous"]:checked')?.value;
+                if (anonymous === 'yes') {
+                    html += '<div class="review-item">';
+                    html += '<div class="review-label">Compra Anônima</div>';
+                    html += `<div class="review-value">Sim - ${document.getElementById('anonymousNotesText').value.substring(0, 50)}...</div>`;
+                    html += '</div>';
+                }
+            } else {
+                const anonymous = document.querySelector('input[name="anonymousNoCard"]:checked')?.value;
+                if (anonymous === 'yes') {
+                    html += '<div class="review-item">';
+                    html += '<div class="review-label">Compra Anônima</div>';
+                    html += `<div class="review-value">Sim - ${document.getElementById('anonymousNotesTextNoCard').value.substring(0, 50)}...</div>`;
+                    html += '</div>';
+                }
             }
             
             reviewDiv.innerHTML = html;
             
             // Total
             totalHtml += '<div class="total-item">';
-            totalHtml += '<span>Produto:</span>';
-            totalHtml += `<span>${formatCurrency(productPrice)}</span>`;
+            totalHtml += '<span>Produtos:</span>';
+            totalHtml += `<span>${formatCurrency(total)}</span>`;
             totalHtml += '</div>';
             
             if (deliveryType === 'delivery' && !isOtherCity && calculatedShipping > 0) {
@@ -2939,7 +3188,7 @@
                 totalHtml += '</div>';
             }
             
-            if (nightFeeAdded) {
+            if (nightFeeAmount > 0) {
                 totalHtml += '<div class="total-item">';
                 totalHtml += '<span>Taxa noturna/domingo:</span>';
                 totalHtml += `<span>${formatCurrency(nightFeeAmount)}</span>`;
@@ -2956,7 +3205,7 @@
         }
         
         // ============================================
-        // SISTEMA DE ENVIO PARA PLANILHA
+        // ENVIO PARA PLANILHA
         // ============================================
         function prepareExcelData() {
             const now = new Date();
@@ -2966,22 +3215,38 @@
                                      `${now.getHours().toString().padStart(2, '0')}:` +
                                      `${now.getMinutes().toString().padStart(2, '0')}`;
             
-            const productName = document.getElementById('productName').value;
-            const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
+            const { products, total } = getAllProducts();
             const buyerName = document.getElementById('buyerName').value;
             const buyerPhone = document.getElementById('buyerPhone').value;
             const giftedName = document.getElementById('giftedName').value;
             const giftedPhone = document.getElementById('giftedPhone').value;
             const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
-            const anonymous = document.querySelector('input[name="anonymous"]:checked')?.value;
+            const anonymous = document.querySelector('input[name="anonymous"]:checked')?.value || 
+                             document.querySelector('input[name="anonymousNoCard"]:checked')?.value;
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
             const foundUs = document.querySelector('input[name="foundUs"]:checked')?.value;
             const sendCard = document.querySelector('input[name="sendCard"]:checked')?.value;
             const cardMessage = document.getElementById('cardMessage').value || '';
+            const anonymousNotes = document.getElementById('anonymousNotesText').value || 
+                                  document.getElementById('anonymousNotesTextNoCard').value || '';
             
-            const formattedPrice = productPrice.toFixed(2).replace('.', ',');
+            const formattedPrice = total.toFixed(2).replace('.', ',');
             
-            // IMPORTANTE: Frete + taxas juntos para a planilha
+            // Formatar produtos para planilha
+            let productsDescription = '';
+            let kitsCount = 0;
+            const productDetails = [];
+            
+            products.forEach(product => {
+                kitsCount += product.quantity;
+                productDetails.push(`${product.quantity}x ${product.code || ''} ${product.name}`);
+            });
+            
+            const productSummary = `(${kitsCount} Kits ${products.map(p => `${p.quantity}x${p.code}`).join(' ')})`;
+            const productDetailsStr = productDetails.join(' / ');
+            productsDescription = `${productSummary} - ${productDetailsStr}`;
+            
+            // Frete + taxas
             const totalShipping = getShippingForSpreadsheet();
             const formattedShipping = totalShipping.toFixed(2).replace('.', ',');
             
@@ -2994,7 +3259,7 @@
             if (deliveryType === 'delivery' && !isOtherCity) {
                 const street = document.getElementById('street').value;
                 const number = document.getElementById('number').value;
-                streetNumber = `${street}, ${number}`; // Juntos na planilha
+                streetNumber = `${street}, ${number}`;
                 complement = document.getElementById('complement').value || '';
                 neighborhood = document.getElementById('neighborhood').value;
                 city = selectedCity;
@@ -3025,14 +3290,13 @@
             data[0] = formattedDateTime;
             data[1] = buyerName;
             data[2] = buyerPhone;
-            data[3] = productName;
+            data[3] = productsDescription;
             data[4] = formattedPrice;
-            data[5] = formattedShipping; // Frete + taxas juntos
+            data[5] = formattedShipping;
             data[6] = 'FORMULÁRIO MANUAL';
-            data[7] = '';
             data[8] = giftedName;
             data[9] = giftedPhone;
-            data[10] = streetNumber; // Rua e número juntos
+            data[10] = streetNumber;
             data[11] = complement;
             data[12] = neighborhood;
             data[13] = city;
@@ -3045,8 +3309,16 @@
                 data[18] = cardMessage.replace(/\n/g, ' ');
             }
             
+            if (anonymous === 'yes') {
+                data[48] = 'ANONIMO';
+                if (anonymousNotes) {
+                    data[49] = anonymousNotes.replace(/\n/g, ' ');
+                }
+            } else {
+                data[48] = 'Sim';
+            }
+            
             data[46] = foundUs || '';
-            data[48] = anonymousText;
             data[32] = paymentText;
             
             return data;
@@ -3055,9 +3327,10 @@
         async function submitForm() {
             if (isSubmitting) return;
             
-            const validation = validateForm();
+            const validation = validatePage(6);
             if (!validation.valid) {
-                showModalError('Por favor, corrija os erros no formulário:', validation.errors);
+                showErrors(validation.errors);
+                showToast('Corrija os erros antes de enviar', 'warning');
                 return;
             }
             
@@ -3070,7 +3343,6 @@
             
             try {
                 const excelData = prepareExcelData();
-                console.log('📦 Dados para envio:', excelData);
                 
                 const result = await enviarDadosParaPlanilha(excelData);
                 
@@ -3079,9 +3351,8 @@
                     submitBtn.classList.add('btn-success');
                     
                     setTimeout(() => {
-                        document.getElementById('page4').classList.remove('active');
+                        document.getElementById('page6').classList.remove('active');
                         
-                        // Mostrar página correta baseada no método de pagamento
                         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
                         if (paymentMethod === 'pix') {
                             document.getElementById('thankYouPagePix').classList.add('active');
@@ -3104,7 +3375,7 @@
                 
             } catch (error) {
                 console.error('❌ Erro no envio:', error);
-                showModalError(`Erro: ${error.message || 'Falha na conexão'}`);
+                showToast(`Erro: ${error.message || 'Falha na conexão'}`, 'warning');
                 submitBtn.disabled = false;
                 isSubmitting = false;
             } finally {
@@ -3134,7 +3405,6 @@
                 }
                 
                 const data = await response.json();
-                console.log('📦 Resposta:', data);
                 
                 return {
                     success: data.status === 'sucesso',
@@ -3156,7 +3426,6 @@
         async function enviarDadosAlternativo(dados) {
             return new Promise((resolve) => {
                 setTimeout(() => {
-                    console.log('⚠️ Método alternativo:', dados);
                     resolve({
                         success: true,
                         message: 'Dados enviados - Verifique a planilha'
@@ -3166,7 +3435,7 @@
         }
         
         // ============================================
-        // PÁGINAS DE SUCESSO E PAGAMENTO
+        // PÁGINAS DE SUCESSO
         // ============================================
         function showPaymentConfirmation(type) {
             const paymentMethod = type;
@@ -3187,21 +3456,25 @@
             html += `<div class="review-value">${buyerName}</div>`;
             html += '</div>';
             
+            const { products, total } = getAllProducts();
+            
             html += '<div class="review-item">';
-            html += '<div class="review-label">Produto</div>';
-            html += `<div class="review-value">${document.getElementById('productName').value}</div>`;
+            html += '<div class="review-label">Produtos</div>';
+            html += '<div class="review-value">';
+            products.forEach((product, index) => {
+                html += `${product.quantity}x ${product.code ? product.code + ' - ' : ''}${product.name}<br>`;
+            });
+            html += '</div>';
             html += '</div>';
             
-            const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
             const totalShipping = getShippingForSpreadsheet();
-            const total = getTotalWithShipping();
+            const finalTotal = getTotalWithShipping();
             
             html += '<div class="review-item">';
-            html += '<div class="review-label">Valor</div>';
-            html += `<div class="review-value">${formatCurrency(productPrice)}</div>`;
+            html += '<div class="review-label">Valor Produtos</div>';
+            html += `<div class="review-value">${formatCurrency(total)}</div>`;
             html += '</div>';
             
-            // Frete + taxas juntos na exibição também
             if (totalShipping > 0) {
                 html += '<div class="review-item">';
                 html += '<div class="review-label">Frete + Taxas</div>';
@@ -3211,7 +3484,7 @@
             
             html += '<div class="review-item total-final">';
             html += '<div class="review-label"><strong>TOTAL</strong></div>';
-            html += `<div class="review-value"><strong>${formatCurrency(total)}</strong></div>`;
+            html += `<div class="review-value"><strong>${formatCurrency(finalTotal)}</strong></div>`;
             html += '</div>';
             
             paymentDetailsDiv.innerHTML = html;
@@ -3272,15 +3545,18 @@
         function sendWhatsAppMessage(paymentType) {
             const buyerName = document.getElementById('buyerName').value;
             const buyerPhone = document.getElementById('buyerPhone').value;
-            const productName = document.getElementById('productName').value;
+            const { products } = getAllProducts();
             const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
             
             let message = `*NOVO PEDIDO - Mundo Carol*%0A%0A`;
             message += `*Cliente:* ${buyerName}%0A`;
             message += `*Telefone:* ${buyerPhone}%0A`;
-            message += `*Produto:* ${productName}%0A`;
+            message += `*Produtos:*%0A`;
             
-            // Cidade
+            products.forEach((product, index) => {
+                message += `${product.quantity}x ${product.code ? product.code + ' - ' : ''}${product.name}%0A`;
+            });
+            
             if (deliveryType === 'delivery' && !isOtherCity && selectedCity) {
                 message += `*Cidade:* ${selectedCity}%0A`;
             } else if (deliveryType === 'delivery' && isOtherCity) {
@@ -3289,14 +3565,12 @@
                 message += `*Cidade:* Retirada BH%0A`;
             }
             
-            // Data e hora
             if (selectedDate && selectedTimeLabel) {
                 const formattedDate = selectedDate.toLocaleDateString('pt-BR');
                 message += `*Data:* ${formattedDate}%0A`;
                 message += `*Horário:* ${selectedTimeLabel}%0A`;
             }
             
-            // Forma de pagamento
             if (paymentType === 'pix') {
                 message += `*Pagamento:* PIX%0A`;
             } else if (paymentType === 'card') {
@@ -3305,22 +3579,30 @@
             
             message += `%0AFormulário enviado com sucesso!`;
             
-            const phone = WHATSAPP_NUMBER;
-            window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
         }
         
         // ============================================
-        // SALVAR E CARREGAR DADOS
+        // SALVAR E CARREGAR DADOS (MELHORADO)
         // ============================================
         function saveData() {
+            // Se for de link, salvar em um localStorage separado
+            const storageKey = isFromLink ? 'mundoCarolFormData_link' : 'mundoCarolFormData';
+            
+            const { products } = getAllProducts();
+            
             const formData = {
-                productName: document.getElementById('productName').value,
-                productPrice: document.getElementById('productPrice').value,
+                isFromLink: isFromLink,
+                linkProducts: isFromLink ? lockedProducts : [],
+                products: products,
                 buyerName: document.getElementById('buyerName').value,
                 buyerPhone: document.getElementById('buyerPhone').value,
                 giftedName: document.getElementById('giftedName').value,
                 giftedPhone: document.getElementById('giftedPhone').value,
-                anonymous: document.querySelector('input[name="anonymous"]:checked')?.value,
+                anonymous: document.querySelector('input[name="anonymous"]:checked')?.value || 
+                          document.querySelector('input[name="anonymousNoCard"]:checked')?.value,
+                anonymousNotes: document.getElementById('anonymousNotesText').value || 
+                               document.getElementById('anonymousNotesTextNoCard').value,
                 deliveryType: document.querySelector('input[name="deliveryType"]:checked')?.value,
                 deliveryCity: document.getElementById('deliveryCity').value,
                 street: document.getElementById('street').value,
@@ -3333,32 +3615,83 @@
                 selectedDate: selectedDate ? selectedDate.toISOString() : null,
                 selectedTime: selectedTime,
                 selectedTimeLabel: selectedTimeLabel,
-                nightFeeAdded: nightFeeAdded,
                 nightFeeAmount: nightFeeAmount,
                 sendCard: document.querySelector('input[name="sendCard"]:checked')?.value,
                 cardMessage: document.getElementById('cardMessage').value,
                 signedCard: document.querySelector('input[name="signedCard"]:checked')?.value,
+                acknowledgeTerms: document.querySelector('input[name="acknowledgeTerms"]:checked')?.value,
                 paymentMethod: document.querySelector('input[name="paymentMethod"]:checked')?.value,
                 foundUs: document.querySelector('input[name="foundUs"]:checked')?.value,
-                confirmData: document.getElementById('confirmData').checked
+                productRows: productRows,
+                currentPage: document.querySelector('.form-page.active')?.id?.replace('page', '') || '1'
             };
             
-            localStorage.setItem('mundoCarolFormData', JSON.stringify(formData));
+            // Salvar valores individuais dos produtos
+            for (let i = 1; i <= productRows; i++) {
+                formData[`productQuantity${i}`] = document.getElementById(`productQuantity${i}`)?.value || '';
+                formData[`productCode${i}`] = document.getElementById(`productCode${i}`)?.value || '';
+                formData[`productName${i}`] = document.getElementById(`productName${i}`)?.value || '';
+                formData[`productPrice${i}`] = document.getElementById(`productPrice${i}`)?.value || '';
+            }
+            
+            localStorage.setItem(storageKey, JSON.stringify(formData));
+            
+            // 🔥 Também salvar timestamp do último autosave
+            localStorage.setItem('lastAutosave', Date.now());
         }
         
         function loadSavedData() {
-            const savedData = localStorage.getItem('mundoCarolFormData');
+            // Verificar se há dados salvos (para links ou fluxo normal)
+            const storageKey = isFromLink ? 'mundoCarolFormData_link' : 'mundoCarolFormData';
+            const savedData = localStorage.getItem(storageKey);
+            
             if (!savedData) return;
             
             try {
                 const data = JSON.parse(savedData);
                 
-                // Só preenche se não tiver sido pré-carregado por link
-                if (!isFromLink) {
-                    document.getElementById('productName').value = data.productName || '';
-                    document.getElementById('productPrice').value = data.productPrice || '';
+                // Restaurar produtos (apenas se não for de link)
+                if (data.products && Array.isArray(data.products) && !isFromLink) {
+                    document.getElementById('productsContainer').innerHTML = '';
+                    productRows = 0;
+                    
+                    data.products.forEach((product, index) => {
+                        productRows++;
+                        const container = document.getElementById('productsContainer');
+                        
+                        const newRow = document.createElement('div');
+                        newRow.className = 'product-row';
+                        newRow.id = `productRow${productRows}`;
+                        
+                        newRow.innerHTML = `
+                            <button class="remove-btn" onclick="removeProductRow('productRow${productRows}')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="form-row">
+                                <div class="form-group" style="flex: 0.5;">
+                                    <label for="productQuantity${productRows}">Qtde</label>
+                                    <input type="number" id="productQuantity${productRows}" class="form-control product-quantity" min="1" value="${product.quantity}" onchange="updateProductsSummary()">
+                                </div>
+                                <div class="form-group" style="flex: 0.8;">
+                                    <label for="productCode${productRows}">Código</label>
+                                    <input type="text" id="productCode${productRows}" class="form-control product-code" value="${product.code || ''}" oninput="updateProductsSummary()">
+                                </div>
+                                <div class="form-group" style="flex: 2;">
+                                    <label for="productName${productRows}">Descrição</label>
+                                    <input type="text" id="productName${productRows}" class="form-control product-name" value="${product.name}" required oninput="updateProductsSummary()">
+                                </div>
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="productPrice${productRows}">Preço (R$)</label>
+                                    <input type="number" id="productPrice${productRows}" class="form-control product-price" value="${product.price}" required onchange="updateProductsSummary()">
+                                </div>
+                            </div>
+                        `;
+                        
+                        container.appendChild(newRow);
+                    });
                 }
                 
+                // Restaurar outros dados
                 document.getElementById('buyerName').value = data.buyerName || '';
                 document.getElementById('buyerPhone').value = data.buyerPhone || '';
                 document.getElementById('giftedName').value = data.giftedName || '';
@@ -3370,23 +3703,22 @@
                 document.getElementById('neighborhood').value = data.neighborhood || '';
                 document.getElementById('referencePoint').value = data.referencePoint || '';
                 document.getElementById('cardMessage').value = data.cardMessage || '';
-                document.getElementById('confirmData').checked = data.confirmData || false;
-                
-                if (data.confirmData) {
-                    document.getElementById('submitButton').disabled = false;
-                }
+                document.getElementById('anonymousNotesText').value = data.anonymousNotes || '';
+                document.getElementById('anonymousNotesTextNoCard').value = data.anonymousNotes || '';
                 
                 selectedCity = data.selectedCity || '';
                 calculatedShipping = data.calculatedShipping || 0;
-                nightFeeAdded = data.nightFeeAdded || false;
                 nightFeeAmount = data.nightFeeAmount || 0;
                 currentDeliveryType = data.deliveryType || '';
                 
+                // Restaurar radios
                 const radios = [
                     { name: 'anonymous', value: data.anonymous },
+                    { name: 'anonymousNoCard', value: data.anonymous },
                     { name: 'deliveryType', value: data.deliveryType },
                     { name: 'sendCard', value: data.sendCard },
                     { name: 'signedCard', value: data.signedCard },
+                    { name: 'acknowledgeTerms', value: data.acknowledgeTerms },
                     { name: 'paymentMethod', value: data.paymentMethod },
                     { name: 'foundUs', value: data.foundUs }
                 ];
@@ -3394,12 +3726,39 @@
                 radios.forEach(radio => {
                     if (radio.value) {
                         const element = document.querySelector(`input[name="${radio.name}"][value="${radio.value}"]`);
-                        if (element) element.checked = true;
+                        if (element) {
+                            element.checked = true;
+                            
+                            // Ativar seções conforme necessário
+                            if (radio.name === 'sendCard') {
+                                const cardSection = document.getElementById('cardMessageSection');
+                                const noCardSection = document.getElementById('noCardSection');
+                                
+                                if (radio.value === 'yes') {
+                                    cardSection.classList.remove('hidden');
+                                    noCardSection.classList.add('hidden');
+                                } else {
+                                    cardSection.classList.add('hidden');
+                                    noCardSection.classList.remove('hidden');
+                                }
+                            }
+                            
+                            if ((radio.name === 'anonymous' || radio.name === 'anonymousNoCard') && radio.value === 'yes') {
+                                const anonymousNotes = radio.name === 'anonymous' ? 
+                                    document.getElementById('anonymousNotes') : 
+                                    document.getElementById('anonymousNotesNoCard');
+                                if (anonymousNotes) {
+                                    anonymousNotes.classList.remove('hidden');
+                                }
+                            }
+                        }
                     }
                 });
                 
-                if (data.sendCard === 'yes') {
-                    document.getElementById('acknowledgeTermsYes').checked = true;
+                // Definir padrão para anonimato se não tiver valor
+                if (!data.anonymous && !isFromLink) {
+                    document.getElementById('anonymousNo').checked = true;
+                    document.getElementById('anonymousNoNoCard').checked = true;
                 }
                 
                 if (data.selectedDate) {
@@ -3411,17 +3770,28 @@
                     currentYear = selectedDate.getFullYear();
                 }
                 
-                calculateProductTotal();
-                if (selectedCity && selectedCity !== 'other' && currentDeliveryType === 'delivery') {
-                    calculateShipping();
-                }
-                
-                if (currentDeliveryType) {
-                    updateDeliveryTypeDisplay();
-                }
+                updateProductsSummary();
+                updateRemoveButtons();
                 
                 if (selectedCity) {
                     updateCityDisplay();
+                }
+                
+                // Restaurar página atual
+                if (data.currentPage) {
+                    const currentPage = parseInt(data.currentPage);
+                    if (currentPage > 1) {
+                        document.querySelectorAll('.form-page').forEach(page => {
+                            page.classList.remove('active');
+                        });
+                        document.getElementById(`page${currentPage}`).classList.add('active');
+                        
+                        // Atualizar progresso
+                        for (let i = 1; i < currentPage; i++) {
+                            document.getElementById(`step${i}`).classList.add('completed');
+                        }
+                        document.getElementById(`step${currentPage}`).classList.add('active');
+                    }
                 }
                 
             } catch (e) {
@@ -3430,36 +3800,31 @@
         }
         
         function clearSavedData() {
-            localStorage.removeItem('mundoCarolFormData');
+            // Limpar localStorage apropriado
+            if (isFromLink) {
+                localStorage.removeItem('mundoCarolFormData_link');
+            } else {
+                localStorage.removeItem('mundoCarolFormData');
+            }
+            
+            // Limpar sessionStorage se for link
+            if (isFromLink) {
+                sessionStorage.removeItem('current_session_link');
+                sessionStorage.removeItem('link_products');
+                sessionStorage.removeItem('link_timestamp');
+            }
             
             selectedDate = null;
             selectedTime = null;
             selectedTimeLabel = null;
             currentMonth = new Date().getMonth();
             currentYear = new Date().getFullYear();
-            originalTotal = 0;
-            nightFeeAdded = false;
             nightFeeAmount = 0;
             isOtherCity = false;
             calculatedShipping = 0;
             selectedCity = '';
             currentDeliveryType = '';
         }
-        
-        function validateForm() {
-            const page1 = validatePage1();
-            if (!page1.valid) return page1;
-            
-            const page2 = validatePage2();
-            if (!page2.valid) return page2;
-            
-            const page3 = validatePage3();
-            if (!page3.valid) return page3;
-            
-            const page4 = validatePage4();
-            return page4;
-        }
     </script>
 </body>
 </html>
-
