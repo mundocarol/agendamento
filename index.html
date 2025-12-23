@@ -420,6 +420,24 @@
             border-color: var(--primary);
         }
         
+        .calendar-day.no-delivery {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+            cursor: not-allowed;
+        }
+        
+        .calendar-day.special-day {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
+        .calendar-day.special-day:hover:not(.disabled) {
+            background: #c3e6cb;
+            border-color: var(--primary);
+        }
+        
         .time-options {
             margin-top: 15px;
         }
@@ -1202,8 +1220,15 @@
         
         <!-- Cabeçalho -->
         <div id="mainHeader" class="header">
-            <h1><i class="fas fa-calendar-alt"></i> Agendamento - Mundo Carol</h1>
-            <p>Preencha os dados abaixo para realizar seu pedido</p>
+            <h1><i class="fas fa-calendar-alt"></i> Agendamento Mundo Carol</h1>
+        </div>
+        
+        <!-- Resumo dos Produtos (sempre visível no topo) -->
+        <div id="productsSummary" class="products-summary">
+            <h3><i class="fas fa-box"></i> Produtos do Pedido</h3>
+            <div id="productsList" class="products-list">
+                <!-- Os produtos serão carregados aqui -->
+            </div>
         </div>
         
         <!-- Indicador de Progresso -->
@@ -1221,12 +1246,6 @@
             <i class="fas fa-exclamation-circle"></i>
             <span id="toastMessage"></span>
             <button class="toast-close" onclick="closeToast()">&times;</button>
-        </div>
-        
-        <!-- Resumo dos Produtos (visível apenas quando veio de link) -->
-        <div id="productsSummary" class="products-summary hidden">
-            <h3><i class="fas fa-box"></i> Produtos Selecionados</h3>
-            <div id="productsList" class="products-list"></div>
         </div>
         
         <!-- Página 1: Produtos e Dados Básicos -->
@@ -1394,6 +1413,7 @@
                         <option value="Vespasiano">Vespasiano</option>
                         <option value="Lagoa Santa">Lagoa Santa</option>
                         <option value="Nova Lima">Nova Lima</option>
+                        <option value="Nova Lima (Vila da Serra)">Nova Lima (Vila da Serra)</option>
                         <option value="other">Outra Localidade ou Cidade</option>
                     </select>
                     <div class="error-text" id="errorDeliveryCity"></div>
@@ -1836,63 +1856,185 @@
         let productRows = 1;
         
         // ============================================
-        // TABELA DE FRETES
+        // TABELA DE FRETES ATUALIZADA
         // ============================================
         const shippingRates = {
             'Belo Horizonte': [
                 { min: 1, max: 119.99, cost: 19.90 },
-                { min: 120, max: 179.99, cost: 14.90 },
-                { min: 180, max: 99999, cost: 0.00 }
+                { min: 120, max: 178.99, cost: 14.90 },
+                { min: 179, max: 99999, cost: 0.00 }
             ],
             'Betim': [
                 { min: 1, max: 119.99, cost: 69.90 },
-                { min: 120, max: 179.99, cost: 54.90 },
-                { min: 180, max: 99999, cost: 44.90 }
+                { min: 120, max: 178.99, cost: 54.90 },
+                { min: 179, max: 99999, cost: 44.90 }
             ],
             'Contagem': [
                 { min: 1, max: 119.99, cost: 29.90 },
-                { min: 120, max: 179.99, cost: 24.90 },
-                { min: 180, max: 99999, cost: 19.90 }
+                { min: 120, max: 178.99, cost: 24.90 },
+                { min: 179, max: 99999, cost: 19.90 }
             ],
             'Sabará': [
                 { min: 1, max: 119.99, cost: 29.90 },
-                { min: 120, max: 179.99, cost: 26.90 },
-                { min: 180, max: 99999, cost: 22.90 }
+                { min: 120, max: 178.99, cost: 26.90 },
+                { min: 179, max: 99999, cost: 22.90 }
             ],
             'Ibirité': [
                 { min: 1, max: 119.99, cost: 69.90 },
-                { min: 120, max: 179.99, cost: 59.90 },
-                { min: 180, max: 99999, cost: 44.90 }
+                { min: 120, max: 178.99, cost: 59.90 },
+                { min: 179, max: 99999, cost: 44.90 }
             ],
             'Ribeirão das Neves': [
                 { min: 1, max: 119.99, cost: 59.90 },
-                { min: 120, max: 179.99, cost: 54.90 },
-                { min: 180, max: 99999, cost: 44.90 }
+                { min: 120, max: 178.99, cost: 54.90 },
+                { min: 179, max: 99999, cost: 44.90 }
             ],
             'Santa Luzia': [
                 { min: 1, max: 119.99, cost: 49.90 },
-                { min: 120, max: 179.99, cost: 44.90 },
-                { min: 180, max: 99999, cost: 39.90 }
+                { min: 120, max: 178.99, cost: 44.90 },
+                { min: 179, max: 99999, cost: 39.90 }
             ],
             'Vespasiano': [
                 { min: 1, max: 119.99, cost: 59.90 },
-                { min: 120, max: 179.99, cost: 49.90 },
-                { min: 180, max: 99999, cost: 39.90 }
+                { min: 120, max: 178.99, cost: 49.90 },
+                { min: 179, max: 99999, cost: 39.90 }
             ],
             'Lagoa Santa': [
                 { min: 1, max: 119.99, cost: 59.90 },
-                { min: 120, max: 179.99, cost: 54.90 },
-                { min: 180, max: 99999, cost: 44.90 }
+                { min: 120, max: 178.99, cost: 54.90 },
+                { min: 179, max: 99999, cost: 44.90 }
             ],
             'Nova Lima': [
                 { min: 1, max: 119.99, cost: 69.90 },
-                { min: 120, max: 179.99, cost: 59.90 },
-                { min: 180, max: 99999, cost: 49.90 }
+                { min: 120, max: 178.99, cost: 59.90 },
+                { min: 179, max: 99999, cost: 49.90 }
+            ],
+            'Nova Lima (Vila da Serra)': [
+                { min: 1, max: 119.99, cost: 39.90 },
+                { min: 120, max: 178.99, cost: 29.90 },
+                { min: 179, max: 99999, cost: 19.90 }
             ]
         };
         
         // ============================================
-        // HORÁRIOS
+        // CONFIGURAÇÃO DE DIAS ESPECIAIS
+        // ============================================
+        // Aqui você pode configurar dias especiais, feriados e dias sem entrega
+        
+        // 1. DIAS SEM ENTREGA - datas em que NÃO haverá entrega nenhuma
+        const noDeliveryDates = [
+            '2024-12-25', // Natal
+            '2024-12-31', // Réveillon (tarde)
+            '2025-01-01', // Ano Novo
+            '2025-04-21', // Tiradentes
+            '2025-05-01', // Dia do Trabalho
+            '2025-09-07', // Independência
+            '2025-10-12', // Nossa Senhora
+            '2025-11-02', // Finados
+            '2025-11-15', // Proclamação República
+            '2026-01-26', // ano novo
+            // Adicione mais datas conforme necessário
+        ];
+        
+        // 2. FERIADOS COM HORÁRIOS ESPECIAIS
+        // Formato: 'YYYY-MM-DD': { tipo: 'feriado', horarios: [...] }
+        const specialDates = {
+            // Exemplo: Véspera de Natal (meio expediente)
+            '2025-12-24': {
+                tipo: 'feriado',
+                descricao: 'Véspera de Natal',
+                horarios: [
+                    { start: '07:30', end: '10:30', label: '07:30 às 10:30' },
+                    { start: '09:30', end: '11:30', label: '09:30 às 11:30' },
+                    { start: '13:30', end: '15:30', label: '13:30 às 15:30' },
+                    { start: '15:30', end: '17:30', label: '15:30 às 17:30' },
+                    { start: '18:30', end: '20:30', label: '18:30 às 20:30' }
+                ]
+            },
+            
+            // Exemplo: Dia das Mães (horário especial)
+            '2025-12-25': {
+                tipo: 'feriado',
+                descricao: 'Natal',
+                horarios: [
+                    { start: '07:30', end: '11:30', label: '07:30 às 11:30' }
+                ]
+            },
+            
+            // Exemplo: Sexta-feira Santa
+            '2026-01-02': {
+                tipo: 'feriado',
+                descricao: 'Sexta-feira Santa',
+                horarios: [
+                    { start: '09:00', end: '11:30', label: '09:00 às 11:30' },
+                    { start: '13:00', end: '15:00', label: '13:00 às 15:00' }
+                ]
+            },
+            
+            // Exemplo: Carnaval
+            '2024-12-26': {
+                tipo: 'feriado',
+                descricao: 'Carnaval',
+                horarios: [
+                    { start: '08:00', end: '10:00', label: '08:00 às 10:00' },
+                    { start: '10:00', end: '12:00', label: '10:00 às 12:00' }
+                ]
+            },
+            
+            // Exemplo: Dia dos Namorados
+            '2025-06-12': {
+                tipo: 'feriado',
+                descricao: 'Dia dos Namorados',
+                horarios: [
+                    { start: '07:00', end: '09:00', label: '07:00 às 09:00' },
+                    { start: '09:00', end: '11:00', label: '09:00 às 11:00' },
+                    { start: '11:00', end: '13:00', label: '11:00 às 13:00' },
+                    { start: '13:00', end: '15:00', label: '13:00 às 15:00' },
+                    { start: '15:00', end: '17:00', label: '15:00 às 17:00' },
+                    { start: '19:00', end: '21:00', label: '19:00 às 21:00 (taxa noturna adicional 19,90)', nightFee: true, fee: 19.90 }
+                ]
+            },
+            
+            // Exemplo: Dia das Crianças
+            '2025-10-12': {
+                tipo: 'feriado',
+                descricao: 'Dia das Crianças',
+                horarios: [
+                    { start: '08:00', end: '10:00', label: '08:00 às 10:00' },
+                    { start: '10:00', end: '12:00', label: '10:00 às 12:00' },
+                    { start: '12:00', end: '14:00', label: '12:00 às 14:00' },
+                    { start: '14:00', end: '16:00', label: '14:00 às 16:00' }
+                ]
+            },
+            
+            // 3. DIAS ATÍPICOS (não são feriados, mas têm horários diferentes)
+            // Exemplo: Black Friday
+            '2024-11-29': {
+                tipo: 'atipico',
+                descricao: 'Black Friday',
+                horarios: [
+                    { start: '07:30', end: '09:30', label: '07:30 às 09:30' },
+                    { start: '09:30', end: '11:30', label: '09:30 às 11:30' },
+                    { start: '13:30', end: '15:30', label: '13:30 às 15:30' },
+                    { start: '15:30', end: '17:30', label: '15:30 às 17:30' },
+                    { start: '17:30', end: '19:30', label: '17:30 às 19:30 (taxa noturna adicional 19,90)', nightFee: true, fee: 19.90 },
+                    { start: '19:30', end: '21:30', label: '19:30 às 21:30 (taxa noturna adicional 19,90)', nightFee: true, fee: 19.90 }
+                ]
+            },
+            
+            // Exemplo: Véspera de Ano Novo
+            '2024-12-31': {
+                tipo: 'atipico',
+                descricao: 'Véspera de Ano Novo',
+                horarios: [
+                    { start: '07:30', end: '09:30', label: '07:30 às 09:30' },
+                    { start: '09:30', end: '11:30', label: '09:30 às 11:30' }
+                ]
+            }
+        };
+        
+        // ============================================
+        // HORÁRIOS REGULARES
         // ============================================
         const routeTimes = {
             weekday: [
@@ -1918,11 +2060,11 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Sistema de Agendamento - Mundo Carol');
             
+            // Verificar se veio de link (DEVE SER A PRIMEIRA COISA)
+            checkIfFromLink();
+            
             // Configurar todos os event listeners
             setupEventListeners();
-            
-            // Verificar se veio de link
-            checkIfFromLink();
             
             // Carregar dados salvos
             loadFormData();
@@ -1970,6 +2112,23 @@
             document.getElementById('nextMonth').addEventListener('click', nextMonth);
             document.getElementById('resetCalendarBtn').addEventListener('click', resetCalendar);
             
+            // Tipo de entrega (para calcular frete)
+            document.querySelectorAll('input[name="deliveryType"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    currentDeliveryType = this.value;
+                    updateCityDisplay();
+                    handleSilentAutosave();
+                });
+            });
+            
+            // Cidade (para calcular frete)
+            document.getElementById('deliveryCity').addEventListener('change', function() {
+                selectedCity = this.value;
+                isOtherCity = this.value === 'other';
+                updateCityDisplay();
+                handleSilentAutosave();
+            });
+            
             // Páginas de sucesso
             document.getElementById('copyPixKeyBtn').addEventListener('click', copyPixKey);
             document.getElementById('copyPixKeyBtn2').addEventListener('click', copyPixKey);
@@ -1991,14 +2150,6 @@
             document.querySelectorAll('#buyerName, #buyerPhone, #giftedName, #giftedPhone, #street, #number, #complement, #neighborhood, #referencePoint, #cardMessage, #anonymousNotesText, #anonymousNotesTextNoCard').forEach(input => {
                 input.addEventListener('input', handleSilentAutosave);
                 input.addEventListener('change', handleSilentAutosave);
-            });
-            
-            // Selects
-            document.getElementById('deliveryCity').addEventListener('change', function() {
-                selectedCity = this.value;
-                isOtherCity = this.value === 'other';
-                updateCityDisplay();
-                handleSilentAutosave();
             });
             
             // Radio buttons
@@ -2198,6 +2349,12 @@
                 nightFeeAmount = data.nightFeeAmount || 0;
                 currentDeliveryType = data.currentDeliveryType || '';
                 
+                // Atualizar display da cidade
+                updateCityDisplay();
+                
+                // Atualizar resumo
+                updateProductsSummary();
+                
                 // Restaurar calendário
                 if (data.selectedDate) {
                     selectedDate = new Date(data.selectedDate);
@@ -2216,10 +2373,6 @@
                         }, 500);
                     }
                 }
-                
-                // Atualizar UI
-                updateCityDisplay();
-                updateProductsSummary();
                 
                 // Mostrar/ocultar seções conforme dados
                 if (data.sendCard === 'yes') {
@@ -2426,7 +2579,7 @@
         }
         
         // ============================================
-        // CALENDÁRIO
+        // CALENDÁRIO COM DIAS ESPECIAIS
         // ============================================
         function prevMonth() {
             currentMonth--;
@@ -2484,12 +2637,26 @@
                 dayElement.textContent = day;
                 
                 const currentDate = new Date(year, month, day);
+                const dateString = formatDateForComparison(currentDate);
                 
-                if (currentDate < today) {
+                // Verificar se é dia sem entrega
+                if (noDeliveryDates.includes(dateString)) {
+                    dayElement.classList.add('no-delivery');
+                    dayElement.classList.add('disabled');
+                    dayElement.title = 'Dia sem entrega';
+                }
+                // Verificar se é dia especial (feriado ou atípico)
+                else if (specialDates[dateString]) {
+                    dayElement.classList.add('special-day');
+                    const specialInfo = specialDates[dateString];
+                    dayElement.title = `${specialInfo.descricao} - Horários especiais`;
+                }
+                // Dias normais que já passaram
+                else if (currentDate < today) {
                     dayElement.classList.add('disabled');
                 }
                 
-                if (!dayElement.classList.contains('disabled')) {
+                if (!dayElement.classList.contains('disabled') && !dayElement.classList.contains('no-delivery')) {
                     dayElement.addEventListener('click', function() {
                         selectDate(currentDate);
                     });
@@ -2506,8 +2673,25 @@
             }
         }
         
+        function formatDateForComparison(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
         function selectDate(date) {
+            const dateString = formatDateForComparison(date);
+            
+            // Verificar se é dia sem entrega
+            if (noDeliveryDates.includes(dateString)) {
+                document.getElementById('noDeliveryMessage').classList.remove('hidden');
+                document.getElementById('timeOptions').classList.add('hidden');
+                return;
+            }
+            
             selectedDate = date;
+            document.getElementById('noDeliveryMessage').classList.add('hidden');
             
             document.querySelectorAll('.calendar-day').forEach(day => {
                 day.classList.remove('selected');
@@ -2538,7 +2722,20 @@
             let routes = [];
             let routeType = '';
             
-            if (dayOfWeek === 0) {
+            // Verificar se é dia especial
+            if (specialDates[dateString]) {
+                const specialDay = specialDates[dateString];
+                routes = specialDay.horarios;
+                routeType = specialDay.tipo;
+                
+                // Adicionar descrição especial
+                const specialHeader = document.createElement('div');
+                specialHeader.className = 'alert alert-info';
+                specialHeader.innerHTML = `<p><strong>${specialDay.descricao}:</strong> Horários especiais para este dia.</p>`;
+                optionsContainer.appendChild(specialHeader);
+            }
+            // Dias normais
+            else if (dayOfWeek === 0) {
                 routes = routeTimes.sunday;
                 routeType = 'sunday';
             } else if (dayOfWeek === 6) {
@@ -2549,6 +2746,7 @@
                 routeType = 'weekday';
             }
             
+            // Filtrar horários passados se for hoje
             routes = routes.filter(route => {
                 let isRouteAvailable = true;
                 
@@ -2566,54 +2764,61 @@
                 return isRouteAvailable;
             });
             
-            routes.forEach((route, index) => {
-                const routeId = `time${routeType}${index + 1}`;
-                const routeElement = document.createElement('div');
-                routeElement.classList.add('time-option');
-                
-                const input = document.createElement('input');
-                input.type = 'radio';
-                input.name = 'deliveryTime';
-                input.id = routeId;
-                input.value = `${route.start}-${route.end}`;
-                input.dataset.label = route.label;
-                input.dataset.nightfee = route.nightFee || false;
-                input.dataset.fee = route.fee || 0;
-                input.dataset.sundayfee = route.sundayFee || false;
-                
-                const label = document.createElement('label');
-                label.htmlFor = routeId;
-                label.textContent = route.label;
-                label.style.cursor = 'pointer';
-                label.style.marginLeft = '10px';
-                label.style.flex = '1';
-                
-                const container = document.createElement('div');
-                container.style.display = 'flex';
-                container.style.alignItems = 'center';
-                container.appendChild(input);
-                container.appendChild(label);
-                routeElement.appendChild(container);
-                
-                input.addEventListener('change', function() {
-                    selectedTime = this.value;
-                    selectedTimeLabel = this.getAttribute('data-label');
+            if (routes.length === 0) {
+                const noTimesMessage = document.createElement('div');
+                noTimesMessage.className = 'alert alert-warning';
+                noTimesMessage.textContent = 'Não há mais horários disponíveis para hoje. Selecione outra data.';
+                optionsContainer.appendChild(noTimesMessage);
+            } else {
+                routes.forEach((route, index) => {
+                    const routeId = `time${routeType}${index + 1}`;
+                    const routeElement = document.createElement('div');
+                    routeElement.classList.add('time-option');
                     
-                    const hasNightFee = this.getAttribute('data-nightfee') === 'true';
-                    const hasSundayFee = this.getAttribute('data-sundayfee') === 'true';
-                    const feeAmount = parseFloat(this.getAttribute('data-fee')) || 0;
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = 'deliveryTime';
+                    input.id = routeId;
+                    input.value = `${route.start}-${route.end}`;
+                    input.dataset.label = route.label;
+                    input.dataset.nightfee = route.nightFee || false;
+                    input.dataset.fee = route.fee || 0;
+                    input.dataset.sundayfee = route.sundayFee || false;
                     
-                    nightFeeAmount = 0;
+                    const label = document.createElement('label');
+                    label.htmlFor = routeId;
+                    label.textContent = route.label;
+                    label.style.cursor = 'pointer';
+                    label.style.marginLeft = '10px';
+                    label.style.flex = '1';
                     
-                    if (hasNightFee || hasSundayFee) {
-                        nightFeeAmount = feeAmount;
-                    }
+                    const container = document.createElement('div');
+                    container.style.display = 'flex';
+                    container.style.alignItems = 'center';
+                    container.appendChild(input);
+                    container.appendChild(label);
+                    routeElement.appendChild(container);
                     
-                    handleSilentAutosave();
+                    input.addEventListener('change', function() {
+                        selectedTime = this.value;
+                        selectedTimeLabel = this.getAttribute('data-label');
+                        
+                        const hasNightFee = this.getAttribute('data-nightfee') === 'true';
+                        const hasSundayFee = this.getAttribute('data-sundayfee') === 'true';
+                        const feeAmount = parseFloat(this.getAttribute('data-fee')) || 0;
+                        
+                        nightFeeAmount = 0;
+                        
+                        if (hasNightFee || hasSundayFee) {
+                            nightFeeAmount = feeAmount;
+                        }
+                        
+                        handleSilentAutosave();
+                    });
+                    
+                    optionsContainer.appendChild(routeElement);
                 });
-                
-                optionsContainer.appendChild(routeElement);
-            });
+            }
             
             document.getElementById('timeOptions').classList.remove('hidden');
             handleSilentAutosave();
@@ -2647,6 +2852,7 @@
                 shippingInfo.classList.add('hidden');
                 addressFields.style.display = 'none';
                 calculatedShipping = 0;
+                document.getElementById('freteValue').textContent = 'A combinar';
             } else {
                 otherCityMessage.classList.add('hidden');
                 addressFields.style.display = 'block';
@@ -2654,6 +2860,8 @@
                 if (selectedCity && currentDeliveryType === 'delivery') {
                     shippingInfo.classList.remove('hidden');
                     calculateShipping();
+                } else {
+                    shippingInfo.classList.add('hidden');
                 }
             }
         }
@@ -2662,14 +2870,17 @@
             const { total } = getAllProducts();
             const cityRates = shippingRates[selectedCity];
             
-            if (cityRates) {
+            if (cityRates && total > 0) {
                 for (const rate of cityRates) {
                     if (total >= rate.min && total <= rate.max) {
                         calculatedShipping = rate.cost;
-                        document.getElementById('freteValue').textContent = `R$ ${rate.cost.toFixed(2)}`;
+                        document.getElementById('freteValue').textContent = `R$ ${rate.cost.toFixed(2).replace('.', ',')}`;
                         break;
                     }
                 }
+            } else {
+                calculatedShipping = 0;
+                document.getElementById('freteValue').textContent = 'R$ 0,00';
             }
             
             handleSilentAutosave();
@@ -2682,6 +2893,12 @@
             const products = [];
             let total = 0;
             
+            // Se veio de link, usa os produtos bloqueados
+            if (isFromLink && lockedProducts.length > 0) {
+                return { products: lockedProducts, total: lockedProducts.reduce((sum, p) => sum + (p.quantity * p.price), 0) };
+            }
+            
+            // Se não veio de link, lê os produtos do formulário
             for (let i = 1; i <= productRows; i++) {
                 const quantity = parseInt(document.getElementById(`productQuantity${i}`)?.value) || 0;
                 const code = document.getElementById(`productCode${i}`)?.value || '';
@@ -2706,10 +2923,8 @@
         function updateProductsSummary() {
             const { products, total } = getAllProducts();
             
-            // Atualizar resumo quando vier de link
-            if (isFromLink) {
-                updateProductsSummaryDisplay(products);
-            }
+            // Atualizar resumo SEMPRE (para ambos os modos)
+            updateProductsSummaryDisplay(products);
             
             // Calcular frete se necessário
             if (selectedCity && selectedCity !== 'other' && currentDeliveryType === 'delivery') {
@@ -2721,23 +2936,38 @@
         
         function updateProductsSummaryDisplay(products) {
             const productsList = document.getElementById('productsList');
-            const productsSummary = document.getElementById('productsSummary');
             
             if (products.length > 0) {
                 let html = '';
+                let totalGeral = 0;
+                
                 products.forEach((product, index) => {
+                    const produtoTotal = product.quantity * product.price;
+                    totalGeral += produtoTotal;
+                    
                     html += `
                         <div class="product-summary-item">
                             <span>${product.quantity}x ${product.code ? product.code + ' - ' : ''}${product.name}</span>
-                            <span>R$ ${product.total.toFixed(2).replace('.', ',')}</span>
+                            <span>R$ ${produtoTotal.toFixed(2).replace('.', ',')}</span>
                         </div>
                     `;
                 });
                 
+                // Adicionar linha do total
+                html += `
+                    <div class="product-summary-item" style="border-top: 2px solid #28a745; margin-top: 8px; padding-top: 10px; font-weight: bold;">
+                        <span>TOTAL</span>
+                        <span>R$ ${totalGeral.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                `;
+                
                 productsList.innerHTML = html;
-                productsSummary.classList.remove('hidden');
+                
+                // Garantir que o resumo esteja visível
+                document.getElementById('productsSummary').classList.remove('hidden');
             } else {
-                productsSummary.classList.add('hidden');
+                productsList.innerHTML = '<div class="product-summary-item">Nenhum produto selecionado</div>';
+                document.getElementById('productsSummary').classList.remove('hidden');
             }
         }
         
@@ -2782,7 +3012,7 @@
         }
         
         function encodeProductsForLink(products) {
-            // Novo formato: quantidade|codigo|nome|preço-quantidade|codigo|nome|preço
+            // Formato: quantidade|codigo|nome|preço-quantidade|codigo|nome|preço
             let encoded = '';
             
             products.forEach((product, index) => {
@@ -2845,10 +3075,13 @@
             const productsData = urlParams.get('p');
             linkId = urlParams.get('id');
             
-            if (productsData) {
+            console.log('🔍 Verificando URL:', { productsData, linkId });
+            
+            if (productsData && linkId) {
                 // Verificar se já foi usado (salvamos IDs usados no localStorage)
                 const usedLinks = JSON.parse(localStorage.getItem('mundoCarol_used_links') || '[]');
                 if (usedLinks.includes(linkId)) {
+                    console.log('❌ Link já usado:', linkId);
                     showExpiredMessage();
                     return;
                 }
@@ -2859,7 +3092,10 @@
                     const now = Date.now();
                     const hoursDiff = (now - linkTime) / (1000 * 60 * 60);
                     
+                    console.log('⏰ Verificando expiração:', { linkTime, now, hoursDiff });
+                    
                     if (hoursDiff > 24) {
+                        console.log('❌ Link expirado (mais de 24 horas):', hoursDiff);
                         showExpiredMessage();
                         return;
                     }
@@ -2871,77 +3107,40 @@
                 
                 // Decodificar produtos
                 try {
+                    console.log('📦 Decodificando produtos:', productsData);
                     lockedProducts = decodeProductsFromLink(productsData);
+                    console.log('✅ Produtos decodificados:', lockedProducts);
+                    
                     sessionStorage.setItem('link_products', productsData);
                     sessionStorage.setItem('link_id', linkId);
                     setupFromLink();
                     
                 } catch (error) {
-                    console.error('Erro ao decodificar produtos:', error);
+                    console.error('❌ Erro ao decodificar produtos:', error);
                     showExpiredMessage();
                 }
                 
             } else {
                 sessionStorage.removeItem('current_session_link');
+                console.log('📝 Modo normal (não veio de link)');
             }
         }
         
         function setupFromLink() {
-            console.log('📌 Carregado de link:', lockedProducts);
+            console.log('📌 Configurando modo LINK:', lockedProducts);
             
             // Ocultar botão de adicionar produto e seção de produtos
             document.getElementById('productSection').style.display = 'none';
+            document.getElementById('linkGeneratorSection').style.display = 'none';
+            document.getElementById('clearAllSection').style.display = 'none';
             
-            // Mostrar resumo com fundo verde
-            updateProductsSummaryDisplay(lockedProducts);
+            // Atualizar o cabeçalho
+            const header = document.getElementById('mainHeader');
+            header.innerHTML = `
+                <h1><i class="fas fa-calendar-alt"></i> Agendamento Mundo Carol</h1>
+            `;
             
-            // Preencher produtos (apenas para cálculo)
-            productRows = lockedProducts.length;
-            
-            // Limpar container de produtos
-            document.getElementById('productsContainer').innerHTML = '';
-            
-            // Criar produtos bloqueados (não editáveis)
-            lockedProducts.forEach((product, index) => {
-                const container = document.getElementById('productsContainer');
-                
-                const newRow = document.createElement('div');
-                newRow.className = 'product-row product-locked';
-                newRow.id = `productRow${index + 1}`;
-                
-                newRow.innerHTML = `
-                    <h3><i class="fas fa-lock"></i> Produto ${index + 1} (Pré-selecionado)</h3>
-                    <div class="form-row">
-                        <div class="form-group" style="flex: 0.5;">
-                            <label>Qtde</label>
-                            <div class="form-control" style="background: #e9ecef; padding: 12px; border-radius: 8px;">
-                                ${product.quantity}
-                            </div>
-                        </div>
-                        <div class="form-group" style="flex: 0.8;">
-                            <label>Código</label>
-                            <div class="form-control" style="background: #e9ecef; padding: 12px; border-radius: 8px;">
-                                ${product.code || ''}
-                            </div>
-                        </div>
-                        <div class="form-group" style="flex: 2;">
-                            <label>Descrição</label>
-                            <div class="form-control" style="background: #e9ecef; padding: 12px; border-radius: 8px;">
-                                ${product.name}
-                            </div>
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>Preço (R$)</label>
-                            <div class="form-control" style="background: #e9ecef; padding: 12px; border-radius: 8px;">
-                                R$ ${product.price.toFixed(2).replace('.', ',')}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                container.appendChild(newRow);
-            });
-            
+            // Atualizar resumo imediatamente
             updateProductsSummary();
         }
         
@@ -2951,6 +3150,7 @@
                 page.style.display = 'none';
             });
             document.getElementById('mainHeader').style.display = 'none';
+            document.getElementById('productsSummary').style.display = 'none';
             document.getElementById('progressIndicator').style.display = 'none';
         }
         
@@ -2967,11 +3167,31 @@
         
         function getTotalWithShipping() {
             const { total } = getAllProducts();
-            return total + calculatedShipping + (nightFeeAmount || 0);
+            let finalTotal = total;
+            
+            // Adicionar frete se for entrega
+            if (currentDeliveryType === 'delivery' && !isOtherCity) {
+                finalTotal += calculatedShipping;
+            }
+            
+            // Adicionar taxa noturna
+            finalTotal += (nightFeeAmount || 0);
+            
+            return finalTotal;
         }
         
         function getShippingForSpreadsheet() {
-            return calculatedShipping + (nightFeeAmount || 0);
+            let totalShipping = 0;
+            
+            // Adicionar frete se for entrega
+            if (currentDeliveryType === 'delivery' && !isOtherCity) {
+                totalShipping += calculatedShipping;
+            }
+            
+            // Adicionar taxa noturna
+            totalShipping += (nightFeeAmount || 0);
+            
+            return totalShipping;
         }
         
         // ============================================
@@ -3202,18 +3422,22 @@
             // Valores
             const finalTotal = getTotalWithShipping();
             
-            html += '<div class="review-item">';
-            html += '<div class="review-label">Valor dos Produtos</div>';
-            html += `<div class="review-value">${formatCurrency(total)}</div>`;
-            html += '</div>';
+            totalHtml += '<div class="total-item">';
+            totalHtml += '<span>Valor dos Produtos:</span>';
+            totalHtml += `<span>${formatCurrency(total)}</span>`;
+            totalHtml += '</div>';
             
             // Frete
-            const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
-            if (deliveryType === 'delivery' && !isOtherCity && calculatedShipping > 0) {
+            if (currentDeliveryType === 'delivery' && !isOtherCity && calculatedShipping > 0) {
                 html += '<div class="review-item">';
                 html += '<div class="review-label">Frete</div>';
                 html += `<div class="review-value">${formatCurrency(calculatedShipping)}</div>`;
                 html += '</div>';
+                
+                totalHtml += '<div class="total-item">';
+                totalHtml += '<span>Frete:</span>';
+                totalHtml += `<span>${formatCurrency(calculatedShipping)}</span>`;
+                totalHtml += '</div>';
             }
             
             // Taxas
@@ -3222,6 +3446,11 @@
                 html += '<div class="review-label taxa-label">Taxa Noturna/Domingo</div>';
                 html += `<div class="review-value taxa-item">${formatCurrency(nightFeeAmount)}</div>`;
                 html += '</div>';
+                
+                totalHtml += '<div class="total-item">';
+                totalHtml += '<span class="taxa-label">Taxa Noturna/Domingo:</span>';
+                totalHtml += `<span class="taxa-item">${formatCurrency(nightFeeAmount)}</span>`;
+                totalHtml += '</div>';
             }
             
             // Dados pessoais
@@ -3242,7 +3471,7 @@
             // Entrega
             html += '<div class="review-item">';
             html += '<div class="review-label">Entrega</div>';
-            if (deliveryType === 'pickup') {
+            if (currentDeliveryType === 'pickup') {
                 html += '<div class="review-value">Retirada na loja (São Geraldo - BH)</div>';
             } else if (isOtherCity) {
                 html += '<div class="review-value">Outra cidade (prazo a confirmar)</div>';
@@ -3296,26 +3525,7 @@
             
             reviewDiv.innerHTML = html;
             
-            // Total
-            totalHtml += '<div class="total-item">';
-            totalHtml += '<span>Produtos:</span>';
-            totalHtml += `<span>${formatCurrency(total)}</span>`;
-            totalHtml += '</div>';
-            
-            if (deliveryType === 'delivery' && !isOtherCity && calculatedShipping > 0) {
-                totalHtml += '<div class="total-item">';
-                totalHtml += '<span>Frete:</span>';
-                totalHtml += `<span>${formatCurrency(calculatedShipping)}</span>`;
-                totalHtml += '</div>';
-            }
-            
-            if (nightFeeAmount > 0) {
-                totalHtml += '<div class="total-item">';
-                totalHtml += '<span>Taxa noturna/domingo:</span>';
-                totalHtml += `<span>${formatCurrency(nightFeeAmount)}</span>`;
-                totalHtml += '</div>';
-            }
-            
+            // Total final
             totalHtml += '<div class="total-item total-final">';
             totalHtml += '<span><strong>TOTAL:</strong></span>';
             totalHtml += `<span><strong>${formatCurrency(finalTotal)}</strong></span>`;
@@ -3759,6 +3969,10 @@
         
         function closeToast() {
             document.getElementById('toastNotification').classList.add('hidden');
+        }
+        
+        function setupSilentAutosave() {
+            // Já configurado nos event listeners
         }
     </script>
 </body>
