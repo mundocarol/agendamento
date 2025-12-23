@@ -1079,6 +1079,13 @@
             display: flex;
         }
         
+        .obrigatorio-small {
+            font-size: 11px;
+            color: var(--danger);
+            font-weight: normal;
+            margin-left: 5px;
+        }
+        
         @media (max-width: 480px) {
             .header h1 {
                 font-size: 16px;
@@ -1209,10 +1216,11 @@
             <div class="progress-step" id="step6"></div>
         </div>
         
-        <!-- Indicador de Autosave -->
-        <div id="autosaveIndicator" class="autosave-indicator">
-            <i class="fas fa-save"></i>
-            <span>Dados salvos automaticamente</span>
+        <!-- Notificação Toast -->
+        <div id="toastNotification" class="toast-notification hidden">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="toastMessage"></span>
+            <button class="toast-close" onclick="closeToast()">&times;</button>
         </div>
         
         <!-- Resumo dos Produtos (visível apenas na página 1 quando veio de link) -->
@@ -1221,19 +1229,12 @@
             <div id="productsList" class="products-list"></div>
         </div>
         
-        <!-- Notificação Toast -->
-        <div id="toastNotification" class="toast-notification hidden">
-            <i class="fas fa-exclamation-circle"></i>
-            <span id="toastMessage"></span>
-            <button class="toast-close" onclick="closeToast()">&times;</button>
-        </div>
-        
         <!-- Página 1: Produtos e Dados Básicos -->
         <div id="page1" class="form-page active">
             <div class="section" id="productSection">
                 <div class="section-title">
                     <span><i class="fas fa-box"></i> Produtos do Pedido</span>
-                    <button type="button" class="btn btn-primary btn-small" id="addProductBtn" onclick="addProductRow()">
+                    <button type="button" class="btn btn-primary btn-small" id="addProductBtn">
                         <i class="fas fa-plus"></i> Adicionar Produto
                     </button>
                 </div>
@@ -1245,7 +1246,7 @@
                 <div id="productsContainer">
                     <!-- Primeira linha de produto -->
                     <div class="product-row" id="productRow1">
-                        <button class="remove-btn" onclick="removeProductRow('productRow1')" style="display: none;">
+                        <button class="remove-btn" style="display: none;">
                             <i class="fas fa-times"></i>
                         </button>
                         <div class="form-row">
@@ -1258,12 +1259,12 @@
                                 <input type="text" id="productCode1" class="form-control product-code" placeholder="Ex: 060">
                             </div>
                             <div class="form-group" style="flex: 2;">
-                                <label for="productName1">Descrição</label>
+                                <label for="productName1">Descrição <span class="obrigatorio-small">(obrigatório)</span></label>
                                 <input type="text" id="productName1" class="form-control product-name" placeholder="Descrição do produto" required>
                                 <div class="error-text" id="errorProductName1"></div>
                             </div>
                             <div class="form-group" style="flex: 1;">
-                                <label for="productPrice1">Preço (R$)</label>
+                                <label for="productPrice1">Preço (R$) <span class="obrigatorio-small">(obrigatório)</span></label>
                                 <input type="number" id="productPrice1" class="form-control product-price" min="0" step="0.01" placeholder="0,00" required>
                                 <div class="error-text" id="errorProductPrice1"></div>
                             </div>
@@ -1273,7 +1274,7 @@
                 
                 <!-- Botão Limpar Tudo (só aparece quando não veio de link) -->
                 <div id="clearAllSection" class="clear-section">
-                    <button type="button" class="clear-all-btn" onclick="clearAllData()">
+                    <button type="button" class="clear-all-btn" id="clearAllBtn">
                         <i class="fas fa-trash-alt"></i> Limpar Todos os Dados
                     </button>
                     <p style="font-size: 12px; color: #666; margin-top: 8px;">
@@ -1286,7 +1287,7 @@
                     <div class="link-instructions">
                         <p><strong>📋 Para enviar para cliente:</strong> Preencha os produtos e clique em "Gerar Link"</p>
                     </div>
-                    <button type="button" class="btn btn-primary" id="generateLinkBtn" onclick="generateClientLink()">Gerar Link para Cliente</button>
+                    <button type="button" class="btn btn-primary" id="generateLinkBtn">Gerar Link para Cliente</button>
                     
                     <div id="generatedLinkContainer" class="generated-link-container hidden">
                         <div class="multi-method-notice">
@@ -1297,7 +1298,7 @@
                         
                         <h3 class="section-title">Link Gerado:</h3>
                         <div id="generatedLink" class="generated-link"></div>
-                        <button type="button" id="copyLinkBtn" class="btn copy-btn" onclick="copyLinkAgain()">Copiar Link</button>
+                        <button type="button" id="copyLinkBtn" class="btn copy-btn">Copiar Link</button>
                         
                         <div class="alert alert-warning" style="margin-top: 15px;">
                             <p><strong>Instruções:</strong></p>
@@ -1317,13 +1318,13 @@
                 <h2 class="section-title"><i class="fas fa-user"></i> Dados do Comprador</h2>
                 
                 <div class="form-group">
-                    <label for="buyerName">Nome do Comprador:</label>
+                    <label for="buyerName">Nome do Comprador: <span class="obrigatorio-small">(obrigatório)</span></label>
                     <input type="text" id="buyerName" class="form-control" required>
                     <div class="error-text" id="errorBuyerName"></div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="buyerPhone">Telefone:</label>
+                    <label for="buyerPhone">Telefone: <span class="obrigatorio-small">(obrigatório)</span></label>
                     <input type="text" id="buyerPhone" class="form-control" placeholder="Ex: (31) 98323-8087 ou 31983238087" required>
                     <small style="color: #666; font-size: 12px;">Qualquer formato de telefone é aceito</small>
                     <div class="error-text" id="errorBuyerPhone"></div>
@@ -1334,17 +1335,17 @@
                 <h2 class="section-title"><i class="fas fa-user-check"></i> Dados do Presenteado</h2>
                 
                 <div class="alert alert-warning">
-                    <p><strong>Atenção:</strong> Preencha nome e telefone da pessoa presenteada apenas se o presente for para ela. Se for para você (comprador), repita seus dados. Não queremos estragar surpresas!</p>
+                    <p><strong>Atenção:</strong> Preencha nome e telefone da pessoa presenteada apenas se a entrega do presente for para ela. Se a entrega do presente for para você (comprador), repita seus dados. Não queremos estragar surpresas!</p>
                 </div>
                 
                 <div class="form-group">
-                    <label for="giftedName">Nome da Pessoa Presenteada:</label>
+                    <label for="giftedName">Nome da Pessoa Presenteada: <span class="obrigatorio-small">(obrigatório)</span></label>
                     <input type="text" id="giftedName" class="form-control" required>
                     <div class="error-text" id="errorGiftedName"></div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="giftedPhone">Telefone do Presenteado:</label>
+                    <label for="giftedPhone">Telefone do Presenteado: <span class="obrigatorio-small">(obrigatório)</span></label>
                     <input type="text" id="giftedPhone" class="form-control" placeholder="Ex: (31) 98323-8087 ou 31983238087" required>
                     <small style="color: #666; font-size: 12px;">Qualquer formato de telefone é aceito</small>
                     <div class="error-text" id="errorGiftedPhone"></div>
@@ -1352,7 +1353,7 @@
             </div>
             
             <div class="section">
-                <h2 class="section-title"><i class="fas fa-truck"></i> Tipo de Entrega</h2>
+                <h2 class="section-title"><i class="fas fa-truck"></i> Tipo de Entrega <span class="obrigatorio-small">(obrigatório)</span></h2>
                 <div class="radio-group">
                     <p>Confirme se será entrega ou Retirada na Loja</p>
                     <div class="radio-option">
@@ -1368,8 +1369,8 @@
             </div>
             
             <div class="nav-buttons">
-                <button type="button" class="btn btn-secondary" onclick="prevPage(1, 1)" disabled><i class="fas fa-arrow-left"></i> Anterior</button>
-                <button type="button" class="btn btn-primary" onclick="nextPage(1, 2)">Próxima <i class="fas fa-arrow-right"></i></button>
+                <button type="button" class="btn btn-secondary" id="prevPage1" disabled><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button type="button" class="btn btn-primary" id="nextPage1">Próxima <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
         
@@ -1379,7 +1380,7 @@
                 <h2 class="section-title"><i class="fas fa-map-marker-alt"></i> Endereço de Entrega</h2>
                 
                 <div class="form-group">
-                    <label for="deliveryCity">Para qual cidade enviaremos seu pedido?</label>
+                    <label for="deliveryCity">Para qual cidade enviaremos seu pedido? <span class="obrigatorio-small">(obrigatório)</span></label>
                     <select id="deliveryCity" class="form-control" required>
                         <option value="">Selecione sua cidade</option>
                         <option value="Belo Horizonte">Belo Horizonte</option>
@@ -1403,13 +1404,13 @@
                 <div id="addressFields">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="street">Rua:</label>
+                            <label for="street">Rua: <span class="obrigatorio-small">(obrigatório)</span></label>
                             <input type="text" id="street" class="form-control" placeholder="Ex: Rua das Flores" required>
                             <div class="error-text" id="errorStreet"></div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="number">Número:</label>
+                            <label for="number">Número: <span class="obrigatorio-small">(obrigatório)</span></label>
                             <input type="text" id="number" class="form-control" placeholder="Ex: 123" required>
                             <div class="error-text" id="errorNumber"></div>
                         </div>
@@ -1422,7 +1423,7 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="neighborhood">Bairro:</label>
+                        <label for="neighborhood">Bairro: <span class="obrigatorio-small">(obrigatório)</span></label>
                         <input type="text" id="neighborhood" class="form-control" required>
                         <div class="error-text" id="errorNeighborhood"></div>
                     </div>
@@ -1442,15 +1443,15 @@
             </div>
             
             <div class="nav-buttons">
-                <button type="button" class="btn btn-secondary" onclick="prevPage(2, 1)"><i class="fas fa-arrow-left"></i> Anterior</button>
-                <button type="button" class="btn btn-primary" onclick="nextPage(2, 3)">Próxima <i class="fas fa-arrow-right"></i></button>
+                <button type="button" class="btn btn-secondary" id="prevPage2"><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button type="button" class="btn btn-primary" id="nextPage2">Próxima <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
         
         <!-- Página 3: Calendário -->
         <div id="page3" class="form-page">
             <div class="section">
-                <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Data de Entrega/Retirada</h2>
+                <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Data de Entrega/Retirada <span class="obrigatorio-small">(obrigatório)</span></h2>
                 
                 <div id="calendarContainer" class="calendar-container">
                     <div class="calendar-nav-container">
@@ -1463,26 +1464,26 @@
                 
                 <div id="noDeliveryMessage" class="alert alert-warning hidden">
                     <p><strong>Nesse dia não teremos entregas.</strong> Selecione outro dia para conseguir agendar seu pedido.</p>
-                    <button type="button" class="btn btn-secondary" onclick="resetCalendar()">Voltar para opções</button>
+                    <button type="button" class="btn btn-secondary" id="resetCalendarBtn">Voltar para opções</button>
                 </div>
                 
                 <div id="timeOptions" class="time-options hidden">
-                    <h3 class="section-title"><i class="fas fa-clock"></i> Horários Disponíveis</h3>
+                    <h3 class="section-title"><i class="fas fa-clock"></i> Horários Disponíveis <span class="obrigatorio-small">(obrigatório)</span></h3>
                     <div id="deliveryOptionsContainer"></div>
                     <div class="error-text" id="errorDeliveryTime"></div>
                 </div>
             </div>
             
             <div class="nav-buttons">
-                <button type="button" class="btn btn-secondary" onclick="prevPage(3, 2)"><i class="fas fa-arrow-left"></i> Anterior</button>
-                <button type="button" class="btn btn-primary" onclick="nextPage(3, 4)">Próxima <i class="fas fa-arrow-right"></i></button>
+                <button type="button" class="btn btn-secondary" id="prevPage3"><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button type="button" class="btn btn-primary" id="nextPage3">Próxima <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
         
         <!-- Página 4: Cartão de Mensagem -->
         <div id="page4" class="form-page">
             <div class="section">
-                <h2 class="section-title"><i class="fas fa-envelope"></i> Cartão de Mensagem</h2>
+                <h2 class="section-title"><i class="fas fa-envelope"></i> Cartão de Mensagem <span class="obrigatorio-small">(obrigatório)</span></h2>
                 
                 <div class="radio-group">
                     <p>Gostaria de Enviar um Cartão? (Sem custo adicional)</p>
@@ -1500,7 +1501,7 @@
                 <!-- Seção que aparece quando NÃO quer cartão -->
                 <div id="noCardSection" class="hidden">
                     <div class="radio-group">
-                        <p>Sua compra é Normal? Seu nome pode aparecer?</p>
+                        <p>Sua compra é Normal? Seu nome pode aparecer? <span class="obrigatorio-small">(obrigatório)</span></p>
                         <div class="radio-option">
                             <input type="radio" name="anonymousNoCard" id="anonymousNoNoCard" value="no" checked>
                             <label for="anonymousNoNoCard">Sim, sem problemas (nome aparecendo)</label>
@@ -1521,7 +1522,7 @@
                             <li>Como o presenteado saberá quem enviou?</li>
                         </ul>
                         <div class="form-group">
-                            <label for="anonymousNotesTextNoCard">Observações do anonimato (obrigatório):</label>
+                            <label for="anonymousNotesTextNoCard">Observações do anonimato: <span class="obrigatorio-small">(obrigatório)</span></label>
                             <textarea id="anonymousNotesTextNoCard" class="form-control" rows="3" placeholder="Descreva todas as informações necessárias para uma entrega perfeita..."></textarea>
                             <div class="error-text" id="errorAnonymousNotesNoCard"></div>
                         </div>
@@ -1531,13 +1532,13 @@
                 <!-- Seção que aparece quando QUER cartão -->
                 <div id="cardMessageSection" class="hidden">
                     <div class="form-group">
-                        <label for="cardMessage">Escreva o Texto do seu Cartão: (não esqueça de assinar caso não seja anônimo)</label>
+                        <label for="cardMessage">Escreva o Texto do seu Cartão: (não esqueça de assinar caso não seja anônimo) <span class="obrigatorio-small">(obrigatório)</span></label>
                         <textarea id="cardMessage" class="form-control" rows="5" placeholder="Digite sua mensagem aqui..."></textarea>
                         <div class="error-text" id="errorCardMessage"></div>
                     </div>
                     
                     <div class="radio-group">
-                        <p>Você lembrou de assinar seu cartão na mensagem acima?</p>
+                        <p>Você lembrou de assinar seu cartão na mensagem acima? <span class="obrigatorio-small">(obrigatório)</span></p>
                         <div class="radio-option">
                             <input type="radio" name="signedCard" value="yes" id="signedCardYes">
                             <label for="signedCardYes">Sei que a assinatura deve constar no final da mensagem acima preenchida, e se eu não colocar é porque realmente não quero minha assinatura</label>
@@ -1546,7 +1547,7 @@
                     <div class="error-text" id="errorSignedCard"></div>
                     
                     <div class="radio-group">
-                        <p>Como será a compra?</p>
+                        <p>Sua compra é Normal? Seu nome pode aparecer? <span class="obrigatorio-small">(obrigatório)</span></p>
                         <div class="radio-option">
                             <input type="radio" name="anonymous" id="anonymousNo" value="no" checked>
                             <label for="anonymousNo">Sim, sem problemas (nome aparecendo)</label>
@@ -1567,7 +1568,7 @@
                             <li>Como o presenteado saberá quem enviou?</li>
                         </ul>
                         <div class="form-group">
-                            <label for="anonymousNotesText">Observações do anonimato (obrigatório):</label>
+                            <label for="anonymousNotesText">Observações do anonimato: <span class="obrigatorio-small">(obrigatório)</span></label>
                             <textarea id="anonymousNotesText" class="form-control" rows="3" placeholder="Descreva todas as informações necessárias para uma entrega perfeita..."></textarea>
                             <div class="error-text" id="errorAnonymousNotes"></div>
                         </div>
@@ -1576,7 +1577,7 @@
                     <div class="terms-box">
                         <label>
                             <input type="radio" name="acknowledgeTerms" value="yes" id="acknowledgeTermsYes">
-                            Termo de Ciência
+                            Termo de Ciência <span class="obrigatorio-small">(obrigatório)</span>
                         </label>
                         <p style="margin-top: 10px; font-size: 13px; color: #666;">
                             Todas as mensagens para o cartão não podem ser corrigidas ou alteradas, por se tratar de algo particular. <strong>Então se atente à gramática.</strong>
@@ -1587,15 +1588,15 @@
             </div>
             
             <div class="nav-buttons">
-                <button type="button" class="btn btn-secondary" onclick="prevPage(4, 3)"><i class="fas fa-arrow-left"></i> Anterior</button>
-                <button type="button" class="btn btn-primary" onclick="nextPage(4, 5)">Próxima <i class="fas fa-arrow-right"></i></button>
+                <button type="button" class="btn btn-secondary" id="prevPage4"><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button type="button" class="btn btn-primary" id="nextPage4">Próxima <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
         
         <!-- Página 5: Pagamento -->
         <div id="page5" class="form-page">
             <div class="section">
-                <h2 class="section-title"><i class="fas fa-credit-card"></i> Forma de Pagamento</h2>
+                <h2 class="section-title"><i class="fas fa-credit-card"></i> Forma de Pagamento <span class="obrigatorio-small">(obrigatório)</span></h2>
                 
                 <div class="radio-group">
                     <p>Como gostaria de finalizar o pagamento do seu pedido?</p>
@@ -1612,7 +1613,7 @@
             </div>
             
             <div class="section">
-                <h2 class="section-title"><i class="fas fa-search"></i> Como nos encontrou?</h2>
+                <h2 class="section-title"><i class="fas fa-search"></i> Como nos encontrou? <span class="obrigatorio-small">(obrigatório)</span></h2>
                 
                 <div class="radio-group">
                     <p>Nos ajude a melhorar cada vez mais!</p>
@@ -1645,8 +1646,8 @@
             </div>
             
             <div class="nav-buttons">
-                <button type="button" class="btn btn-secondary" onclick="prevPage(5, 4)"><i class="fas fa-arrow-left"></i> Anterior</button>
-                <button type="button" class="btn btn-primary" onclick="nextPage(5, 6)">Revisar e Enviar <i class="fas fa-arrow-right"></i></button>
+                <button type="button" class="btn btn-secondary" id="prevPage5"><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button type="button" class="btn btn-primary" id="nextPage5">Revisar e Enviar <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
         
@@ -1669,13 +1670,13 @@
                 <!-- Status de Envio -->
                 <div class="loading" id="loadingSection">
                     <div class="spinner"></div>
-                    <p>Enviando dados para a planilha...</p>
+                    <p>Enviando dados para Mundo Carol...</p>
                 </div>
             </div>
             
             <div class="nav-buttons">
-                <button type="button" class="btn btn-secondary" onclick="prevPage(6, 5)"><i class="fas fa-arrow-left"></i> Anterior</button>
-                <button type="button" class="btn btn-primary" onclick="submitForm()" id="submitButton">Enviar Pedido <i class="fas fa-paper-plane"></i></button>
+                <button type="button" class="btn btn-secondary" id="prevPage6"><i class="fas fa-arrow-left"></i> Anterior</button>
+                <button type="button" class="btn btn-primary" id="submitButton">Enviar Pedido <i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
         
@@ -1694,14 +1695,12 @@
                     
                     <div class="pix-key-container">
                         <p>Para pagamento imediato, utilize nossa chave PIX (CNPJ):</p>
-                        <div class="pix-key" id="pixKey" onclick="selectPixKey()">10648303000179</div>
-                        <button type="button" class="btn btn-primary" onclick="copyPixKey()">
+                        <div class="pix-key" id="pixKey">10648303000179</div>
+                        <button type="button" class="btn btn-primary" id="copyPixKeyBtn">
                             <i class="fas fa-copy"></i> Copiar Chave PIX
                         </button>
                         <p class="copy-success" id="pixCopySuccess"></p>
                     </div>
-                    
-                   
                     
                     <div id="paymentSummary" class="info-card">
                         <h3><i class="fas fa-file-invoice-dollar"></i> Resumo do Pedido</h3>
@@ -1717,7 +1716,7 @@
                     </div>
                     
                     <!-- Botão WhatsApp -->
-                    <button class="whatsapp-discreto" onclick="sendWhatsAppMessage('pix')">
+                    <button class="whatsapp-discreto" id="whatsappPixBtn">
                         <i class="fab fa-whatsapp"></i> WhatsApp: (31) 98323-8087
                     </button>
                     
@@ -1755,7 +1754,7 @@
                     <div class="payment-option-header">
                         <h3><i class="fas fa-credit-card"></i> Você escolheu pagamento via Link de Cartão</h3>
                         <p>Para receber seu link, clique abaixo e já solicite ao seu atendente</p>
-                        <button class="whatsapp-discreto" onclick="sendWhatsAppMessage('card')" style="margin-top: 15px;">
+                        <button class="whatsapp-discreto" id="whatsappCardBtn" style="margin-top: 15px;">
                             <i class="fab fa-whatsapp"></i> Solicitar Link de Cartão
                         </button>
                     </div>
@@ -1763,14 +1762,12 @@
                     <div class="pix-key-container" style="margin-top: 30px;">
                         <h3><i class="fas fa-qrcode"></i> Ou prefira pagar via PIX agora mesmo:</h3>
                         <p>Para pagamento imediato, utilize nossa chave PIX (CNPJ):</p>
-                        <div class="pix-key" id="pixKey2" onclick="selectPixKey()">10648303000179</div>
-                        <button type="button" class="btn btn-primary" onclick="copyPixKey()">
+                        <div class="pix-key" id="pixKey2">10648303000179</div>
+                        <button type="button" class="btn btn-primary" id="copyPixKeyBtn2">
                             <i class="fas fa-copy"></i> Copiar Chave PIX
                         </button>
                         <p class="copy-success" id="pixCopySuccess2"></p>
                     </div>
-                    
-                   
                     
                     <div id="paymentSummaryCard" class="info-card">
                         <h3><i class="fas fa-file-invoice-dollar"></i> Resumo do Pedido</h3>
@@ -1822,10 +1819,6 @@
         let selectedTimeLabel = null;
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
-        let specialDates = ['03-08', '06-12', '12-25'];
-        let holidays = [];
-        let avulsoDates = [];
-        let noDeliveryDates = [];
         let nightFeeAmount = 0;
         let isOtherCity = false;
         let calculatedShipping = 0;
@@ -1837,6 +1830,7 @@
         let isFromLink = false;
         let lockedProducts = [];
         let linkExpiration = null;
+        let linkId = null;
         
         // Sistema de múltiplos produtos
         let productRows = 1;
@@ -1915,16 +1909,6 @@
             ],
             sunday: [
                 { start: '08:00', end: '10:00', label: '08:00 às 10:00 (taxa adicional 19,90)', sundayFee: true, fee: 19.90 }
-            ],
-            special: [
-                { start: '07:30', end: '12:30', label: '07:30 às 12:30' },
-                { start: '13:30', end: '18:30', label: '13:30 às 18:30' },
-                { start: '19:30', end: '21:30', label: '19:30 às 21:30 (taxa noturna 19,90)', nightFee: true, fee: 19.90 }
-            ],
-            avulso: [
-                { start: '08:00', end: '12:00', label: '08:00 às 12:00' },
-                { start: '13:00', end: '17:00', label: '13:00 às 17:00' },
-                { start: '18:00', end: '21:00', label: '18:00 às 21:00 (taxa adicional 29,90)', avulsoNightFee: true, fee: 29.90 }
             ]
         };
         
@@ -1934,16 +1918,11 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Sistema de Agendamento - Mundo Carol');
             
-            // Verificar sessionStorage primeiro
-            const sessionKey = 'current_session_link';
-            if (sessionStorage.getItem(sessionKey) === 'valid') {
-                loadFromSessionStorage();
-            } else {
-                checkIfFromLink();
-            }
-            
-            // Configurar eventos básicos
+            // Configurar todos os event listeners
             setupEventListeners();
+            
+            // Verificar se veio de link
+            checkIfFromLink();
             
             // Carregar dados salvos
             loadFormData();
@@ -1957,138 +1936,126 @@
             // Atualizar resumo inicial
             updateProductsSummary();
             
-            // Configurar AUTOSAVE UNIVERSAL (funciona para ambos os fluxos)
-            setupUniversalAutosave();
+            // Configurar AUTOSAVE SILENCIOSO
+            setupSilentAutosave();
             
-            // Ocultar seções desnecessárias se veio de link
-            if (isFromLink) {
-                document.getElementById('productSection').style.display = 'none';
-                document.getElementById('clearAllSection').style.display = 'none';
-            }
-            
-            // Mostrar mensagem inicial
             console.log('✅ Sistema carregado. Modo:', isFromLink ? 'LINK' : 'FLUXO NORMAL');
         });
         
         // ============================================
-        // SISTEMA DE AUTOSAVE UNIVERSAL
+        // CONFIGURAÇÃO DE EVENT LISTENERS
         // ============================================
-        
-        function setupUniversalAutosave() {
-            console.log('🔧 Configurando autosave universal...');
+        function setupEventListeners() {
+            // Botões de navegação
+            document.getElementById('addProductBtn').addEventListener('click', addProductRow);
+            document.getElementById('clearAllBtn').addEventListener('click', clearAllData);
+            document.getElementById('generateLinkBtn').addEventListener('click', generateClientLink);
+            document.getElementById('copyLinkBtn').addEventListener('click', copyLinkAgain);
             
-            // 1. Todos os inputs de texto, número, textarea e select
-            document.querySelectorAll('input[type="text"], input[type="number"], textarea, select').forEach(input => {
-                // Remover listeners antigos primeiro (evitar duplicação)
-                const newInput = input.cloneNode(true);
-                input.parentNode.replaceChild(newInput, input);
-                
-                // Adicionar novos listeners ao novo elemento
-                newInput.addEventListener('input', handleAutosave);
-                newInput.addEventListener('change', handleAutosave);
-                
-                // Restaurar eventos específicos
-                if (newInput.classList.contains('product-quantity') || 
-                    newInput.classList.contains('product-code') ||
-                    newInput.classList.contains('product-name') ||
-                    newInput.classList.contains('product-price')) {
-                    newInput.addEventListener('input', updateProductsSummary);
-                    newInput.addEventListener('change', updateProductsSummary);
-                }
-                
-                if (newInput.id === 'deliveryCity') {
-                    newInput.addEventListener('change', function() {
-                        selectedCity = this.value;
-                        isOtherCity = this.value === 'other';
-                        updateCityDisplay();
-                        handleAutosave();
-                    });
-                }
-            });
+            // Navegação entre páginas
+            document.getElementById('nextPage1').addEventListener('click', () => nextPage(1, 2));
+            document.getElementById('prevPage2').addEventListener('click', () => prevPage(2, 1));
+            document.getElementById('nextPage2').addEventListener('click', () => nextPage(2, 3));
+            document.getElementById('prevPage3').addEventListener('click', () => prevPage(3, 2));
+            document.getElementById('nextPage3').addEventListener('click', () => nextPage(3, 4));
+            document.getElementById('prevPage4').addEventListener('click', () => prevPage(4, 3));
+            document.getElementById('nextPage4').addEventListener('click', () => nextPage(4, 5));
+            document.getElementById('prevPage5').addEventListener('click', () => prevPage(5, 4));
+            document.getElementById('nextPage5').addEventListener('click', () => nextPage(5, 6));
+            document.getElementById('prevPage6').addEventListener('click', () => prevPage(6, 5));
+            document.getElementById('submitButton').addEventListener('click', submitForm);
             
-            // 2. Todos os radio buttons
-            document.querySelectorAll('input[type="radio"]').forEach(radio => {
-                const newRadio = radio.cloneNode(true);
-                radio.parentNode.replaceChild(newRadio, radio);
-                
-                newRadio.addEventListener('change', handleAutosave);
-                
-                // Restaurar eventos específicos
-                if (newRadio.name === 'sendCard') {
-                    newRadio.addEventListener('change', function() {
-                        const cardSection = document.getElementById('cardMessageSection');
-                        const noCardSection = document.getElementById('noCardSection');
-                        
-                        if (this.value === 'yes') {
-                            cardSection.classList.remove('hidden');
-                            noCardSection.classList.add('hidden');
-                        } else {
-                            cardSection.classList.add('hidden');
-                            noCardSection.classList.remove('hidden');
-                        }
-                        handleAutosave();
-                    });
-                }
-                
-                if (newRadio.name === 'anonymous' || newRadio.name === 'anonymousNoCard') {
-                    newRadio.addEventListener('change', function() {
-                        const anonymousNotes = newRadio.name === 'anonymous' ? 
-                            document.getElementById('anonymousNotes') : 
-                            document.getElementById('anonymousNotesNoCard');
-                        if (this.value === 'yes') {
-                            anonymousNotes.classList.remove('hidden');
-                        } else {
-                            anonymousNotes.classList.add('hidden');
-                        }
-                        handleAutosave();
-                    });
-                }
-            });
+            // Calendário
+            document.getElementById('prevMonth').addEventListener('click', prevMonth);
+            document.getElementById('nextMonth').addEventListener('click', nextMonth);
+            document.getElementById('resetCalendarBtn').addEventListener('click', resetCalendar);
             
-            // 3. Eventos de calendário
-            if (document.getElementById('prevMonth')) {
-                document.getElementById('prevMonth').addEventListener('click', function() {
-                    currentMonth--;
-                    if (currentMonth < 0) {
-                        currentMonth = 11;
-                        currentYear--;
-                    }
-                    renderCalendar(currentMonth, currentYear);
-                    handleAutosave();
-                });
-            }
+            // Páginas de sucesso
+            document.getElementById('copyPixKeyBtn').addEventListener('click', copyPixKey);
+            document.getElementById('copyPixKeyBtn2').addEventListener('click', copyPixKey);
+            document.getElementById('whatsappPixBtn').addEventListener('click', () => sendWhatsAppMessage('pix'));
+            document.getElementById('whatsappCardBtn').addEventListener('click', () => sendWhatsAppMessage('card'));
             
-            if (document.getElementById('nextMonth')) {
-                document.getElementById('nextMonth').addEventListener('click', function() {
-                    currentMonth++;
-                    if (currentMonth > 11) {
-                        currentMonth = 0;
-                        currentYear++;
-                    }
-                    renderCalendar(currentMonth, currentYear);
-                    handleAutosave();
-                });
-            }
-            
-            console.log('✅ Autosave configurado para TODOS os elementos');
+            // Campos de formulário para autosave
+            setupFormInputListeners();
         }
         
-        function handleAutosave() {
-            // Pequeno debounce para evitar salvar a cada tecla pressionada
+        function setupFormInputListeners() {
+            // Inputs de produtos
+            document.querySelectorAll('.product-quantity, .product-code, .product-name, .product-price').forEach(input => {
+                input.addEventListener('input', updateProductsSummary);
+                input.addEventListener('change', handleSilentAutosave);
+            });
+            
+            // Outros inputs
+            document.querySelectorAll('#buyerName, #buyerPhone, #giftedName, #giftedPhone, #street, #number, #complement, #neighborhood, #referencePoint, #cardMessage, #anonymousNotesText, #anonymousNotesTextNoCard').forEach(input => {
+                input.addEventListener('input', handleSilentAutosave);
+                input.addEventListener('change', handleSilentAutosave);
+            });
+            
+            // Selects
+            document.getElementById('deliveryCity').addEventListener('change', function() {
+                selectedCity = this.value;
+                isOtherCity = this.value === 'other';
+                updateCityDisplay();
+                handleSilentAutosave();
+            });
+            
+            // Radio buttons
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', handleSilentAutosave);
+            });
+            
+            // Radio buttons específicos
+            document.querySelectorAll('input[name="sendCard"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const cardSection = document.getElementById('cardMessageSection');
+                    const noCardSection = document.getElementById('noCardSection');
+                    
+                    if (this.value === 'yes') {
+                        cardSection.classList.remove('hidden');
+                        noCardSection.classList.add('hidden');
+                    } else {
+                        cardSection.classList.add('hidden');
+                        noCardSection.classList.remove('hidden');
+                    }
+                    handleSilentAutosave();
+                });
+            });
+            
+            document.querySelectorAll('input[name="anonymous"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const anonymousNotes = document.getElementById('anonymousNotes');
+                    if (this.value === 'yes') {
+                        anonymousNotes.classList.remove('hidden');
+                    } else {
+                        anonymousNotes.classList.add('hidden');
+                    }
+                    handleSilentAutosave();
+                });
+            });
+            
+            document.querySelectorAll('input[name="anonymousNoCard"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const anonymousNotes = document.getElementById('anonymousNotesNoCard');
+                    if (this.value === 'yes') {
+                        anonymousNotes.classList.remove('hidden');
+                    } else {
+                        anonymousNotes.classList.add('hidden');
+                    }
+                    handleSilentAutosave();
+                });
+            });
+        }
+        
+        // ============================================
+        // SISTEMA DE AUTOSAVE SILENCIOSO
+        // ============================================
+        function handleSilentAutosave() {
             clearTimeout(window.autosaveTimeout);
             window.autosaveTimeout = setTimeout(() => {
                 saveFormData();
-                showAutosaveIndicator();
-            }, 1000); // 1 segundo de delay
-        }
-        
-        function showAutosaveIndicator() {
-            const indicator = document.getElementById('autosaveIndicator');
-            indicator.classList.add('show');
-            
-            setTimeout(() => {
-                indicator.classList.remove('show');
-            }, 2000);
+            }, 1000);
         }
         
         function saveFormData() {
@@ -2101,6 +2068,7 @@
                     timestamp: new Date().toISOString(),
                     isFromLink: isFromLink,
                     linkProducts: isFromLink ? lockedProducts : [],
+                    linkId: linkId,
                     
                     // Dados pessoais
                     buyerName: document.getElementById('buyerName')?.value || '',
@@ -2144,19 +2112,8 @@
                     
                     // Produtos
                     products: products,
-                    productRows: productRows,
-                    
-                    // Salvar valores individuais dos produtos
-                    productData: {}
+                    productRows: productRows
                 };
-                
-                // Salvar valores individuais dos produtos
-                for (let i = 1; i <= productRows; i++) {
-                    formData.productData[`productQuantity${i}`] = document.getElementById(`productQuantity${i}`)?.value || '';
-                    formData.productData[`productCode${i}`] = document.getElementById(`productCode${i}`)?.value || '';
-                    formData.productData[`productName${i}`] = document.getElementById(`productName${i}`)?.value || '';
-                    formData.productData[`productPrice${i}`] = document.getElementById(`productPrice${i}`)?.value || '';
-                }
                 
                 // Página atual
                 const activePage = document.querySelector('.form-page.active');
@@ -2164,15 +2121,6 @@
                 
                 // Salvar no localStorage
                 localStorage.setItem(storageKey, JSON.stringify(formData));
-                
-                // Para debugging
-                if (window.location.hostname.includes('github.io')) {
-                    console.log('💾 Dados salvos:', {
-                        key: storageKey,
-                        page: formData.currentPage,
-                        time: new Date().toLocaleTimeString()
-                    });
-                }
                 
             } catch (error) {
                 console.error('❌ Erro ao salvar dados:', error);
@@ -2184,10 +2132,7 @@
                 const storageKey = isFromLink ? 'mundoCarolFormData_link' : 'mundoCarolFormData';
                 const savedData = localStorage.getItem(storageKey);
                 
-                if (!savedData) {
-                    console.log('ℹ️ Nenhum dado salvo encontrado');
-                    return;
-                }
+                if (!savedData) return;
                 
                 const data = JSON.parse(savedData);
                 console.log('📂 Carregando dados salvos de:', data.timestamp);
@@ -2215,45 +2160,24 @@
                 
                 // Restaurar produtos (apenas se não for de link)
                 if (!isFromLink && data.products && Array.isArray(data.products)) {
-                    // Limpar produtos existentes
-                    document.getElementById('productsContainer').innerHTML = '';
-                    productRows = 0;
+                    // Limpar produtos existentes (exceto o primeiro)
+                    const container = document.getElementById('productsContainer');
+                    while (container.children.length > 1) {
+                        container.removeChild(container.lastChild);
+                    }
                     
-                    // Recriar produtos
-                    data.products.forEach((product, index) => {
-                        productRows++;
-                        const container = document.getElementById('productsContainer');
+                    productRows = 1;
+                    
+                    // Recriar produtos a partir do segundo
+                    for (let i = 1; i < data.products.length; i++) {
+                        addProductRow();
+                        const product = data.products[i];
                         
-                        const newRow = document.createElement('div');
-                        newRow.className = 'product-row';
-                        newRow.id = `productRow${productRows}`;
-                        
-                        newRow.innerHTML = `
-                            <button class="remove-btn" onclick="removeProductRow('productRow${productRows}')">
-                                <i class="fas fa-times"></i>
-                            </button>
-                            <div class="form-row">
-                                <div class="form-group" style="flex: 0.5;">
-                                    <label for="productQuantity${productRows}">Qtde</label>
-                                    <input type="number" id="productQuantity${productRows}" class="form-control product-quantity" min="1" value="${product.quantity}">
-                                </div>
-                                <div class="form-group" style="flex: 0.8;">
-                                    <label for="productCode${productRows}">Código</label>
-                                    <input type="text" id="productCode${productRows}" class="form-control product-code" value="${product.code || ''}">
-                                </div>
-                                <div class="form-group" style="flex: 2;">
-                                    <label for="productName${productRows}">Descrição</label>
-                                    <input type="text" id="productName${productRows}" class="form-control product-name" value="${product.name}" required>
-                                </div>
-                                <div class="form-group" style="flex: 1;">
-                                    <label for="productPrice${productRows}">Preço (R$)</label>
-                                    <input type="number" id="productPrice${productRows}" class="form-control product-price" value="${product.price}" required>
-                                </div>
-                            </div>
-                        `;
-                        
-                        container.appendChild(newRow);
-                    });
+                        document.getElementById(`productQuantity${i+1}`).value = product.quantity;
+                        document.getElementById(`productCode${i+1}`).value = product.code || '';
+                        document.getElementById(`productName${i+1}`).value = product.name;
+                        document.getElementById(`productPrice${i+1}`).value = product.price;
+                    }
                     
                     updateRemoveButtons();
                 }
@@ -2337,93 +2261,8 @@
             }
         }
         
-        function navigateToPage(pageNumber) {
-            if (pageNumber < 1 || pageNumber > 6) return;
-            
-            // Esconder todas as páginas
-            document.querySelectorAll('.form-page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // Mostrar página desejada
-            document.getElementById(`page${pageNumber}`).classList.add('active');
-            
-            // Atualizar progresso
-            document.querySelectorAll('.progress-step').forEach(step => {
-                step.classList.remove('active', 'completed');
-            });
-            
-            for (let i = 1; i < pageNumber; i++) {
-                document.getElementById(`step${i}`).classList.add('completed');
-            }
-            document.getElementById(`step${pageNumber}`).classList.add('active');
-        }
-        
-        function setupEventListeners() {
-            // Calendário
-            document.getElementById('prevMonth').addEventListener('click', function() {
-                currentMonth--;
-                if (currentMonth < 0) {
-                    currentMonth = 11;
-                    currentYear--;
-                }
-                renderCalendar(currentMonth, currentYear);
-            });
-            
-            document.getElementById('nextMonth').addEventListener('click', function() {
-                currentMonth++;
-                if (currentMonth > 11) {
-                    currentMonth = 0;
-                    currentYear++;
-                }
-                renderCalendar(currentMonth, currentYear);
-            });
-        }
-        
-        function setupCardSection() {
-            // Configurar eventos para cartão
-            document.querySelectorAll('input[name="sendCard"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    const cardSection = document.getElementById('cardMessageSection');
-                    const noCardSection = document.getElementById('noCardSection');
-                    
-                    if (this.value === 'yes') {
-                        cardSection.classList.remove('hidden');
-                        noCardSection.classList.add('hidden');
-                    } else {
-                        cardSection.classList.add('hidden');
-                        noCardSection.classList.remove('hidden');
-                    }
-                });
-            });
-            
-            // Configurar eventos para anonimato (com cartão)
-            document.querySelectorAll('input[name="anonymous"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    const anonymousNotes = document.getElementById('anonymousNotes');
-                    if (this.value === 'yes') {
-                        anonymousNotes.classList.remove('hidden');
-                    } else {
-                        anonymousNotes.classList.add('hidden');
-                    }
-                });
-            });
-            
-            // Configurar eventos para anonimato (sem cartão)
-            document.querySelectorAll('input[name="anonymousNoCard"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    const anonymousNotes = document.getElementById('anonymousNotesNoCard');
-                    if (this.value === 'yes') {
-                        anonymousNotes.classList.remove('hidden');
-                    } else {
-                        anonymousNotes.classList.add('hidden');
-                    }
-                });
-            });
-        }
-        
         // ============================================
-        // SISTEMA DE MÚLTIPLOS PRODUTOS
+        // FUNÇÕES DOS BOTÕES
         // ============================================
         function addProductRow() {
             productRows++;
@@ -2434,7 +2273,7 @@
             newRow.id = `productRow${productRows}`;
             
             newRow.innerHTML = `
-                <button class="remove-btn" onclick="removeProductRow('productRow${productRows}')">
+                <button class="remove-btn">
                     <i class="fas fa-times"></i>
                 </button>
                 <div class="form-row">
@@ -2447,12 +2286,12 @@
                         <input type="text" id="productCode${productRows}" class="form-control product-code" placeholder="Ex: 060">
                     </div>
                     <div class="form-group" style="flex: 2;">
-                        <label for="productName${productRows}">Descrição</label>
+                        <label for="productName${productRows}">Descrição <span class="obrigatorio-small">(obrigatório)</span></label>
                         <input type="text" id="productName${productRows}" class="form-control product-name" placeholder="Descrição do produto" required>
                         <div class="error-text" id="errorProductName${productRows}"></div>
                     </div>
                     <div class="form-group" style="flex: 1;">
-                        <label for="productPrice${productRows}">Preço (R$)</label>
+                        <label for="productPrice${productRows}">Preço (R$) <span class="obrigatorio-small">(obrigatório)</span></label>
                         <input type="number" id="productPrice${productRows}" class="form-control product-price" min="0" step="0.01" placeholder="0,00" required>
                         <div class="error-text" id="errorProductPrice${productRows}"></div>
                     </div>
@@ -2463,19 +2302,14 @@
             updateRemoveButtons();
             updateProductsSummary();
             
-            // Configurar autosave para os novos inputs
-            const newInputs = newRow.querySelectorAll('input');
-            newInputs.forEach(input => {
-                input.addEventListener('input', handleAutosave);
-                input.addEventListener('change', handleAutosave);
-                
-                if (input.classList.contains('product-quantity') || 
-                    input.classList.contains('product-code') ||
-                    input.classList.contains('product-name') ||
-                    input.classList.contains('product-price')) {
-                    input.addEventListener('input', updateProductsSummary);
-                    input.addEventListener('change', updateProductsSummary);
-                }
+            // Adicionar event listeners aos novos inputs
+            const removeBtn = newRow.querySelector('.remove-btn');
+            removeBtn.addEventListener('click', () => removeProductRow(`productRow${productRows}`));
+            
+            const inputs = newRow.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', updateProductsSummary);
+                input.addEventListener('change', handleSilentAutosave);
             });
         }
         
@@ -2486,7 +2320,7 @@
                 productRows--;
                 updateRemoveButtons();
                 updateProductsSummary();
-                handleAutosave();
+                handleSilentAutosave();
             }
         }
         
@@ -2499,72 +2333,6 @@
             });
         }
         
-        function getAllProducts() {
-            const products = [];
-            let total = 0;
-            
-            for (let i = 1; i <= productRows; i++) {
-                const quantity = parseInt(document.getElementById(`productQuantity${i}`)?.value) || 0;
-                const code = document.getElementById(`productCode${i}`)?.value || '';
-                const name = document.getElementById(`productName${i}`)?.value || '';
-                const price = parseFloat(document.getElementById(`productPrice${i}`)?.value) || 0;
-                
-                if (name && price > 0) {
-                    products.push({
-                        quantity,
-                        code,
-                        name,
-                        price,
-                        total: quantity * price
-                    });
-                    total += quantity * price;
-                }
-            }
-            
-            return { products, total };
-        }
-        
-        function updateProductsSummary() {
-            const { products, total } = getAllProducts();
-            
-            // Atualizar resumo para link
-            if (isFromLink || document.getElementById('page1').classList.contains('active')) {
-                updateProductsSummaryDisplay(products);
-            }
-            
-            // Calcular frete se necessário
-            if (selectedCity && selectedCity !== 'other' && currentDeliveryType === 'delivery') {
-                calculateShipping();
-            }
-            
-            handleAutosave();
-        }
-        
-        function updateProductsSummaryDisplay(products) {
-            const productsList = document.getElementById('productsList');
-            const productsSummary = document.getElementById('productsSummary');
-            
-            if (products.length > 0) {
-                let html = '';
-                products.forEach((product, index) => {
-                    html += `
-                        <div class="product-summary-item">
-                            <span>${product.quantity}x ${product.code ? product.code + ' - ' : ''}${product.name}</span>
-                            <span>R$ ${product.total.toFixed(2).replace('.', ',')}</span>
-                        </div>
-                    `;
-                });
-                
-                productsList.innerHTML = html;
-                productsSummary.classList.remove('hidden');
-            } else {
-                productsSummary.classList.add('hidden');
-            }
-        }
-        
-        // ============================================
-        // FUNÇÃO LIMPAR TUDO
-        // ============================================
         function clearAllData() {
             if (confirm('Tem certeza que deseja limpar todos os dados? Isso apagará todos os produtos e informações preenchidas.')) {
                 // Limpar localStorage
@@ -2577,278 +2345,7 @@
         }
         
         // ============================================
-        // LINK COMPARTILHADO (FORMATO CURTO)
-        // ============================================
-        function checkIfFromLink() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const productsData = urlParams.get('p');
-            const timestamp = urlParams.get('t');
-            
-            if (productsData) {
-                // Verificar se expirou
-                if (timestamp) {
-                    const linkTime = parseInt(timestamp);
-                    const now = Date.now();
-                    const hoursDiff = (now - linkTime) / (1000 * 60 * 60);
-                    
-                    if (hoursDiff > 24) {
-                        showExpiredMessage();
-                        return;
-                    }
-                }
-                
-                // Marcar como válido
-                sessionStorage.setItem('current_session_link', 'valid');
-                isFromLink = true;
-                
-                // Decodificar produtos (formato curto)
-                try {
-                    lockedProducts = decodeShortProducts(productsData);
-                    sessionStorage.setItem('link_products', productsData);
-                    sessionStorage.setItem('link_timestamp', timestamp || '');
-                    setupFromLink();
-                    
-                } catch (error) {
-                    console.error('Erro ao decodificar produtos:', error);
-                    showExpiredMessage();
-                }
-                
-            } else {
-                sessionStorage.removeItem('current_session_link');
-            }
-        }
-        
-        function decodeShortProducts(shortData) {
-            // Formato: 2x050-asdfa-10-00-3x080adfasdfasdfa-50-00
-            const products = [];
-            const parts = shortData.split('-');
-            
-            for (let i = 0; i < parts.length; i += 4) {
-                if (i + 3 < parts.length) {
-                    const qtyCode = parts[i]; // Ex: 2x050
-                    const qtyCodeMatch = qtyCode.match(/(\d+)x(\d*)/);
-                    
-                    if (qtyCodeMatch) {
-                        const quantity = parseInt(qtyCodeMatch[1]);
-                        const code = qtyCodeMatch[2] || '';
-                        const name = parts[i + 1];
-                        const price = parseFloat(parts[i + 2] + '.' + parts[i + 3]);
-                        
-                        products.push({
-                            quantity,
-                            code,
-                            name,
-                            price,
-                            total: quantity * price
-                        });
-                    }
-                }
-            }
-            
-            return products;
-        }
-        
-        function encodeProductsForLink(products) {
-            // Formato curto: 2x050-asdfa-10-00-3x080adfasdfasdfa-50-00
-            let encoded = '';
-            
-            products.forEach((product, index) => {
-                if (index > 0) encoded += '-';
-                encoded += `${product.quantity}x${product.code || ''}-`;
-                encoded += `${product.name}-`;
-                
-                const priceParts = product.price.toFixed(2).split('.');
-                encoded += `${priceParts[0]}-${priceParts[1]}`;
-            });
-            
-            return encoded;
-        }
-        
-        function loadFromSessionStorage() {
-            const productsData = sessionStorage.getItem('link_products');
-            
-            if (productsData) {
-                try {
-                    lockedProducts = decodeShortProducts(productsData);
-                    isFromLink = true;
-                    setupFromLink();
-                } catch (error) {
-                    console.error('Erro ao carregar produtos:', error);
-                }
-            }
-        }
-        
-        function setupFromLink() {
-            console.log('📌 Carregado de link:', lockedProducts);
-            
-            // Ocultar botão de adicionar produto
-            document.getElementById('addProductBtn').style.display = 'none';
-            document.getElementById('linkGeneratorSection').style.display = 'none';
-            document.getElementById('clearAllSection').style.display = 'none';
-            document.getElementById('productsContainer').innerHTML = '';
-            productRows = 0;
-            
-            // Adicionar produtos bloqueados
-            lockedProducts.forEach((product, index) => {
-                productRows++;
-                const container = document.getElementById('productsContainer');
-                
-                const newRow = document.createElement('div');
-                newRow.className = 'product-row';
-                newRow.id = `productRow${productRows}`;
-                newRow.style.backgroundColor = '#f8f9fa';
-                
-                newRow.innerHTML = `
-                    <div class="form-row">
-                        <div class="form-group" style="flex: 0.5;">
-                            <label for="productQuantity${productRows}">Qtde</label>
-                            <input type="number" id="productQuantity${productRows}" class="form-control product-quantity" min="1" value="${product.quantity}" readonly style="background: #e9ecef;">
-                        </div>
-                        <div class="form-group" style="flex: 0.8;">
-                            <label for="productCode${productRows}">Código</label>
-                            <input type="text" id="productCode${productRows}" class="form-control product-code" value="${product.code || ''}" readonly style="background: #e9ecef;">
-                        </div>
-                        <div class="form-group" style="flex: 2;">
-                            <label for="productName${productRows}">Descrição</label>
-                            <input type="text" id="productName${productRows}" class="form-control product-name" value="${product.name}" readonly style="background: #e9ecef;">
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label for="productPrice${productRows}">Preço (R$)</label>
-                            <input type="number" id="productPrice${productRows}" class="form-control product-price" value="${product.price}" readonly style="background: #e9ecef;">
-                        </div>
-                    </div>
-                `;
-                
-                container.appendChild(newRow);
-            });
-            
-            updateProductsSummary();
-        }
-        
-        function showExpiredMessage() {
-            document.getElementById('expiredMessage').classList.remove('hidden');
-            document.querySelectorAll('.form-page').forEach(page => {
-                page.style.display = 'none';
-            });
-            document.getElementById('mainHeader').style.display = 'none';
-        }
-        
-        function contactWhatsApp() {
-            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Olá! Recebi um link expirado e preciso de um novo link para fazer um pedido.`, '_blank');
-        }
-        
-        // ============================================
-        // GERADOR DE LINKS (FORMATO CURTO)
-        // ============================================
-        function generateClientLink() {
-            const { products, total } = getAllProducts();
-            
-            if (products.length === 0) {
-                showToast('Adicione pelo menos um produto antes de gerar o link', 'warning');
-                return;
-            }
-            
-            // Codificar produtos no formato curto
-            const encodedProducts = encodeProductsForLink(products);
-            const timestamp = Date.now();
-            
-            // Criar URL com parâmetros curtos
-            const baseUrl = window.location.origin + window.location.pathname;
-            const clientLink = `${baseUrl}?p=${encodedProducts}&t=${timestamp}`;
-            
-            // Mostrar link
-            document.getElementById('generatedLink').textContent = clientLink;
-            document.getElementById('generatedLinkContainer').classList.remove('hidden');
-            
-            // Copiar automaticamente
-            copyToClipboard(clientLink, 'link');
-            
-            // Mostrar mensagem
-            const copySuccess = document.getElementById('copySuccess');
-            copySuccess.textContent = '✅ Link copiado automaticamente!';
-            copySuccess.classList.add('show');
-            
-            setTimeout(() => {
-                copySuccess.classList.remove('show');
-            }, 5000);
-            
-            showToast('✅ Link gerado e copiado com sucesso!', 'success');
-        }
-        
-        function copyLinkAgain() {
-            const link = document.getElementById('generatedLink').textContent;
-            if (link) {
-                copyToClipboard(link, 'link');
-                const copySuccess = document.getElementById('copySuccess');
-                copySuccess.textContent = '✅ Link copiado novamente!';
-                copySuccess.classList.add('show');
-                
-                setTimeout(() => {
-                    copySuccess.classList.remove('show');
-                }, 3000);
-            }
-        }
-        
-        function copyToClipboard(text, type) {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(() => {
-                    if (type === 'link') {
-                        showToast('Link copiado para a área de transferência!', 'success');
-                    }
-                }).catch(err => {
-                    copyUsingExecCommand(text, type);
-                });
-            } else {
-                copyUsingExecCommand(text, type);
-            }
-        }
-        
-        function copyUsingExecCommand(text, type) {
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            textArea.style.position = 'fixed';
-            textArea.style.left = '-999999px';
-            textArea.style.top = '-999999px';
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            
-            try {
-                document.execCommand('copy');
-                if (type === 'link') {
-                    showToast('Link copiado para a área de transferência!', 'success');
-                }
-            } catch (err) {
-                showToast('⚠️ Não foi possível copiar. Por favor, anote: ' + text.substring(0, 50) + '...', 'warning');
-            } finally {
-                document.body.removeChild(textArea);
-            }
-        }
-        
-        // ============================================
-        // NOTIFICAÇÕES TOAST
-        // ============================================
-        function showToast(message, type = 'warning') {
-            const toast = document.getElementById('toastNotification');
-            const toastMessage = document.getElementById('toastMessage');
-            
-            toastMessage.textContent = message;
-            toast.className = 'toast-notification';
-            toast.classList.add(type);
-            toast.classList.remove('hidden');
-            
-            // Auto-fechar após 5 segundos
-            setTimeout(() => {
-                closeToast();
-            }, 5000);
-        }
-        
-        function closeToast() {
-            document.getElementById('toastNotification').classList.add('hidden');
-        }
-        
-        // ============================================
-        // NAVEGAÇÃO COM VALIDAÇÃO
+        // NAVEGAÇÃO ENTRE PÁGINAS
         // ============================================
         function nextPage(current, next) {
             clearErrors();
@@ -2888,6 +2385,28 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
+        function navigateToPage(pageNumber) {
+            if (pageNumber < 1 || pageNumber > 6) return;
+            
+            // Esconder todas as páginas
+            document.querySelectorAll('.form-page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Mostrar página desejada
+            document.getElementById(`page${pageNumber}`).classList.add('active');
+            
+            // Atualizar progresso
+            document.querySelectorAll('.progress-step').forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+            
+            for (let i = 1; i < pageNumber; i++) {
+                document.getElementById(`step${i}`).classList.add('completed');
+            }
+            document.getElementById(`step${pageNumber}`).classList.add('active');
+        }
+        
         function updateProgress(current, next, forward = true) {
             const steps = document.querySelectorAll('.progress-step');
             
@@ -2907,7 +2426,555 @@
         }
         
         // ============================================
-        // VALIDAÇÃO COM ERROS VISUAIS
+        // CALENDÁRIO
+        // ============================================
+        function prevMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar(currentMonth, currentYear);
+            handleSilentAutosave();
+        }
+        
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar(currentMonth, currentYear);
+            handleSilentAutosave();
+        }
+        
+        function renderCalendar(month, year) {
+            const calendar = document.getElementById('calendar');
+            const monthYearDisplay = document.getElementById('currentMonthYear');
+            
+            calendar.innerHTML = '';
+            
+            const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+                              "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            monthYearDisplay.textContent = `${monthNames[month]} ${year}`;
+            
+            const firstDay = new Date(year, month, 1);
+            const startingDay = firstDay.getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            for (let i = 0; i < 7; i++) {
+                const dayHeader = document.createElement('div');
+                dayHeader.classList.add('calendar-day-header');
+                dayHeader.textContent = weekdays[i];
+                calendar.appendChild(dayHeader);
+            }
+            
+            for (let i = 0; i < startingDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.classList.add('calendar-day', 'disabled');
+                calendar.appendChild(emptyDay);
+            }
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.classList.add('calendar-day');
+                dayElement.textContent = day;
+                
+                const currentDate = new Date(year, month, day);
+                
+                if (currentDate < today) {
+                    dayElement.classList.add('disabled');
+                }
+                
+                if (!dayElement.classList.contains('disabled')) {
+                    dayElement.addEventListener('click', function() {
+                        selectDate(currentDate);
+                    });
+                }
+                
+                if (selectedDate && 
+                    selectedDate.getDate() === day && 
+                    selectedDate.getMonth() === month && 
+                    selectedDate.getFullYear() === year) {
+                    dayElement.classList.add('selected');
+                }
+                
+                calendar.appendChild(dayElement);
+            }
+        }
+        
+        function selectDate(date) {
+            selectedDate = date;
+            
+            document.querySelectorAll('.calendar-day').forEach(day => {
+                day.classList.remove('selected');
+            });
+            
+            const days = document.querySelectorAll('.calendar-day');
+            days.forEach(day => {
+                if (parseInt(day.textContent) === date.getDate() && !isNaN(parseInt(day.textContent))) {
+                    day.classList.add('selected');
+                }
+            });
+            
+            const dayOfWeek = date.getDay();
+            const optionsContainer = document.getElementById('deliveryOptionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            selectedTime = null;
+            selectedTimeLabel = null;
+            nightFeeAmount = 0;
+            
+            const today = new Date();
+            const isToday = date.getDate() === today.getDate() && 
+                           date.getMonth() === today.getMonth() && 
+                           date.getFullYear() === today.getFullYear();
+            
+            const now = new Date();
+            const currentHour = now.getHours();
+            let routes = [];
+            let routeType = '';
+            
+            if (dayOfWeek === 0) {
+                routes = routeTimes.sunday;
+                routeType = 'sunday';
+            } else if (dayOfWeek === 6) {
+                routes = routeTimes.saturday;
+                routeType = 'saturday';
+            } else {
+                routes = routeTimes.weekday;
+                routeType = 'weekday';
+            }
+            
+            routes = routes.filter(route => {
+                let isRouteAvailable = true;
+                
+                if (isToday) {
+                    const [startHour, startMinute] = route.start.split(':').map(Number);
+                    const startTimeInMinutes = startHour * 60 + startMinute;
+                    const currentTimeInMinutes = currentHour * 60 + now.getMinutes();
+                    const timeUntilStart = startTimeInMinutes - currentTimeInMinutes;
+                    
+                    if (timeUntilStart < 30) {
+                        isRouteAvailable = false;
+                    }
+                }
+                
+                return isRouteAvailable;
+            });
+            
+            routes.forEach((route, index) => {
+                const routeId = `time${routeType}${index + 1}`;
+                const routeElement = document.createElement('div');
+                routeElement.classList.add('time-option');
+                
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = 'deliveryTime';
+                input.id = routeId;
+                input.value = `${route.start}-${route.end}`;
+                input.dataset.label = route.label;
+                input.dataset.nightfee = route.nightFee || false;
+                input.dataset.fee = route.fee || 0;
+                input.dataset.sundayfee = route.sundayFee || false;
+                
+                const label = document.createElement('label');
+                label.htmlFor = routeId;
+                label.textContent = route.label;
+                label.style.cursor = 'pointer';
+                label.style.marginLeft = '10px';
+                label.style.flex = '1';
+                
+                const container = document.createElement('div');
+                container.style.display = 'flex';
+                container.style.alignItems = 'center';
+                container.appendChild(input);
+                container.appendChild(label);
+                routeElement.appendChild(container);
+                
+                input.addEventListener('change', function() {
+                    selectedTime = this.value;
+                    selectedTimeLabel = this.getAttribute('data-label');
+                    
+                    const hasNightFee = this.getAttribute('data-nightfee') === 'true';
+                    const hasSundayFee = this.getAttribute('data-sundayfee') === 'true';
+                    const feeAmount = parseFloat(this.getAttribute('data-fee')) || 0;
+                    
+                    nightFeeAmount = 0;
+                    
+                    if (hasNightFee || hasSundayFee) {
+                        nightFeeAmount = feeAmount;
+                    }
+                    
+                    handleSilentAutosave();
+                });
+                
+                optionsContainer.appendChild(routeElement);
+            });
+            
+            document.getElementById('timeOptions').classList.remove('hidden');
+            handleSilentAutosave();
+        }
+        
+        function resetCalendar() {
+            document.getElementById('noDeliveryMessage').classList.add('hidden');
+            document.getElementById('timeOptions').classList.add('hidden');
+            selectedDate = null;
+            selectedTime = null;
+            selectedTimeLabel = null;
+            nightFeeAmount = 0;
+            
+            document.querySelectorAll('.calendar-day').forEach(day => {
+                day.classList.remove('selected');
+            });
+            
+            handleSilentAutosave();
+        }
+        
+        // ============================================
+        // FUNÇÕES DE DISPLAY
+        // ============================================
+        function updateCityDisplay() {
+            const otherCityMessage = document.getElementById('otherCityMessage');
+            const shippingInfo = document.getElementById('shippingInfo');
+            const addressFields = document.getElementById('addressFields');
+            
+            if (isOtherCity) {
+                otherCityMessage.classList.remove('hidden');
+                shippingInfo.classList.add('hidden');
+                addressFields.style.display = 'none';
+                calculatedShipping = 0;
+            } else {
+                otherCityMessage.classList.add('hidden');
+                addressFields.style.display = 'block';
+                
+                if (selectedCity && currentDeliveryType === 'delivery') {
+                    shippingInfo.classList.remove('hidden');
+                    calculateShipping();
+                }
+            }
+        }
+        
+        function calculateShipping() {
+            const { total } = getAllProducts();
+            const cityRates = shippingRates[selectedCity];
+            
+            if (cityRates) {
+                for (const rate of cityRates) {
+                    if (total >= rate.min && total <= rate.max) {
+                        calculatedShipping = rate.cost;
+                        document.getElementById('freteValue').textContent = `R$ ${rate.cost.toFixed(2)}`;
+                        break;
+                    }
+                }
+            }
+            
+            handleSilentAutosave();
+        }
+        
+        // ============================================
+        // FUNÇÕES DE PRODUTOS
+        // ============================================
+        function getAllProducts() {
+            const products = [];
+            let total = 0;
+            
+            for (let i = 1; i <= productRows; i++) {
+                const quantity = parseInt(document.getElementById(`productQuantity${i}`)?.value) || 0;
+                const code = document.getElementById(`productCode${i}`)?.value || '';
+                const name = document.getElementById(`productName${i}`)?.value || '';
+                const price = parseFloat(document.getElementById(`productPrice${i}`)?.value) || 0;
+                
+                if (name && price > 0) {
+                    products.push({
+                        quantity,
+                        code,
+                        name,
+                        price,
+                        total: quantity * price
+                    });
+                    total += quantity * price;
+                }
+            }
+            
+            return { products, total };
+        }
+        
+        function updateProductsSummary() {
+            const { products, total } = getAllProducts();
+            
+            // Atualizar resumo para link
+            if (isFromLink || document.getElementById('page1').classList.contains('active')) {
+                updateProductsSummaryDisplay(products);
+            }
+            
+            // Calcular frete se necessário
+            if (selectedCity && selectedCity !== 'other' && currentDeliveryType === 'delivery') {
+                calculateShipping();
+            }
+            
+            handleSilentAutosave();
+        }
+        
+        function updateProductsSummaryDisplay(products) {
+            const productsList = document.getElementById('productsList');
+            const productsSummary = document.getElementById('productsSummary');
+            
+            if (products.length > 0) {
+                let html = '';
+                products.forEach((product, index) => {
+                    html += `
+                        <div class="product-summary-item">
+                            <span>${product.quantity}x ${product.code ? product.code + ' - ' : ''}${product.name}</span>
+                            <span>R$ ${product.total.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                    `;
+                });
+                
+                productsList.innerHTML = html;
+                productsSummary.classList.remove('hidden');
+            } else {
+                productsSummary.classList.add('hidden');
+            }
+        }
+        
+        // ============================================
+        // GERADOR DE LINKS
+        // ============================================
+        function generateClientLink() {
+            const { products, total } = getAllProducts();
+            
+            if (products.length === 0) {
+                showToast('Adicione pelo menos um produto antes de gerar o link', 'warning');
+                return;
+            }
+            
+            // Gerar ID único para o link
+            linkId = generateLinkId();
+            
+            // Codificar produtos no formato curto
+            const encodedProducts = encodeProductsForLink(products);
+            const timestamp = Date.now();
+            
+            // Criar URL com parâmetros curtos
+            const baseUrl = window.location.origin + window.location.pathname;
+            const clientLink = `${baseUrl}?p=${encodedProducts}&t=${timestamp}&id=${linkId}`;
+            
+            // Mostrar link
+            document.getElementById('generatedLink').textContent = clientLink;
+            document.getElementById('generatedLinkContainer').classList.remove('hidden');
+            
+            // Copiar automaticamente
+            copyToClipboard(clientLink, 'link');
+            
+            // Mostrar mensagem
+            const copySuccess = document.getElementById('copySuccess');
+            copySuccess.textContent = '✅ Link copiado automaticamente!';
+            copySuccess.classList.add('show');
+            
+            setTimeout(() => {
+                copySuccess.classList.remove('show');
+            }, 5000);
+            
+            showToast('✅ Link gerado e copiado com sucesso!', 'success');
+        }
+        
+        function generateLinkId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        }
+        
+        function encodeProductsForLink(products) {
+            // Formato curto: 2x050-asdfa-10-00-3x080adfasdfasdfa-50-00
+            // Substituir espaços por hífens
+            let encoded = '';
+            
+            products.forEach((product, index) => {
+                if (index > 0) encoded += '-';
+                
+                // Quantidade + código
+                encoded += `${product.quantity}x${product.code || ''}-`;
+                
+                // Nome do produto (substituir espaços por hífens)
+                const nameWithoutSpaces = product.name.replace(/\s+/g, '-');
+                encoded += `${nameWithoutSpaces}-`;
+                
+                // Preço
+                const priceParts = product.price.toFixed(2).split('.');
+                encoded += `${priceParts[0]}-${priceParts[1]}`;
+            });
+            
+            return encoded;
+        }
+        
+        function copyLinkAgain() {
+            const link = document.getElementById('generatedLink').textContent;
+            if (link) {
+                copyToClipboard(link, 'link');
+                const copySuccess = document.getElementById('copySuccess');
+                copySuccess.textContent = '✅ Link copiado novamente!';
+                copySuccess.classList.add('show');
+                
+                setTimeout(() => {
+                    copySuccess.classList.remove('show');
+                }, 3000);
+            }
+        }
+        
+        // ============================================
+        // LINK COMPARTILHADO
+        // ============================================
+        function checkIfFromLink() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productsData = urlParams.get('p');
+            const timestamp = urlParams.get('t');
+            linkId = urlParams.get('id') || generateLinkId();
+            
+            if (productsData) {
+                // Verificar se expirou
+                if (timestamp) {
+                    const linkTime = parseInt(timestamp);
+                    const now = Date.now();
+                    const hoursDiff = (now - linkTime) / (1000 * 60 * 60);
+                    
+                    if (hoursDiff > 24) {
+                        showExpiredMessage();
+                        return;
+                    }
+                }
+                
+                // Marcar como válido
+                sessionStorage.setItem('current_session_link', 'valid');
+                isFromLink = true;
+                
+                // Decodificar produtos
+                try {
+                    lockedProducts = decodeShortProducts(productsData);
+                    sessionStorage.setItem('link_products', productsData);
+                    sessionStorage.setItem('link_timestamp', timestamp || '');
+                    sessionStorage.setItem('link_id', linkId);
+                    setupFromLink();
+                    
+                } catch (error) {
+                    console.error('Erro ao decodificar produtos:', error);
+                    showExpiredMessage();
+                }
+                
+            } else {
+                sessionStorage.removeItem('current_session_link');
+            }
+        }
+        
+        function decodeShortProducts(shortData) {
+            const products = [];
+            const parts = shortData.split('-');
+            
+            for (let i = 0; i < parts.length; i += 4) {
+                if (i + 3 < parts.length) {
+                    const qtyCode = parts[i];
+                    const qtyCodeMatch = qtyCode.match(/(\d+)x(\d*)/);
+                    
+                    if (qtyCodeMatch) {
+                        const quantity = parseInt(qtyCodeMatch[1]);
+                        const code = qtyCodeMatch[2] || '';
+                        const name = parts[i + 1].replace(/-/g, ' ');
+                        const price = parseFloat(parts[i + 2] + '.' + parts[i + 3]);
+                        
+                        products.push({
+                            quantity,
+                            code,
+                            name,
+                            price,
+                            total: quantity * price
+                        });
+                    }
+                }
+            }
+            
+            return products;
+        }
+        
+        function setupFromLink() {
+            console.log('📌 Carregado de link:', lockedProducts);
+            
+            // Ocultar botão de adicionar produto
+            document.getElementById('addProductBtn').style.display = 'none';
+            document.getElementById('linkGeneratorSection').style.display = 'none';
+            document.getElementById('clearAllSection').style.display = 'none';
+            
+            // Limpar produtos existentes
+            document.getElementById('productsContainer').innerHTML = '';
+            productRows = 0;
+            
+            // Adicionar produtos bloqueados
+            lockedProducts.forEach((product, index) => {
+                productRows++;
+                const container = document.getElementById('productsContainer');
+                
+                const newRow = document.createElement('div');
+                newRow.className = 'product-row';
+                newRow.id = `productRow${productRows}`;
+                newRow.style.backgroundColor = '#f8f9fa';
+                
+                newRow.innerHTML = `
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 0.5;">
+                            <label for="productQuantity${productRows}">Qtde</label>
+                            <input type="number" id="productQuantity${productRows}" class="form-control product-quantity" min="1" value="${product.quantity}" readonly style="background: #e9ecef;">
+                        </div>
+                        <div class="form-group" style="flex: 0.8;">
+                            <label for="productCode${productRows}">Código</label>
+                            <input type="text" id="productCode${productRows}" class="form-control product-code" value="${product.code || ''}" readonly style="background: #e9ecef;">
+                        </div>
+                        <div class="form-group" style="flex: 2;">
+                            <label for="productName${productRows}">Descrição <span class="obrigatorio-small">(obrigatório)</span></label>
+                            <input type="text" id="productName${productRows}" class="form-control product-name" value="${product.name}" readonly style="background: #e9ecef;">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="productPrice${productRows}">Preço (R$) <span class="obrigatorio-small">(obrigatório)</span></label>
+                            <input type="number" id="productPrice${productRows}" class="form-control product-price" value="${product.price}" readonly style="background: #e9ecef;">
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(newRow);
+            });
+            
+            updateProductsSummary();
+        }
+        
+        function showExpiredMessage() {
+            document.getElementById('expiredMessage').classList.remove('hidden');
+            document.querySelectorAll('.form-page').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById('mainHeader').style.display = 'none';
+        }
+        
+        function contactWhatsApp() {
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Olá! Recebi um link expirado e preciso de um novo link para fazer um pedido.`, '_blank');
+        }
+        
+        // ============================================
+        // FUNÇÕES AUXILIARES
+        // ============================================
+        function setupCardSection() {
+            // Configurar eventos para cartão já foram configurados em setupFormInputListeners
+        }
+        
+        function getTotalWithShipping() {
+            const { total } = getAllProducts();
+            return total + calculatedShipping + (nightFeeAmount || 0);
+        }
+        
+        function getShippingForSpreadsheet() {
+            return calculatedShipping + (nightFeeAmount || 0);
+        }
+        
+        // ============================================
+        // VALIDAÇÃO
         // ============================================
         function validatePage(page) {
             const errors = [];
@@ -3087,245 +3154,6 @@
             document.querySelectorAll('.error-text').forEach(el => {
                 el.classList.remove('show');
             });
-        }
-        
-        // ============================================
-        // FUNÇÕES DE DISPLAY
-        // ============================================
-        function updateCityDisplay() {
-            const otherCityMessage = document.getElementById('otherCityMessage');
-            const shippingInfo = document.getElementById('shippingInfo');
-            const addressFields = document.getElementById('addressFields');
-            
-            if (isOtherCity) {
-                otherCityMessage.classList.remove('hidden');
-                shippingInfo.classList.add('hidden');
-                addressFields.style.display = 'none';
-                calculatedShipping = 0;
-            } else {
-                otherCityMessage.classList.add('hidden');
-                addressFields.style.display = 'block';
-                
-                if (selectedCity && currentDeliveryType === 'delivery') {
-                    shippingInfo.classList.remove('hidden');
-                    calculateShipping();
-                }
-            }
-        }
-        
-        function calculateShipping() {
-            const { total } = getAllProducts();
-            const cityRates = shippingRates[selectedCity];
-            
-            if (cityRates) {
-                for (const rate of cityRates) {
-                    if (total >= rate.min && total <= rate.max) {
-                        calculatedShipping = rate.cost;
-                        document.getElementById('freteValue').textContent = `R$ ${rate.cost.toFixed(2)}`;
-                        break;
-                    }
-                }
-            }
-            
-            handleAutosave();
-        }
-        
-        function getTotalWithShipping() {
-            const { total } = getAllProducts();
-            return total + calculatedShipping + (nightFeeAmount || 0);
-        }
-        
-        function getShippingForSpreadsheet() {
-            return calculatedShipping + (nightFeeAmount || 0);
-        }
-        
-        // ============================================
-        // CALENDÁRIO E HORÁRIOS
-        // ============================================
-        function renderCalendar(month, year) {
-            const calendar = document.getElementById('calendar');
-            const monthYearDisplay = document.getElementById('currentMonthYear');
-            
-            calendar.innerHTML = '';
-            
-            const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-                              "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-            monthYearDisplay.textContent = `${monthNames[month]} ${year}`;
-            
-            const firstDay = new Date(year, month, 1);
-            const startingDay = firstDay.getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-            for (let i = 0; i < 7; i++) {
-                const dayHeader = document.createElement('div');
-                dayHeader.classList.add('calendar-day-header');
-                dayHeader.textContent = weekdays[i];
-                calendar.appendChild(dayHeader);
-            }
-            
-            for (let i = 0; i < startingDay; i++) {
-                const emptyDay = document.createElement('div');
-                emptyDay.classList.add('calendar-day', 'disabled');
-                calendar.appendChild(emptyDay);
-            }
-            
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayElement = document.createElement('div');
-                dayElement.classList.add('calendar-day');
-                dayElement.textContent = day;
-                
-                const currentDate = new Date(year, month, day);
-                
-                if (currentDate < today) {
-                    dayElement.classList.add('disabled');
-                }
-                
-                if (!dayElement.classList.contains('disabled')) {
-                    dayElement.addEventListener('click', function() {
-                        selectDate(currentDate);
-                    });
-                }
-                
-                if (selectedDate && 
-                    selectedDate.getDate() === day && 
-                    selectedDate.getMonth() === month && 
-                    selectedDate.getFullYear() === year) {
-                    dayElement.classList.add('selected');
-                }
-                
-                calendar.appendChild(dayElement);
-            }
-        }
-        
-        function selectDate(date) {
-            selectedDate = date;
-            
-            document.querySelectorAll('.calendar-day').forEach(day => {
-                day.classList.remove('selected');
-            });
-            
-            const days = document.querySelectorAll('.calendar-day');
-            days.forEach(day => {
-                if (parseInt(day.textContent) === date.getDate() && !isNaN(parseInt(day.textContent))) {
-                    day.classList.add('selected');
-                }
-            });
-            
-            const dayOfWeek = date.getDay();
-            const optionsContainer = document.getElementById('deliveryOptionsContainer');
-            optionsContainer.innerHTML = '';
-            
-            selectedTime = null;
-            selectedTimeLabel = null;
-            nightFeeAmount = 0;
-            
-            const today = new Date();
-            const isToday = date.getDate() === today.getDate() && 
-                           date.getMonth() === today.getMonth() && 
-                           date.getFullYear() === today.getFullYear();
-            
-            const now = new Date();
-            const currentHour = now.getHours();
-            let routes = [];
-            let routeType = '';
-            
-            if (dayOfWeek === 0) {
-                routes = routeTimes.sunday;
-                routeType = 'sunday';
-            } else if (dayOfWeek === 6) {
-                routes = routeTimes.saturday;
-                routeType = 'saturday';
-            } else {
-                routes = routeTimes.weekday;
-                routeType = 'weekday';
-            }
-            
-            routes = routes.filter(route => {
-                let isRouteAvailable = true;
-                
-                if (isToday) {
-                    const [startHour, startMinute] = route.start.split(':').map(Number);
-                    const startTimeInMinutes = startHour * 60 + startMinute;
-                    const currentTimeInMinutes = currentHour * 60 + now.getMinutes();
-                    const timeUntilStart = startTimeInMinutes - currentTimeInMinutes;
-                    
-                    if (timeUntilStart < 30) {
-                        isRouteAvailable = false;
-                    }
-                }
-                
-                return isRouteAvailable;
-            });
-            
-            routes.forEach((route, index) => {
-                const routeId = `time${routeType}${index + 1}`;
-                const routeElement = document.createElement('div');
-                routeElement.classList.add('time-option');
-                
-                const input = document.createElement('input');
-                input.type = 'radio';
-                input.name = 'deliveryTime';
-                input.id = routeId;
-                input.value = `${route.start}-${route.end}`;
-                input.dataset.label = route.label;
-                input.dataset.nightfee = route.nightFee || false;
-                input.dataset.fee = route.fee || 0;
-                input.dataset.sundayfee = route.sundayFee || false;
-                
-                const label = document.createElement('label');
-                label.htmlFor = routeId;
-                label.textContent = route.label;
-                label.style.cursor = 'pointer';
-                label.style.marginLeft = '10px';
-                label.style.flex = '1';
-                
-                const container = document.createElement('div');
-                container.style.display = 'flex';
-                container.style.alignItems = 'center';
-                container.appendChild(input);
-                container.appendChild(label);
-                routeElement.appendChild(container);
-                
-                input.addEventListener('change', function() {
-                    selectedTime = this.value;
-                    selectedTimeLabel = this.getAttribute('data-label');
-                    
-                    const hasNightFee = this.getAttribute('data-nightfee') === 'true';
-                    const hasSundayFee = this.getAttribute('data-sundayfee') === 'true';
-                    const feeAmount = parseFloat(this.getAttribute('data-fee')) || 0;
-                    
-                    nightFeeAmount = 0;
-                    
-                    if (hasNightFee || hasSundayFee) {
-                        nightFeeAmount = feeAmount;
-                    }
-                    
-                    handleAutosave();
-                });
-                
-                optionsContainer.appendChild(routeElement);
-            });
-            
-            document.getElementById('timeOptions').classList.remove('hidden');
-            handleAutosave();
-        }
-        
-        function resetCalendar() {
-            document.getElementById('noDeliveryMessage').classList.add('hidden');
-            document.getElementById('timeOptions').classList.add('hidden');
-            selectedDate = null;
-            selectedTime = null;
-            selectedTimeLabel = null;
-            nightFeeAmount = 0;
-            
-            document.querySelectorAll('.calendar-day').forEach(day => {
-                day.classList.remove('selected');
-            });
-            
-            handleAutosave();
         }
         
         // ============================================
@@ -3574,7 +3402,7 @@
                 paymentText = 'Link de Cartão Crédito online (vamos te enviar o link)';
             }
             
-            const data = new Array(50).fill('');
+            const data = new Array(52).fill('');
             
             data[0] = formattedDateTime;
             data[1] = buyerName;
@@ -3609,6 +3437,9 @@
             
             data[46] = foundUs || '';
             data[32] = paymentText;
+            
+            // Adicionar link ID na coluna 51
+            data[51] = linkId || '';
             
             return data;
         }
@@ -3730,7 +3561,6 @@
         // PÁGINAS DE SUCESSO
         // ============================================
         function showPaymentConfirmation(type) {
-            const paymentMethod = type;
             const buyerName = document.getElementById('buyerName').value;
             const paymentDetailsDiv = type === 'pix' ? document.getElementById('paymentDetails') : document.getElementById('paymentDetailsCard');
             
@@ -3780,15 +3610,6 @@
             html += '</div>';
             
             paymentDetailsDiv.innerHTML = html;
-        }
-        
-        function selectPixKey() {
-            const pixKeyElement = document.getElementById('pixKey');
-            const range = document.createRange();
-            range.selectNodeContents(pixKeyElement);
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
         }
         
         function copyPixKey() {
@@ -3872,6 +3693,61 @@
             message += `%0AFormulário enviado com sucesso!`;
             
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
+        }
+        
+        // ============================================
+        // FUNÇÕES DE UTILIDADE
+        // ============================================
+        function copyToClipboard(text, type) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    if (type === 'link') {
+                        showToast('Link copiado para a área de transferência!', 'success');
+                    }
+                }).catch(err => {
+                    copyUsingExecCommand(text, type);
+                });
+            } else {
+                copyUsingExecCommand(text, type);
+            }
+        }
+        
+        function copyUsingExecCommand(text, type) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                if (type === 'link') {
+                    showToast('Link copiado para a área de transferência!', 'success');
+                }
+            } catch (err) {
+                showToast('⚠️ Não foi possível copiar. Por favor, anote: ' + text.substring(0, 50) + '...', 'warning');
+            } finally {
+                document.body.removeChild(textArea);
+            }
+        }
+        
+        function showToast(message, type = 'warning') {
+            const toast = document.getElementById('toastNotification');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.className = 'toast-notification';
+            toast.classList.add(type);
+            toast.classList.remove('hidden');
+            
+            // Auto-fechar após 5 segundos
+            setTimeout(() => {
+                closeToast();
+            }, 5000);
+        }
+        
+        function closeToast() {
+            document.getElementById('toastNotification').classList.add('hidden');
         }
     </script>
 </body>
