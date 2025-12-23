@@ -1223,7 +1223,7 @@
             <button class="toast-close" onclick="closeToast()">&times;</button>
         </div>
         
-        <!-- Resumo dos Produtos (visível apenas na página 1 quando veio de link) -->
+        <!-- Resumo dos Produtos (visível apenas quando veio de link) -->
         <div id="productsSummary" class="products-summary hidden">
             <h3><i class="fas fa-box"></i> Produtos Selecionados</h3>
             <div id="productsList" class="products-list"></div>
@@ -1231,6 +1231,7 @@
         
         <!-- Página 1: Produtos e Dados Básicos -->
         <div id="page1" class="form-page active">
+            <!-- Seção de Produtos (só aparece quando NÃO veio de link) -->
             <div class="section" id="productSection">
                 <div class="section-title">
                     <span><i class="fas fa-box"></i> Produtos do Pedido</span>
@@ -1829,7 +1830,6 @@
         // IMPORTANTE: Controla se veio de link (produto bloqueado)
         let isFromLink = false;
         let lockedProducts = [];
-        let linkExpiration = null;
         let linkId = null;
         
         // Sistema de múltiplos produtos
@@ -2706,8 +2706,8 @@
         function updateProductsSummary() {
             const { products, total } = getAllProducts();
             
-            // Atualizar resumo para link
-            if (isFromLink || document.getElementById('page1').classList.contains('active')) {
+            // Atualizar resumo quando vier de link
+            if (isFromLink) {
                 updateProductsSummaryDisplay(products);
             }
             
@@ -2752,16 +2752,15 @@
                 return;
             }
             
-            // Gerar ID único para o link
-            linkId = generateLinkId();
+            // Gerar ID único para o link (usando timestamp como ID)
+            linkId = Date.now().toString();
             
-            // Codificar produtos no formato curto
+            // Codificar produtos
             const encodedProducts = encodeProductsForLink(products);
-            const timestamp = Date.now();
             
-            // Criar URL com parâmetros curtos
+            // Criar URL
             const baseUrl = window.location.origin + window.location.pathname;
-            const clientLink = `${baseUrl}?p=${encodedProducts}&t=${timestamp}&id=${linkId}`;
+            const clientLink = `${baseUrl}?p=${encodedProducts}&id=${linkId}`;
             
             // Mostrar link
             document.getElementById('generatedLink').textContent = clientLink;
@@ -2782,31 +2781,46 @@
             showToast('✅ Link gerado e copiado com sucesso!', 'success');
         }
         
-        function generateLinkId() {
-            return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
-        }
-        
         function encodeProductsForLink(products) {
-            // Formato curto: 2x050-asdfa-10-00-3x080adfasdfasdfa-50-00
-            // Substituir espaços por hífens
+            // Novo formato: quantidade|codigo|nome|preço-quantidade|codigo|nome|preço
             let encoded = '';
             
             products.forEach((product, index) => {
                 if (index > 0) encoded += '-';
                 
-                // Quantidade + código
-                encoded += `${product.quantity}x${product.code || ''}-`;
+                // Nome do produto (codificar espaços e caracteres especiais)
+                const encodedName = encodeURIComponent(product.name);
                 
-                // Nome do produto (substituir espaços por hífens)
-                const nameWithoutSpaces = product.name.replace(/\s+/g, '-');
-                encoded += `${nameWithoutSpaces}-`;
-                
-                // Preço
-                const priceParts = product.price.toFixed(2).split('.');
-                encoded += `${priceParts[0]}-${priceParts[1]}`;
+                // Montar parte: quantidade|codigo|nome|preço
+                encoded += `${product.quantity}|${product.code || ''}|${encodedName}|${product.price.toFixed(2)}`;
             });
             
             return encoded;
+        }
+        
+        function decodeProductsFromLink(encodedData) {
+            const products = [];
+            const productParts = encodedData.split('-');
+            
+            productParts.forEach(part => {
+                const [quantityStr, code, encodedName, priceStr] = part.split('|');
+                
+                const quantity = parseInt(quantityStr);
+                const name = decodeURIComponent(encodedName);
+                const price = parseFloat(priceStr);
+                
+                if (quantity && name && price) {
+                    products.push({
+                        quantity,
+                        code: code || '',
+                        name,
+                        price,
+                        total: quantity * price
+                    });
+                }
+            });
+            
+            return products;
         }
         
         function copyLinkAgain() {
@@ -2829,13 +2843,19 @@
         function checkIfFromLink() {
             const urlParams = new URLSearchParams(window.location.search);
             const productsData = urlParams.get('p');
-            const timestamp = urlParams.get('t');
-            linkId = urlParams.get('id') || generateLinkId();
+            linkId = urlParams.get('id');
             
             if (productsData) {
-                // Verificar se expirou
-                if (timestamp) {
-                    const linkTime = parseInt(timestamp);
+                // Verificar se já foi usado (salvamos IDs usados no localStorage)
+                const usedLinks = JSON.parse(localStorage.getItem('mundoCarol_used_links') || '[]');
+                if (usedLinks.includes(linkId)) {
+                    showExpiredMessage();
+                    return;
+                }
+                
+                // Verificar se expirou (24 horas)
+                if (linkId) {
+                    const linkTime = parseInt(linkId);
                     const now = Date.now();
                     const hoursDiff = (now - linkTime) / (1000 * 60 * 60);
                     
@@ -2851,9 +2871,8 @@
                 
                 // Decodificar produtos
                 try {
-                    lockedProducts = decodeShortProducts(productsData);
+                    lockedProducts = decodeProductsFromLink(productsData);
                     sessionStorage.setItem('link_products', productsData);
-                    sessionStorage.setItem('link_timestamp', timestamp || '');
                     sessionStorage.setItem('link_id', linkId);
                     setupFromLink();
                     
@@ -2867,74 +2886,55 @@
             }
         }
         
-        function decodeShortProducts(shortData) {
-            const products = [];
-            const parts = shortData.split('-');
-            
-            for (let i = 0; i < parts.length; i += 4) {
-                if (i + 3 < parts.length) {
-                    const qtyCode = parts[i];
-                    const qtyCodeMatch = qtyCode.match(/(\d+)x(\d*)/);
-                    
-                    if (qtyCodeMatch) {
-                        const quantity = parseInt(qtyCodeMatch[1]);
-                        const code = qtyCodeMatch[2] || '';
-                        const name = parts[i + 1].replace(/-/g, ' ');
-                        const price = parseFloat(parts[i + 2] + '.' + parts[i + 3]);
-                        
-                        products.push({
-                            quantity,
-                            code,
-                            name,
-                            price,
-                            total: quantity * price
-                        });
-                    }
-                }
-            }
-            
-            return products;
-        }
-        
         function setupFromLink() {
             console.log('📌 Carregado de link:', lockedProducts);
             
-            // Ocultar botão de adicionar produto
-            document.getElementById('addProductBtn').style.display = 'none';
-            document.getElementById('linkGeneratorSection').style.display = 'none';
-            document.getElementById('clearAllSection').style.display = 'none';
+            // Ocultar botão de adicionar produto e seção de produtos
+            document.getElementById('productSection').style.display = 'none';
             
-            // Limpar produtos existentes
+            // Mostrar resumo com fundo verde
+            updateProductsSummaryDisplay(lockedProducts);
+            
+            // Preencher produtos (apenas para cálculo)
+            productRows = lockedProducts.length;
+            
+            // Limpar container de produtos
             document.getElementById('productsContainer').innerHTML = '';
-            productRows = 0;
             
-            // Adicionar produtos bloqueados
+            // Criar produtos bloqueados (não editáveis)
             lockedProducts.forEach((product, index) => {
-                productRows++;
                 const container = document.getElementById('productsContainer');
                 
                 const newRow = document.createElement('div');
-                newRow.className = 'product-row';
-                newRow.id = `productRow${productRows}`;
-                newRow.style.backgroundColor = '#f8f9fa';
+                newRow.className = 'product-row product-locked';
+                newRow.id = `productRow${index + 1}`;
                 
                 newRow.innerHTML = `
+                    <h3><i class="fas fa-lock"></i> Produto ${index + 1} (Pré-selecionado)</h3>
                     <div class="form-row">
                         <div class="form-group" style="flex: 0.5;">
-                            <label for="productQuantity${productRows}">Qtde</label>
-                            <input type="number" id="productQuantity${productRows}" class="form-control product-quantity" min="1" value="${product.quantity}" readonly style="background: #e9ecef;">
+                            <label>Qtde</label>
+                            <div class="form-control" style="background: #e9ecef; padding: 12px; border-radius: 8px;">
+                                ${product.quantity}
+                            </div>
                         </div>
                         <div class="form-group" style="flex: 0.8;">
-                            <label for="productCode${productRows}">Código</label>
-                            <input type="text" id="productCode${productRows}" class="form-control product-code" value="${product.code || ''}" readonly style="background: #e9ecef;">
+                            <label>Código</label>
+                            <div class="form-control" style="background: #e9ecef; padding: 12px; border-radius: 8px;">
+                                ${product.code || ''}
+                            </div>
                         </div>
                         <div class="form-group" style="flex: 2;">
-                            <label for="productName${productRows}">Descrição <span class="obrigatorio-small">(obrigatório)</span></label>
-                            <input type="text" id="productName${productRows}" class="form-control product-name" value="${product.name}" readonly style="background: #e9ecef;">
+                            <label>Descrição</label>
+                            <div class="form-control" style="background: #e9ecef; padding: 12px; border-radius: 8px;">
+                                ${product.name}
+                            </div>
                         </div>
                         <div class="form-group" style="flex: 1;">
-                            <label for="productPrice${productRows}">Preço (R$) <span class="obrigatorio-small">(obrigatório)</span></label>
-                            <input type="number" id="productPrice${productRows}" class="form-control product-price" value="${product.price}" readonly style="background: #e9ecef;">
+                            <label>Preço (R$)</label>
+                            <div class="form-control" style="background: #e9ecef; padding: 12px; border-radius: 8px;">
+                                R$ ${product.price.toFixed(2).replace('.', ',')}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -2951,6 +2951,7 @@
                 page.style.display = 'none';
             });
             document.getElementById('mainHeader').style.display = 'none';
+            document.getElementById('progressIndicator').style.display = 'none';
         }
         
         function contactWhatsApp() {
@@ -2982,19 +2983,22 @@
             if (page === 1) {
                 const { products } = getAllProducts();
                 
-                if (products.length === 0) {
+                // Se veio de link, já tem produtos pré-selecionados
+                if (!isFromLink && products.length === 0) {
                     errors.push({ field: 'products', message: 'Adicione pelo menos um produto' });
                 }
                 
-                // Verificar cada produto
-                products.forEach((product, index) => {
-                    if (!product.name || product.name.trim() === '') {
-                        errors.push({ field: `productName${index + 1}`, message: 'Descrição obrigatória' });
-                    }
-                    if (!product.price || product.price <= 0) {
-                        errors.push({ field: `productPrice${index + 1}`, message: 'Preço obrigatório' });
-                    }
-                });
+                // Verificar cada produto (só se não veio de link)
+                if (!isFromLink) {
+                    products.forEach((product, index) => {
+                        if (!product.name || product.name.trim() === '') {
+                            errors.push({ field: `productName${index + 1}`, message: 'Descrição obrigatória' });
+                        }
+                        if (!product.price || product.price <= 0) {
+                            errors.push({ field: `productPrice${index + 1}`, message: 'Preço obrigatório' });
+                        }
+                    });
+                }
                 
                 if (!document.getElementById('buyerName').value.trim()) {
                     errors.push({ field: 'buyerName', message: 'Nome do comprador obrigatório' });
@@ -3452,6 +3456,13 @@
                 showErrors(validation.errors);
                 showToast('Corrija os erros antes de enviar', 'warning');
                 return;
+            }
+            
+            // Marcar link como usado
+            if (isFromLink && linkId) {
+                const usedLinks = JSON.parse(localStorage.getItem('mundoCarol_used_links') || '[]');
+                usedLinks.push(linkId);
+                localStorage.setItem('mundoCarol_used_links', JSON.stringify(usedLinks));
             }
             
             const submitBtn = document.getElementById('submitButton');
