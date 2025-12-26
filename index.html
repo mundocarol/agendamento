@@ -360,13 +360,11 @@
             background: white;
             border: 2px solid var(--border);
             border-radius: 6px;
-            padding: 8px 12px;
+            padding: 6px 12px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
             font-size: 14px;
-            min-width: 60px;
-            text-align: center;
         }
         
         .calendar-nav:hover {
@@ -1106,30 +1104,6 @@
             margin-left: 5px;
         }
         
-        .link-message-box {
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            border-left: 4px solid #2196f3;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            color: #0d47a1;
-        }
-        
-        .link-message-box p {
-            margin-bottom: 10px;
-            line-height: 1.5;
-        }
-        
-        .link-box {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            border: 2px solid #2196f3;
-            margin: 15px 0;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-        
         @media (max-width: 480px) {
             .header h1 {
                 font-size: 16px;
@@ -1146,23 +1120,17 @@
             }
             
             .calendar-nav-container {
-                flex-direction: row;
-                justify-content: center;
-                align-items: center;
-                gap: 15px;
+                flex-direction: column;
+                align-items: stretch;
             }
             
             .calendar-nav {
-                order: 1;
-                margin-top: 0;
-                min-width: 50px;
-                font-size: 13px;
-                padding: 6px 8px;
+                order: 3;
+                margin-top: 5px;
             }
             
             .calendar-month-year {
-                order: 2;
-                min-width: 140px;
+                order: 1;
             }
             
             .pix-key {
@@ -1342,25 +1310,26 @@
                     <button type="button" class="btn btn-primary" id="generateLinkBtn">Gerar Link para Cliente</button>
                     
                     <div id="generatedLinkContainer" class="generated-link-container hidden">
-                        <div class="link-message-box">
-                            <p><strong>Vou te enviar um link bem facinho para vc colocar o endereço, a data da entrega e o texto que vai no cartão ta? 📅</strong></p>
-                            <div class="link-box" id="linkMessageContainer">
-                                <!-- O link formatado será inserido aqui -->
-                            </div>
+                        <div class="multi-method-notice">
+                            <p><strong>🎯 Link para enviar ao cliente:</strong></p>
+                            <p>O cliente receberá os produtos já pré-selecionados e não poderá alterá-los.</p>
+                            <p><strong>Validade:</strong> 24 horas ou até ser usado</p>
                         </div>
                         
-                        <button type="button" id="copyLinkBtn" class="btn copy-btn">Copiar Link com Mensagem</button>
+                        <h3 class="section-title">Link Gerado:</h3>
+                        <div id="generatedLink" class="generated-link"></div>
+                        <button type="button" id="copyLinkBtn" class="btn copy-btn">Copiar Link</button>
                         
                         <div class="alert alert-warning" style="margin-top: 15px;">
                             <p><strong>Instruções:</strong></p>
-                            <p>1. O link foi copiado automaticamente com a mensagem</p>
+                            <p>1. O link foi copiado automaticamente</p>
                             <p>2. Envie para seu cliente via WhatsApp ou outro app</p>
                             <p>3. O link é válido por 24 horas ou até ser usado</p>
                             <p>4. O cliente verá produtos já preenchidos</p>
                             <p>5. Ele só precisará completar seus dados e endereço</p>
                         </div>
                         
-                        <p class="copy-success" id="copySuccess">✅ Link copiado automaticamente com a mensagem!</p>
+                        <p class="copy-success" id="copySuccess">✅ Link copiado automaticamente!</p>
                     </div>
                 </div>
             </div>
@@ -1507,9 +1476,9 @@
                 
                 <div id="calendarContainer" class="calendar-container">
                     <div class="calendar-nav-container">
-                        <span class="calendar-nav" id="prevMonth"></span>
+                        <span class="calendar-nav" id="prevMonth"><i class="fas fa-chevron-left"></i> Mês Anterior</span>
                         <span id="currentMonthYear" class="calendar-month-year"></span>
-                        <span class="calendar-nav" id="nextMonth"></span>
+                        <span class="calendar-nav" id="nextMonth">Próximo Mês <i class="fas fa-chevron-right"></i></span>
                     </div>
                     <div id="calendar" class="calendar"></div>
                 </div>
@@ -1964,10 +1933,13 @@
             '2025-11-02', // Finados
             '2025-11-15', // Proclamação República
             '2026-01-26', // ano novo
+            // Adicione mais datas conforme necessário
         ];
         
         // 2. FERIADOS COM HORÁRIOS ESPECIAIS
+        // Formato: 'YYYY-MM-DD': { tipo: 'feriado', horarios: [...] }
         const specialDates = {
+            // Exemplo: Véspera de Natal (meio expediente)
             '2025-12-24': {
                 tipo: 'feriado',
                 descricao: 'Véspera de Natal',
@@ -1980,11 +1952,83 @@
                 ]
             },
             
+            // Exemplo: Dia das Mães (horário especial)
             '2025-12-25': {
                 tipo: 'feriado',
                 descricao: 'Natal',
                 horarios: [
                     { start: '07:30', end: '11:30', label: '07:30 às 11:30' }
+                ]
+            },
+            
+            // Exemplo: Sexta-feira Santa
+            '2026-01-02': {
+                tipo: 'feriado',
+                descricao: 'Sexta-feira Santa',
+                horarios: [
+                    { start: '09:00', end: '11:30', label: '09:00 às 11:30' },
+                    { start: '13:00', end: '15:00', label: '13:00 às 15:00' }
+                ]
+            },
+            
+            // Exemplo: Carnaval
+            '2024-12-26': {
+                tipo: 'feriado',
+                descricao: 'Carnaval',
+                horarios: [
+                    { start: '08:00', end: '10:00', label: '08:00 às 10:00' },
+                    { start: '10:00', end: '12:00', label: '10:00 às 12:00' }
+                ]
+            },
+            
+            // Exemplo: Dia dos Namorados
+            '2025-06-12': {
+                tipo: 'feriado',
+                descricao: 'Dia dos Namorados',
+                horarios: [
+                    { start: '07:00', end: '09:00', label: '07:00 às 09:00' },
+                    { start: '09:00', end: '11:00', label: '09:00 às 11:00' },
+                    { start: '11:00', end: '13:00', label: '11:00 às 13:00' },
+                    { start: '13:00', end: '15:00', label: '13:00 às 15:00' },
+                    { start: '15:00', end: '17:00', label: '15:00 às 17:00' },
+                    { start: '19:00', end: '21:00', label: '19:00 às 21:00 (taxa noturna adicional 19,90)', nightFee: true, fee: 19.90 }
+                ]
+            },
+            
+            // Exemplo: Dia das Crianças
+            '2025-10-12': {
+                tipo: 'feriado',
+                descricao: 'Dia das Crianças',
+                horarios: [
+                    { start: '08:00', end: '10:00', label: '08:00 às 10:00' },
+                    { start: '10:00', end: '12:00', label: '10:00 às 12:00' },
+                    { start: '12:00', end: '14:00', label: '12:00 às 14:00' },
+                    { start: '14:00', end: '16:00', label: '14:00 às 16:00' }
+                ]
+            },
+            
+            // 3. DIAS ATÍPICOS (não são feriados, mas têm horários diferentes)
+            // Exemplo: Black Friday
+            '2024-11-29': {
+                tipo: 'atipico',
+                descricao: 'Black Friday',
+                horarios: [
+                    { start: '07:30', end: '09:30', label: '07:30 às 09:30' },
+                    { start: '09:30', end: '11:30', label: '09:30 às 11:30' },
+                    { start: '13:30', end: '15:30', label: '13:30 às 15:30' },
+                    { start: '15:30', end: '17:30', label: '15:30 às 17:30' },
+                    { start: '17:30', end: '19:30', label: '17:30 às 19:30 (taxa noturna adicional 19,90)', nightFee: true, fee: 19.90 },
+                    { start: '19:30', end: '21:30', label: '19:30 às 21:30 (taxa noturna adicional 19,90)', nightFee: true, fee: 19.90 }
+                ]
+            },
+            
+            // Exemplo: Véspera de Ano Novo
+            '2024-12-31': {
+                tipo: 'atipico',
+                descricao: 'Véspera de Ano Novo',
+                horarios: [
+                    { start: '07:30', end: '09:30', label: '07:30 às 09:30' },
+                    { start: '09:30', end: '11:30', label: '09:30 às 11:30' }
                 ]
             }
         };
@@ -2048,19 +2092,19 @@
             document.getElementById('addProductBtn').addEventListener('click', addProductRow);
             document.getElementById('clearAllBtn').addEventListener('click', clearAllData);
             document.getElementById('generateLinkBtn').addEventListener('click', generateClientLink);
-            document.getElementById('copyLinkBtn').addEventListener('click', copyLinkWithMessage);
+            document.getElementById('copyLinkBtn').addEventListener('click', copyLinkAgain);
             
-            // Navegação entre páginas - AJUSTADO: Se for retirada, pula da página 1 para página 3
-            document.getElementById('nextPage1').addEventListener('click', handleNextPage1);
+            // Navegação entre páginas
+            document.getElementById('nextPage1').addEventListener('click', nextPage1Handler);
             document.getElementById('prevPage2').addEventListener('click', () => prevPage(2, 1));
             document.getElementById('nextPage2').addEventListener('click', () => nextPage(2, 3));
-            document.getElementById('prevPage3').addEventListener('click', handlePrevPage3);
+            document.getElementById('prevPage3').addEventListener('click', prevPage3Handler);
             document.getElementById('nextPage3').addEventListener('click', () => nextPage(3, 4));
             document.getElementById('prevPage4').addEventListener('click', () => prevPage(4, 3));
             document.getElementById('nextPage4').addEventListener('click', () => nextPage(4, 5));
             document.getElementById('prevPage5').addEventListener('click', () => prevPage(5, 4));
             document.getElementById('nextPage5').addEventListener('click', () => nextPage(5, 6));
-            document.getElementById('prevPage6').addEventListener('click', () => prevPage(6, 5));
+            document.getElementById('prevPage6').addEventListener('click', prevPage6Handler);
             document.getElementById('submitButton').addEventListener('click', submitForm);
             
             // Calendário
@@ -2093,60 +2137,6 @@
             
             // Campos de formulário para autosave
             setupFormInputListeners();
-        }
-        
-        function handleNextPage1() {
-            clearErrors();
-            
-            let validationResult = validatePage(1);
-            if (!validationResult.valid) {
-                showErrors(validationResult.errors);
-                showToast('Preencha todos os campos obrigatórios', 'warning');
-                return;
-            }
-            
-            // Verificar se é retirada na loja
-            const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
-            
-            // SALVAR antes de mudar de página
-            saveFormData();
-            
-            // Atualizar progresso
-            if (deliveryType === 'pickup') {
-                // Se for retirada, vai direto para página 3 (calendário)
-                updateProgress(1, 3);
-                document.getElementById('page1').classList.remove('active');
-                document.getElementById('page3').classList.add('active');
-            } else {
-                // Se for entrega, vai para página 2 (endereço)
-                updateProgress(1, 2);
-                document.getElementById('page1').classList.remove('active');
-                document.getElementById('page2').classList.add('active');
-            }
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
-        function handlePrevPage3() {
-            // SALVAR antes de mudar de página
-            saveFormData();
-            
-            // Voltar para página anterior dependendo do tipo de entrega
-            const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
-            
-            if (deliveryType === 'pickup') {
-                // Se for retirada, volta para página 1
-                document.getElementById('page3').classList.remove('active');
-                document.getElementById('page1').classList.add('active');
-                updateProgress(3, 1, false);
-            } else {
-                // Se for entrega, volta para página 2
-                document.getElementById('page3').classList.remove('active');
-                document.getElementById('page2').classList.add('active');
-                updateProgress(3, 2, false);
-            }
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
         function setupFormInputListeners() {
@@ -2207,6 +2197,167 @@
                     handleSilentAutosave();
                 });
             });
+        }
+        
+        // ============================================
+        // NAVEGAÇÃO ENTRE PÁGINAS - AJUSTES
+        // ============================================
+        function nextPage1Handler() {
+            clearErrors();
+            
+            let validationResult = validatePage(1);
+            if (!validationResult.valid) {
+                showErrors(validationResult.errors);
+                showToast('Preencha todos os campos obrigatórios', 'warning');
+                return;
+            }
+            
+            // Verificar se é retirada na loja
+            const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
+            
+            // SALVAR antes de mudar de página
+            saveFormData();
+            
+            // Atualizar progresso
+            let nextPageNumber;
+            
+            if (deliveryType === 'pickup') {
+                // Retirada na loja: pula para página 3 (calendário)
+                nextPageNumber = 3;
+                updateProgress(1, 3);
+            } else {
+                // Entrega: vai para página 2 (endereço)
+                nextPageNumber = 2;
+                updateProgress(1, 2);
+            }
+            
+            // Ir para próxima página
+            document.getElementById('page1').classList.remove('active');
+            document.getElementById(`page${nextPageNumber}`).classList.add('active');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function prevPage3Handler() {
+            const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
+            let prevPageNumber;
+            
+            if (deliveryType === 'pickup') {
+                // Se for retirada, volta para página 1
+                prevPageNumber = 1;
+            } else {
+                // Se for entrega, volta para página 2
+                prevPageNumber = 2;
+            }
+            
+            // SALVAR antes de mudar de página
+            saveFormData();
+            
+            document.getElementById('page3').classList.remove('active');
+            document.getElementById(`page${prevPageNumber}`).classList.add('active');
+            
+            // Atualizar progresso
+            if (deliveryType === 'pickup') {
+                updateProgress(3, 1, false);
+            } else {
+                updateProgress(3, 2, false);
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function prevPage6Handler() {
+            const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
+            let prevPageNumber = 5; // Por padrão, volta para página 5
+            
+            // SALVAR antes de mudar de página
+            saveFormData();
+            
+            document.getElementById('page6').classList.remove('active');
+            document.getElementById(`page${prevPageNumber}`).classList.add('active');
+            
+            updateProgress(6, 5, false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function nextPage(current, next) {
+            clearErrors();
+            
+            let validationResult = validatePage(current);
+            if (!validationResult.valid) {
+                showErrors(validationResult.errors);
+                showToast('Preencha todos os campos obrigatórios', 'warning');
+                return;
+            }
+            
+            // SALVAR antes de mudar de página
+            saveFormData();
+            
+            // Atualizar progresso
+            updateProgress(current, next);
+            
+            // Ir para próxima página
+            document.getElementById(`page${current}`).classList.remove('active');
+            document.getElementById(`page${next}`).classList.add('active');
+            
+            // Atualizar revisão na última página
+            if (next === 6) {
+                updateReviewData();
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function prevPage(current, prev) {
+            // SALVAR antes de mudar de página
+            saveFormData();
+            
+            document.getElementById(`page${current}`).classList.remove('active');
+            document.getElementById(`page${prev}`).classList.add('active');
+            updateProgress(current, prev, false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function navigateToPage(pageNumber) {
+            if (pageNumber < 1 || pageNumber > 6) return;
+            
+            // Esconder todas as páginas
+            document.querySelectorAll('.form-page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Mostrar página desejada
+            document.getElementById(`page${pageNumber}`).classList.add('active');
+            
+            // Atualizar progresso
+            document.querySelectorAll('.progress-step').forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+            
+            for (let i = 1; i < pageNumber; i++) {
+                document.getElementById(`step${i}`).classList.add('completed');
+            }
+            document.getElementById(`step${pageNumber}`).classList.add('active');
+        }
+        
+        function updateProgress(current, next, forward = true) {
+            const steps = document.querySelectorAll('.progress-step');
+            
+            if (forward) {
+                // Marcar atual como completado e próxima como ativa
+                steps[current - 1].classList.add('completed');
+                steps[current - 1].classList.remove('active');
+                if (next <= steps.length) {
+                    steps[next - 1].classList.add('active');
+                }
+            } else {
+                // Voltar: remover completado da atual
+                steps[current - 1].classList.remove('completed');
+                steps[current - 1].classList.remove('active');
+                if (next > 0) {
+                    steps[next - 1].classList.add('active');
+                }
+            }
         }
         
         // ============================================
@@ -2508,87 +2659,6 @@
         }
         
         // ============================================
-        // NAVEGAÇÃO ENTRE PÁGINAS
-        // ============================================
-        function nextPage(current, next) {
-            clearErrors();
-            
-            let validationResult = validatePage(current);
-            if (!validationResult.valid) {
-                showErrors(validationResult.errors);
-                showToast('Preencha todos os campos obrigatórios', 'warning');
-                return;
-            }
-            
-            // SALVAR antes de mudar de página
-            saveFormData();
-            
-            // Atualizar progresso
-            updateProgress(current, next);
-            
-            // Ir para próxima página
-            document.getElementById(`page${current}`).classList.remove('active');
-            document.getElementById(`page${next}`).classList.add('active');
-            
-            // Atualizar revisão na última página
-            if (next === 6) {
-                updateReviewData();
-            }
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
-        function prevPage(current, prev) {
-            // SALVAR antes de mudar de página
-            saveFormData();
-            
-            document.getElementById(`page${current}`).classList.remove('active');
-            document.getElementById(`page${prev}`).classList.add('active');
-            updateProgress(current, prev, false);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
-        function navigateToPage(pageNumber) {
-            if (pageNumber < 1 || pageNumber > 6) return;
-            
-            // Esconder todas as páginas
-            document.querySelectorAll('.form-page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // Mostrar página desejada
-            document.getElementById(`page${pageNumber}`).classList.add('active');
-            
-            // Atualizar progresso
-            document.querySelectorAll('.progress-step').forEach(step => {
-                step.classList.remove('active', 'completed');
-            });
-            
-            for (let i = 1; i < pageNumber; i++) {
-                document.getElementById(`step${i}`).classList.add('completed');
-            }
-            document.getElementById(`step${pageNumber}`).classList.add('active');
-        }
-        
-        function updateProgress(current, next, forward = true) {
-            const steps = document.querySelectorAll('.progress-step');
-            
-            if (forward) {
-                // Marcar atual como completado e próxima como ativa
-                steps[current - 1].classList.add('completed');
-                steps[current - 1].classList.remove('active');
-                if (next <= steps.length) {
-                    steps[next - 1].classList.add('active');
-                }
-            } else {
-                // Voltar: remover completado da atual
-                steps[current - 1].classList.remove('completed');
-                steps[current - 1].classList.remove('active');
-                steps[prev - 1].classList.add('active');
-            }
-        }
-        
-        // ============================================
         // CALENDÁRIO COM DIAS ESPECIAIS
         // ============================================
         function prevMonth() {
@@ -2614,35 +2684,12 @@
         function renderCalendar(month, year) {
             const calendar = document.getElementById('calendar');
             const monthYearDisplay = document.getElementById('currentMonthYear');
-            const prevMonthBtn = document.getElementById('prevMonth');
-            const nextMonthBtn = document.getElementById('nextMonth');
             
             calendar.innerHTML = '';
             
             const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
                               "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-            const monthNamesShort = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
-                                   "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-            
-            monthYearDisplay.textContent = monthNames[month];
-            
-            // Calcular meses anterior e próximo
-            let prevMonthNumber = month - 1;
-            let prevYear = year;
-            if (prevMonthNumber < 0) {
-                prevMonthNumber = 11;
-                prevYear--;
-            }
-            
-            let nextMonthNumber = month + 1;
-            let nextYear = year;
-            if (nextMonthNumber > 11) {
-                nextMonthNumber = 0;
-                nextYear++;
-            }
-            
-            prevMonthBtn.textContent = monthNamesShort[prevMonthNumber];
-            nextMonthBtn.textContent = monthNamesShort[nextMonthNumber];
+            monthYearDisplay.textContent = `${monthNames[month]} ${year}`;
             
             const firstDay = new Date(year, month, 1);
             const startingDay = firstDay.getDay();
@@ -3025,24 +3072,16 @@
             const baseUrl = window.location.origin + window.location.pathname;
             const clientLink = `${baseUrl}?p=${encodedProducts}&id=${linkId}`;
             
-            // Criar mensagem formatada
-            const message = `Vou te enviar um link bem facinho para vc colocar o endereço, a data da entrega e o texto que vai no cartão ta? 📅\n\n${clientLink}`;
-            
-            // Mostrar na tela
-            const linkMessageContainer = document.getElementById('linkMessageContainer');
-            linkMessageContainer.innerHTML = `
-                <p><strong>Vou te enviar um link bem facinho para vc colocar o endereço, a data da entrega e o texto que vai no cartão ta? 📅</strong></p>
-                <p style="margin-top: 10px; font-size: 12px; word-break: break-all;">${clientLink}</p>
-            `;
-            
+            // Mostrar link
+            document.getElementById('generatedLink').textContent = clientLink;
             document.getElementById('generatedLinkContainer').classList.remove('hidden');
             
             // Copiar automaticamente
-            copyToClipboard(message, 'link');
+            copyToClipboard(clientLink, 'link');
             
             // Mostrar mensagem
             const copySuccess = document.getElementById('copySuccess');
-            copySuccess.textContent = '✅ Link copiado automaticamente com a mensagem!';
+            copySuccess.textContent = '✅ Link copiado automaticamente!';
             copySuccess.classList.add('show');
             
             setTimeout(() => {
@@ -3059,11 +3098,11 @@
             products.forEach((product, index) => {
                 if (index > 0) encoded += '-';
                 
-                // Nome do produto (codificar espaços como hífen)
-                const formattedName = product.name.replace(/\s+/g, '-');
+                // Nome do produto (codificar espaços e caracteres especiais)
+                const encodedName = encodeURIComponent(product.name);
                 
                 // Montar parte: quantidade|codigo|nome|preço
-                encoded += `${product.quantity}|${product.code || ''}|${formattedName}|${product.price.toFixed(2)}`;
+                encoded += `${product.quantity}|${product.code || ''}|${encodedName}|${product.price.toFixed(2)}`;
             });
             
             return encoded;
@@ -3074,11 +3113,10 @@
             const productParts = encodedData.split('-');
             
             productParts.forEach(part => {
-                const [quantityStr, code, formattedName, priceStr] = part.split('|');
+                const [quantityStr, code, encodedName, priceStr] = part.split('|');
                 
                 const quantity = parseInt(quantityStr);
-                // Converter hífens de volta para espaços
-                const name = formattedName.replace(/-/g, ' ');
+                const name = decodeURIComponent(encodedName);
                 const price = parseFloat(priceStr);
                 
                 if (quantity && name && price) {
@@ -3095,14 +3133,12 @@
             return products;
         }
         
-        function copyLinkWithMessage() {
-            const linkMessageContainer = document.getElementById('linkMessageContainer');
-            const paragraphs = linkMessageContainer.querySelectorAll('p');
-            if (paragraphs.length >= 2) {
-                const message = `${paragraphs[0].textContent}\n\n${paragraphs[1].textContent}`;
-                copyToClipboard(message, 'link');
+        function copyLinkAgain() {
+            const link = document.getElementById('generatedLink').textContent;
+            if (link) {
+                copyToClipboard(link, 'link');
                 const copySuccess = document.getElementById('copySuccess');
-                copySuccess.textContent = '✅ Link copiado novamente com a mensagem!';
+                copySuccess.textContent = '✅ Link copiado novamente!';
                 copySuccess.classList.add('show');
                 
                 setTimeout(() => {
@@ -3287,6 +3323,7 @@
             } else if (page === 2) {
                 const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
                 
+                // Só valida endereço se for entrega
                 if (deliveryType === 'delivery') {
                     const city = document.getElementById('deliveryCity').value;
                     if (!city) {
@@ -3312,16 +3349,19 @@
                 const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
                 
                 if (deliveryType === 'pickup') {
+                    // Retirada precisa de data e horário
                     if (!selectedDate) {
-                        errors.push({ field: 'deliveryTime', message: 'Selecione uma data' });
+                        errors.push({ field: 'deliveryTime', message: 'Selecione uma data para retirada' });
                     }
                     
                     if (!document.querySelector('input[name="deliveryTime"]:checked')) {
-                        errors.push({ field: 'deliveryTime', message: 'Selecione um horário' });
+                        errors.push({ field: 'deliveryTime', message: 'Selecione um horário para retirada' });
                     }
                 } else {
+                    // Entrega pode ser para outra cidade (sem data/horário obrigatório)
                     const city = document.getElementById('deliveryCity').value;
                     if (city !== 'other') {
+                        // Entrega própria precisa de data e horário
                         if (!selectedDate) {
                             errors.push({ field: 'deliveryTime', message: 'Selecione uma data' });
                         }
