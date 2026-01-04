@@ -1059,13 +1059,12 @@
             border-radius: 8px;
             margin: 15px 0;
             border: 2px dashed #dee2e6;
-            text-align: center;
+            text-align: left;
         }
         
         .terms-box label {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: flex-start;
             cursor: pointer;
             font-weight: 600;
             color: var(--primary);
@@ -1075,6 +1074,19 @@
             margin-right: 10px;
             width: 18px;
             height: 18px;
+            margin-top: 3px;
+        }
+        
+        .terms-box-content {
+            margin-left: 28px;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .terms-box-content strong {
+            color: #333;
         }
         
         .autosave-indicator {
@@ -1102,6 +1114,56 @@
             color: var(--danger);
             font-weight: normal;
             margin-left: 5px;
+        }
+        
+        .vendedor-info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .vendedor-info h3 {
+            color: #0d47a1;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        
+        .vendedor-summary {
+            background: #e8f4fd;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 14px;
+            border: 1px solid #bbdefb;
+            font-weight: 600;
+        }
+        
+        .vendedor-summary-simples {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 14px;
+            border: 1px solid #dee2e6;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .vendedor-label {
+            color: #6c757d;
+            font-weight: 600;
+        }
+        
+        .vendedor-value {
+            color: var(--primary);
+            font-weight: 700;
         }
         
         @media (max-width: 480px) {
@@ -1248,8 +1310,36 @@
             <button class="toast-close" onclick="closeToast()">&times;</button>
         </div>
         
-        <!-- Página 1: Produtos e Dados Básicos -->
+        <!-- Página 1: Dados do Vendedor e Produtos -->
         <div id="page1" class="form-page active">
+            <!-- Seção do Vendedor (modo normal - vendedor preenchendo) -->
+            <div id="vendedorSectionNormal" class="section">
+                <h2 class="section-title"><i class="fas fa-user-tie"></i> Dados do Vendedor <span class="obrigatorio-small">(obrigatório)</span></h2>
+                
+                <div class="vendedor-info">
+                    <h3><i class="fas fa-info-circle"></i> Informações do Vendedor</h3>
+                    <p>Preencha seu nome abaixo. Este nome será salvo junto com os produtos e aparecerá na planilha quando o pedido for enviado.</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="vendedorNome">Nome do Vendedor: <span class="obrigatorio-small">(obrigatório)</span></label>
+                    <input type="text" id="vendedorNome" class="form-control" placeholder="Digite seu nome completo" required>
+                    <div class="error-text" id="errorVendedorNome"></div>
+                </div>
+                
+                <div id="vendedorSummary" class="vendedor-summary hidden">
+                    <strong>Vendedor:</strong> <span id="vendedorNomeDisplay">-</span>
+                </div>
+            </div>
+            
+            <!-- Seção do Vendedor Simplificada (modo link - cliente vendo) -->
+            <div id="vendedorSectionLink" class="section hidden">
+                <div id="vendedorDisplay" class="vendedor-summary-simples">
+                    <span class="vendedor-label">Vendedor:</span>
+                    <span class="vendedor-value" id="vendedorNomeDisplayLink">-</span>
+                </div>
+            </div>
+            
             <!-- Seção de Produtos (só aparece quando NÃO veio de link) -->
             <div class="section" id="productSection">
                 <div class="section-title">
@@ -1305,7 +1395,7 @@
                 <!-- Gerador de Link (só aparece quando não veio de link) -->
                 <div id="linkGeneratorSection">
                     <div class="link-instructions">
-                        <p><strong>📋 Para enviar para cliente:</strong> Preencha os produtos e clique em "Gerar Link"</p>
+                        <p><strong>📋 Para enviar para cliente:</strong> Preencha o nome do vendedor e os produtos, depois clique em "Gerar Link"</p>
                     </div>
                     <button type="button" class="btn btn-primary" id="generateLinkBtn">Gerar Link para Cliente</button>
                     
@@ -1595,14 +1685,22 @@
                         </div>
                     </div>
                     
+                    <!-- Termo de Ciência Atualizado -->
                     <div class="terms-box">
                         <label>
                             <input type="radio" name="acknowledgeTerms" value="yes" id="acknowledgeTermsYes">
                             Termo de Ciência <span class="obrigatorio-small">(obrigatório)</span>
                         </label>
-                        <p style="margin-top: 10px; font-size: 13px; color: #666;">
-                            Todas as mensagens para o cartão não podem ser corrigidas ou alteradas, por se tratar de algo particular. <strong>Então se atente à gramática.</strong>
-                        </p>
+                        <div class="terms-box-content">
+                            <p><strong>Todas as mensagens para o cartão não podem ser corrigidas ou alteradas, por se tratar de algo particular. Então se atente à gramática.</strong></p>
+                            
+                            <!-- Mensagem adicional para compra anônima -->
+                            <div id="anonymousTerms" class="hidden" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;">
+                                <p><strong>Atenção para compra anônima:</strong></p>
+                                <p>Declaro que estou ciente de que a compra anônima pode ser recusada pelo presenteado, podendo resultar na devolução do produto para a empresa. Neste caso, o produto poderá ser retirado pelo comprador.</p>
+                                <p>Considerando que se trata de um presente personalizado e exclusivo para o pedido, a empresa reserva-se o direito de não efetuar cancelamentos. Em casos de reenvios, novos fretes serão cobrados.</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="error-text" id="errorAcknowledgeTerms"></div>
                 </div>
@@ -1854,6 +1952,9 @@
         
         // Sistema de múltiplos produtos
         let productRows = 1;
+        
+        // Vendedor (novo campo)
+        let vendedorNome = '';
         
         // ============================================
         // TABELA DE FRETES ATUALIZADA
@@ -2129,6 +2230,32 @@
                 handleSilentAutosave();
             });
             
+            // Campo do vendedor (só no modo normal)
+            if (!isFromLink) {
+                document.getElementById('vendedorNome').addEventListener('input', function() {
+                    vendedorNome = this.value.trim();
+                    updateVendedorDisplay();
+                    handleSilentAutosave();
+                });
+            }
+            
+            // Anônimo - para mostrar/ocultar termos especiais
+            document.querySelectorAll('input[name="anonymous"], input[name="anonymousNoCard"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const anonymousTerms = document.getElementById('anonymousTerms');
+                    const isAnonymous = this.value === 'yes';
+                    
+                    if (anonymousTerms) {
+                        if (isAnonymous) {
+                            anonymousTerms.classList.remove('hidden');
+                        } else {
+                            anonymousTerms.classList.add('hidden');
+                        }
+                    }
+                    handleSilentAutosave();
+                });
+            });
+            
             // Páginas de sucesso
             document.getElementById('copyPixKeyBtn').addEventListener('click', copyPixKey);
             document.getElementById('copyPixKeyBtn2').addEventListener('click', copyPixKey);
@@ -2382,6 +2509,9 @@
                     linkProducts: isFromLink ? lockedProducts : [],
                     linkId: linkId,
                     
+                    // Vendedor
+                    vendedorNome: vendedorNome || '',
+                    
                     // Dados pessoais
                     buyerName: document.getElementById('buyerName')?.value || '',
                     buyerPhone: document.getElementById('buyerPhone')?.value || '',
@@ -2448,6 +2578,20 @@
                 
                 const data = JSON.parse(savedData);
                 console.log('📂 Carregando dados salvos de:', data.timestamp);
+                
+                // Se veio de link, mostrar apenas o display simples
+                if (isFromLink && data.vendedorNome) {
+                    vendedorNome = data.vendedorNome;
+                    updateVendedorDisplayLink();
+                    document.getElementById('vendedorSectionNormal').classList.add('hidden');
+                    document.getElementById('vendedorSectionLink').classList.remove('hidden');
+                } 
+                // Se não veio de link, mostrar formulário normal
+                else if (!isFromLink && data.vendedorNome) {
+                    document.getElementById('vendedorNome').value = data.vendedorNome;
+                    vendedorNome = data.vendedorNome;
+                    updateVendedorDisplay();
+                }
                 
                 // Restaurar dados básicos
                 if (data.buyerName) document.getElementById('buyerName').value = data.buyerName;
@@ -2547,6 +2691,11 @@
                 if (data.anonymous === 'yes') {
                     document.getElementById('anonymousNotes').classList.remove('hidden');
                     document.getElementById('anonymousNotesNoCard').classList.remove('hidden');
+                    // Mostrar termos anônimos
+                    const anonymousTerms = document.getElementById('anonymousTerms');
+                    if (anonymousTerms) {
+                        anonymousTerms.classList.remove('hidden');
+                    }
                 }
                 
                 // Restaurar página atual
@@ -2648,13 +2797,38 @@
         }
         
         function clearAllData() {
-            if (confirm('Tem certeza que deseja limpar todos os dados? Isso apagará todos os produtos e informações preenchidas.')) {
+            if (confirm('Tem certeza que deseja limpar todos os dados? Isso apagará todos os produtos e informações preenchidos.')) {
                 // Limpar localStorage
                 const storageKey = isFromLink ? 'mundoCarolFormData_link' : 'mundoCarolFormData';
                 localStorage.removeItem(storageKey);
                 
                 // Recarregar a página
                 location.reload();
+            }
+        }
+        
+        // ============================================
+        // FUNÇÕES DO VENDEDOR
+        // ============================================
+        function updateVendedorDisplay() {
+            const vendedorDisplay = document.getElementById('vendedorNomeDisplay');
+            const vendedorSummary = document.getElementById('vendedorSummary');
+            
+            if (vendedorNome && vendedorNome.trim() !== '') {
+                vendedorDisplay.textContent = vendedorNome;
+                vendedorSummary.classList.remove('hidden');
+            } else {
+                vendedorSummary.classList.add('hidden');
+            }
+        }
+        
+        function updateVendedorDisplayLink() {
+            const vendedorDisplay = document.getElementById('vendedorNomeDisplayLink');
+            
+            if (vendedorNome && vendedorNome.trim() !== '') {
+                vendedorDisplay.textContent = vendedorNome;
+            } else {
+                vendedorDisplay.textContent = 'Não informado';
             }
         }
         
@@ -3057,6 +3231,14 @@
         function generateClientLink() {
             const { products, total } = getAllProducts();
             
+            // Verificar se o vendedor foi preenchido
+            if (!vendedorNome || vendedorNome.trim() === '') {
+                showToast('Preencha o nome do vendedor antes de gerar o link', 'warning');
+                document.getElementById('vendedorNome').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('vendedorNome').focus();
+                return;
+            }
+            
             if (products.length === 0) {
                 showToast('Adicione pelo menos um produto antes de gerar o link', 'warning');
                 return;
@@ -3065,12 +3247,13 @@
             // Gerar ID único para o link (usando timestamp como ID)
             linkId = Date.now().toString();
             
-            // Codificar produtos
+            // Codificar produtos e vendedor
             const encodedProducts = encodeProductsForLink(products);
+            const encodedVendedor = encodeURIComponent(vendedorNome);
             
             // Criar URL
             const baseUrl = window.location.origin + window.location.pathname;
-            const clientLink = `${baseUrl}?p=${encodedProducts}&id=${linkId}`;
+            const clientLink = `${baseUrl}?p=${encodedProducts}&id=${linkId}&v=${encodedVendedor}`;
             
             // Mostrar link
             document.getElementById('generatedLink').textContent = clientLink;
@@ -3154,8 +3337,9 @@
             const urlParams = new URLSearchParams(window.location.search);
             const productsData = urlParams.get('p');
             linkId = urlParams.get('id');
+            const vendedorData = urlParams.get('v');
             
-            console.log('🔍 Verificando URL:', { productsData, linkId });
+            console.log('🔍 Verificando URL:', { productsData, linkId, vendedorData });
             
             if (productsData && linkId) {
                 // Verificar se já foi usado (salvamos IDs usados no localStorage)
@@ -3191,8 +3375,15 @@
                     lockedProducts = decodeProductsFromLink(productsData);
                     console.log('✅ Produtos decodificados:', lockedProducts);
                     
+                    // Decodificar vendedor se existir
+                    if (vendedorData) {
+                        vendedorNome = decodeURIComponent(vendedorData);
+                        console.log('👤 Vendedor do link:', vendedorNome);
+                    }
+                    
                     sessionStorage.setItem('link_products', productsData);
                     sessionStorage.setItem('link_id', linkId);
+                    sessionStorage.setItem('link_vendedor', vendedorNome || '');
                     setupFromLink();
                     
                 } catch (error) {
@@ -3213,6 +3404,17 @@
             document.getElementById('productSection').style.display = 'none';
             document.getElementById('linkGeneratorSection').style.display = 'none';
             document.getElementById('clearAllSection').style.display = 'none';
+            
+            // Mostrar apenas o display simples do vendedor
+            if (vendedorNome) {
+                updateVendedorDisplayLink();
+                document.getElementById('vendedorSectionNormal').classList.add('hidden');
+                document.getElementById('vendedorSectionLink').classList.remove('hidden');
+            } else {
+                // Se não tiver vendedor no link, ocultar completamente a seção
+                document.getElementById('vendedorSectionNormal').classList.add('hidden');
+                document.getElementById('vendedorSectionLink').classList.add('hidden');
+            }
             
             // Atualizar o cabeçalho
             const header = document.getElementById('mainHeader');
@@ -3281,6 +3483,14 @@
             const errors = [];
             
             if (page === 1) {
+                // Validar vendedor (obrigatório apenas no modo normal)
+                if (!isFromLink) {
+                    // No modo normal, o vendedor é obrigatório
+                    if (!vendedorNome || vendedorNome.trim() === '') {
+                        errors.push({ field: 'vendedorNome', message: 'Nome do vendedor obrigatório' });
+                    }
+                }
+                
                 const { products } = getAllProducts();
                 
                 // Se veio de link, já tem produtos pré-selecionados
@@ -3490,6 +3700,14 @@
                     year: 'numeric'
                 });
             };
+            
+            // Vendedor (sempre mostrar, se existir)
+            if (vendedorNome) {
+                html += '<div class="review-item">';
+                html += '<div class="review-label">Vendedor</div>';
+                html += `<div class="review-value">${vendedorNome}</div>`;
+                html += '</div>';
+            }
             
             // Produtos
             const { products, total } = getAllProducts();
@@ -3708,7 +3926,10 @@
             data[3] = productsDescription;
             data[4] = formattedPrice;
             data[5] = formattedShipping;
-            data[6] = 'FORMULÁRIO MANUAL';
+            
+            // IMPORTANTE: Substituir "FORMULÁRIO MANUAL" pelo nome do vendedor
+            data[6] = vendedorNome || 'Vendedor não informado';
+            
             data[8] = giftedName;
             data[9] = giftedPhone;
             data[10] = streetNumber;
