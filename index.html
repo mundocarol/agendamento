@@ -250,6 +250,12 @@
             color: #0c5460;
         }
         
+        .alert-danger {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
         .btn {
             display: inline-block;
             padding: 14px 20px;
@@ -1340,6 +1346,114 @@
             margin-left: 8px;
         }
         
+        .frete-config-section {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .frete-config-section h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .frete-config-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 2px solid #dee2e6;
+        }
+        
+        .frete-config-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #dee2e6;
+        }
+        
+        .frete-config-label {
+            font-weight: 600;
+            color: #6c757d;
+        }
+        
+        .frete-config-value {
+            font-weight: 700;
+            color: var(--success);
+        }
+        
+        .bloqueio-outra-cidade {
+            background: #f8d7da;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #dc3545;
+            text-align: center;
+        }
+        
+        .bloqueio-outra-cidade h3 {
+            color: #721c24;
+            margin-bottom: 15px;
+        }
+        
+        .bloqueio-outra-cidade p {
+            color: #721c24;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        /* NOVO: Seção de Taxa Personalizada */
+        .taxa-personalizada-section {
+            background: linear-gradient(135deg, #e8f4fd 0%, #bbdefb 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .taxa-personalizada-section h3 {
+            color: #0d47a1;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        
+        .taxa-personalizada-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 2px solid #dee2e6;
+        }
+        
+        .taxa-personalizada-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #dee2e6;
+        }
+        
+        .taxa-personalizada-label {
+            font-weight: 600;
+            color: #6c757d;
+        }
+        
+        .taxa-personalizada-value {
+            font-weight: 700;
+            color: #dc3545;
+        }
+        
         @media (max-width: 480px) {
             .header h1 {
                 font-size: 16px;
@@ -1542,6 +1656,107 @@
                 </div>
             </div>
             
+            <!-- NOVA SEÇÃO: Taxa Personalizada do Vendedor -->
+            <div id="taxaPersonalizadaSection" class="taxa-personalizada-section" style="display: none;">
+                <h2 class="section-title"><i class="fas fa-receipt"></i> Taxa Personalizada do Vendedor</h2>
+                
+                <div class="taxa-personalizada-section">
+                    <h3><i class="fas fa-cog"></i> Adicionar Taxa Personalizada</h3>
+                    <p>Esta taxa será adicionada ao pedido e aparecerá para o cliente na revisão. Será salva junto com o frete na planilha.</p>
+                    
+                    <div class="radio-group">
+                        <p>Deseja adicionar uma taxa personalizada ao pedido?</p>
+                        <div class="radio-option">
+                            <input type="radio" name="addCustomTax" value="no" id="addCustomTaxNo" checked>
+                            <label for="addCustomTaxNo">Não adicionar taxa personalizada</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="addCustomTax" value="yes" id="addCustomTaxYes">
+                            <label for="addCustomTaxYes">Sim, adicionar taxa personalizada</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Configuração da taxa personalizada (aparece quando permitir) -->
+                    <div id="taxaPersonalizadaDetails" class="hidden">
+                        <div class="taxa-personalizada-card">
+                            <div class="form-group">
+                                <label for="taxaPersonalizadaDescricao">Descrição da Taxa: <span class="obrigatorio-small">(obrigatório)</span></label>
+                                <input type="text" id="taxaPersonalizadaDescricao" class="form-control" placeholder="Ex: Taxa de embalagem especial, Taxa de urgência, etc.">
+                                <div class="error-text" id="errorTaxaPersonalizadaDescricao"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="taxaPersonalizadaValor">Valor da Taxa (R$): <span class="obrigatorio-small">(obrigatório)</span></label>
+                                <input type="number" id="taxaPersonalizadaValor" class="form-control" min="0" step="0.01" placeholder="0,00">
+                                <div class="error-text" id="errorTaxaPersonalizadaValor"></div>
+                            </div>
+                            
+                            <div id="taxaPersonalizadaDisplay" class="taxa-personalizada-details hidden">
+                                <div class="taxa-personalizada-label">Taxa Configurada:</div>
+                                <div class="taxa-personalizada-value">
+                                    <span id="taxaPersonalizadaDescricaoDisplay">-</span> | 
+                                    <span id="taxaPersonalizadaValorDisplay">R$ 0,00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Seção de Configuração de Frete para Outras Cidades (SÓ VENDEDOR) -->
+            <div id="freteConfigSection" class="section" style="display: none;">
+                <h2 class="section-title"><i class="fas fa-truck"></i> Configuração de Frete para Outras Cidades</h2>
+                
+                <div class="frete-config-section">
+                    <h3><i class="fas fa-cogs"></i> Configurar Envio para Outra Cidade</h3>
+                    <p>Esta configuração será enviada no link para o cliente. Se habilitar, o cliente poderá escolher "Outra Localidade ou Cidade" e verá o frete que você definir.</p>
+                    
+                    <div class="radio-group">
+                        <p>Permitir envio para outras cidades no link do cliente?</p>
+                        <div class="radio-option">
+                            <input type="radio" name="allowOtherCity" value="no" id="allowOtherCityNo" checked>
+                            <label for="allowOtherCityNo">Não permitir - O cliente só poderá escolher entre as cidades da lista</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="allowOtherCity" value="yes" id="allowOtherCityYes">
+                            <label for="allowOtherCityYes">Permitir - Configurar frete para outras cidades</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Configuração de frete para outras cidades (aparece quando permitir) -->
+                    <div id="freteConfigDetails" class="hidden">
+                        <div class="frete-config-card">
+                            <div class="form-group">
+                                <label for="freteTipo">Tipo de Frete: <span class="obrigatorio-small">(obrigatório)</span></label>
+                                <input type="text" id="freteTipo" class="form-control" placeholder="Ex: Correios PAC, Transportadora, etc.">
+                                <div class="error-text" id="errorFreteTipo"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="fretePrazo">Prazo Médio: <span class="obrigatorio-small">(obrigatório)</span></label>
+                                <input type="text" id="fretePrazo" class="form-control" placeholder="Ex: 5-10 dias úteis">
+                                <div class="error-text" id="errorFretePrazo"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="freteValor">Valor do Frete (R$): <span class="obrigatorio-small">(obrigatório)</span></label>
+                                <input type="number" id="freteValor" class="form-control" min="0" step="0.01" placeholder="0,00">
+                                <div class="error-text" id="errorFreteValor"></div>
+                            </div>
+                            
+                            <div id="freteConfigDisplay" class="frete-config-details hidden">
+                                <div class="frete-config-label">Configuração Ativa:</div>
+                                <div class="frete-config-value">
+                                    <span id="freteTipoDisplay">-</span> | 
+                                    <span id="fretePrazoDisplay">-</span> | 
+                                    <span id="freteValorDisplay">R$ 0,00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Seção de Produtos (só aparece quando NÃO veio de link) -->
             <div class="section" id="productSection">
                 <div class="section-title">
@@ -1597,7 +1812,7 @@
                 <!-- Gerador de Link (só aparece quando não veio de link) -->
                 <div id="linkGeneratorSection">
                     <div class="link-instructions">
-                        <p><strong>📋 Para enviar para cliente:</strong> Preencha o nome do vendedor, os produtos e marque se é anônimo, depois clique em "Gerar Link"</p>
+                        <p><strong>📋 Para enviar para cliente:</strong> Preencha o nome do vendedor, os produtos, configure o frete se necessário, adicione taxas se quiser e marque se é anônimo, depois clique em "Gerar Link"</p>
                     </div>
                     <button type="button" class="btn btn-primary" id="generateLinkBtn">Gerar Link para Cliente</button>
                     
@@ -1692,67 +1907,118 @@
             <div class="section">
                 <h2 class="section-title"><i class="fas fa-map-marker-alt"></i> Endereço de Entrega</h2>
                 
-                <div class="form-group">
-                    <label for="deliveryCity">Para qual cidade enviaremos seu pedido? <span class="obrigatorio-small">(obrigatório)</span></label>
-                    <select id="deliveryCity" class="form-control" required>
-                        <option value="">Selecione sua cidade</option>
-                        <option value="Belo Horizonte">Belo Horizonte</option>
-                        <option value="Betim">Betim</option>
-                        <option value="Contagem">Contagem</option>
-                        <option value="Sabará">Sabará</option>
-                        <option value="Ibirité">Ibirité</option>
-                        <option value="Ribeirão das Neves">Ribeirão das Neves</option>
-                        <option value="Santa Luzia">Santa Luzia</option>
-                        <option value="Vespasiano">Vespasiano</option>
-                        <option value="Lagoa Santa">Lagoa Santa</option>
-                        <option value="Nova Lima">Nova Lima</option>
-                        <option value="Nova Lima (Vila da Serra)">Nova Lima (Vila da Serra)</option>
-                        <option value="other">Outra Localidade ou Cidade</option>
-                    </select>
-                    <div class="error-text" id="errorDeliveryCity"></div>
-                    <div id="shippingInfo" class="frete-display hidden">
-                        <span>Frete: <span id="freteValue" class="frete-value"></span></span>
+                <!-- BLOQUEIO PARA OUTRA CIDADE QUANDO NÃO AUTORIZADO (APARECE NO MODO LINK) -->
+                <div id="bloqueioOutraCidade" class="bloqueio-outra-cidade hidden">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Link não autorizado para envios para outras localidades</h3>
+                    <p>Este link não está autorizado para envios para outras localidades. Para pedidos em outras cidades, é necessário que o vendedor configure o frete específico.</p>
+                    <p><strong>Solicite ao atendente o link com seu frete já calculado.</strong></p>
+                    
+                    <button class="whatsapp-discreto" onclick="contactWhatsApp()">
+                        <i class="fab fa-whatsapp"></i> Solicitar Link Correto
+                    </button>
+                    
+                    <div class="alert alert-info" style="margin-top: 15px; text-align: left;">
+                        <h3><i class="fas fa-truck-loading"></i> Entrega para Outra Cidade</h3>
+                        <p>Ao escolher <strong>Outra Localidade ou Cidade</strong>, por não ser entrega própria o prazo será informado por um de nossos atendentes.</p>
+                        <p>Os envios são feitos por Correios e Transportadoras, portanto temos prazos aproximados, mas não temos entregas agendadas.</p>
+                        <p>Após a confirmação do pagamento, nossa equipe entrará em contato para informar o prazo de entrega estimado.</p>
                     </div>
                 </div>
                 
-                <div id="addressFields">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="street">Rua: <span class="obrigatorio-small">(obrigatório)</span></label>
-                            <input type="text" id="street" class="form-control" placeholder="Ex: Rua das Flores" required>
-                            <div class="error-text" id="errorStreet"></div>
+                <div id="addressSelectionArea">
+                    <div class="form-group">
+                        <label for="deliveryCity">Para qual cidade enviaremos seu pedido? <span class="obrigatorio-small">(obrigatório)</span></label>
+                        <select id="deliveryCity" class="form-control" required>
+                            <option value="">Selecione sua cidade</option>
+                            <option value="Belo Horizonte">Belo Horizonte</option>
+                            <option value="Betim">Betim</option>
+                            <option value="Contagem">Contagem</option>
+                            <option value="Sabará">Sabará</option>
+                            <option value="Ibirité">Ibirité</option>
+                            <option value="Ribeirão das Neves">Ribeirão das Neves</option>
+                            <option value="Santa Luzia">Santa Luzia</option>
+                            <option value="Vespasiano">Vespasiano</option>
+                            <option value="Lagoa Santa">Lagoa Santa</option>
+                            <option value="Nova Lima">Nova Lima</option>
+                            <option value="Nova Lima (Vila da Serra)">Nova Lima (Vila da Serra)</option>
+                            <option value="other" id="otherCityOption">Outra Localidade ou Cidade</option>
+                        </select>
+                        <div class="error-text" id="errorDeliveryCity"></div>
+                        <div id="shippingInfo" class="frete-display hidden">
+                            <span>Frete: <span id="freteValue" class="frete-value"></span></span>
+                        </div>
+                        
+                        <!-- Exibição do frete configurado para outras cidades (quando autorizado) -->
+                        <div id="otherCityFreteInfo" class="frete-display hidden" style="color: #856404; background: #fff3cd; padding: 8px; border-radius: 6px; margin-top: 8px;">
+                            <i class="fas fa-info-circle"></i> <strong>Frete para outras cidades:</strong>
+                            <span id="otherCityFreteDetails">-</span>
+                        </div>
+                    </div>
+                    
+                    <div id="addressFields">
+                        <!-- Campos comuns para todas as cidades -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="street">Rua: <span class="obrigatorio-small">(obrigatório)</span></label>
+                                <input type="text" id="street" class="form-control" placeholder="Ex: Rua das Flores" required>
+                                <div class="error-text" id="errorStreet"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="number">Número: <span class="obrigatorio-small">(obrigatório)</span></label>
+                                <input type="text" id="number" class="form-control" placeholder="Ex: 123" required>
+                                <div class="error-text" id="errorNumber"></div>
+                            </div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="number">Número: <span class="obrigatorio-small">(obrigatório)</span></label>
-                            <input type="text" id="number" class="form-control" placeholder="Ex: 123" required>
-                            <div class="error-text" id="errorNumber"></div>
+                            <label for="complement">Complemento (ap/bloco/loja/etc):</label>
+                            <input type="text" id="complement" class="form-control">
+                            <small>Se não tem complemento, pode deixar em branco</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="neighborhood">Bairro: <span class="obrigatorio-small">(obrigatório)</span></label>
+                            <input type="text" id="neighborhood" class="form-control" required>
+                            <div class="error-text" id="errorNeighborhood"></div>
+                        </div>
+                        
+                        <!-- Campo para nome da cidade (apenas para "Outra Localidade ou Cidade") -->
+                        <div id="otherCityNameField" class="form-group hidden">
+                            <label for="otherCityName">Nome da Cidade: <span class="obrigatorio-small">(obrigatório)</span></label>
+                            <input type="text" id="otherCityName" class="form-control" placeholder="Ex: São Paulo, Rio de Janeiro, etc.">
+                            <div class="error-text" id="errorOtherCityName"></div>
+                        </div>
+                        
+                        <!-- Campo de CEP (obrigatório apenas para "Outra Localidade ou Cidade") -->
+                        <div id="cepField" class="form-group hidden">
+                            <label for="cep">CEP: <span class="obrigatorio-small">(obrigatório para outras cidades)</span></label>
+                            <input type="text" id="cep" class="form-control" placeholder="Ex: 31050650 (apenas números)" maxlength="8" pattern="\d{8}">
+                            <div class="error-text" id="errorCep"></div>
+                            <small style="color: #666; font-size: 12px;">Digite o CEP com 8 dígitos, sem traços ou pontos</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="referencePoint">Ponto de referência ou CEP (não é obrigatório para cidades da lista):</label>
+                            <input type="text" id="referencePoint" class="form-control" placeholder="Ex: Próximo ao supermercado X">
                         </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="complement">Complemento (ap/bloco/loja/etc):</label>
-                        <input type="text" id="complement" class="form-control">
-                        <small>Se não tem complemento, pode deixar em branco</small>
+                    <!-- Mensagem informativa para outras cidades -->
+                    <div id="otherCityMessage" class="alert alert-info hidden">
+                        <h3><i class="fas fa-truck-loading"></i> Entrega para Outra Cidade</h3>
+                        <p>Ao escolher <strong>Outra Localidade ou Cidade</strong>, por não ser entrega própria o prazo será informado por um de nossos atendentes.</p>
+                        <p>Os envios são feitos por Correios e Transportadoras, portanto temos prazos aproximados, mas não temos entregas agendadas.</p>
+                        <p>Após a confirmação do pagamento, nossa equipe entrará em contato para informar o prazo de entrega estimado.</p>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="neighborhood">Bairro: <span class="obrigatorio-small">(obrigatório)</span></label>
-                        <input type="text" id="neighborhood" class="form-control" required>
-                        <div class="error-text" id="errorNeighborhood"></div>
+                    <!-- Informações do frete configurado pelo vendedor -->
+                    <div id="vendedorFreteConfigInfo" class="alert alert-warning hidden">
+                        <h3><i class="fas fa-shipping-fast"></i> Frete Configurado pelo Vendedor</h3>
+                        <p><strong>Tipo:</strong> <span id="displayFreteTipo">-</span></p>
+                        <p><strong>Prazo:</strong> <span id="displayFretePrazo">-</span></p>
+                        <p><strong>Valor:</strong> <span id="displayFreteValor">R$ 0,00</span></p>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="referencePoint">Ponto de referência ou CEP (não é obrigatório):</label>
-                        <input type="text" id="referencePoint" class="form-control" placeholder="Ex: Próximo ao supermercado X ou 30130-000">
-                    </div>
-                </div>
-                
-                <div id="otherCityMessage" class="alert alert-info hidden">
-                    <h3><i class="fas fa-truck-loading"></i> Entrega para Outra Cidade</h3>
-                    <p>Ao escolher <strong>Outra Localidade ou Cidade</strong>, por não ser entrega própria o prazo será informado por um de nossos atendentes.</p>
-                    <p>Os envios são feitos por Correios e Transportadoras, portanto temos prazos aproximados, mas não temos entregas agendadas.</p>
-                    <p>Após a confirmação do pagamento, nossa equipe entrará em contato para informar o prazo de entrega estimado.</p>
                 </div>
             </div>
             
@@ -1766,6 +2032,14 @@
         <div id="page3" class="form-page">
             <div class="section">
                 <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Data de Entrega/Retirada <span class="obrigatorio-small">(obrigatório)</span></h2>
+                
+                <!-- Aviso para outras cidades (sem agendamento) -->
+                <div id="otherCityScheduleWarning" class="alert alert-info hidden">
+                    <h3><i class="fas fa-info-circle"></i> Entrega para Outra Cidade</h3>
+                    <p>Para entregas em outras cidades, <strong>não temos agendamento de data e horário</strong>.</p>
+                    <p>O prazo de entrega será informado por nossa equipe após a confirmação do pagamento.</p>
+                    <p>Clique em "Próxima" para continuar com seu pedido.</p>
+                </div>
                 
                 <div id="calendarContainer" class="calendar-container">
                     <div class="calendar-nav-container">
@@ -2067,7 +2341,7 @@
                     </div>
                     
                     <div class="pix-key-container" style="margin-top: 30px;">
-                        <h3><i class="fas fa-qrcode"></i> <strong>Recomendamos:</strong> Pague via PIX e ganhe 2% de desconto!</h3>
+                        <h3><i class="fas fa-qrcode"></i> <strong>Recomendamos:</strong> Pague via PIX e ganhe 2% de desconto!</p>
                         <p>Pagando via PIX seu pedido é processado <strong>imediatamente</strong> e você ainda economiza!</p>
                         <div class="pix-key" id="pixKey2">10648303000179</div>
                         <button type="button" class="btn btn-primary" id="copyPixKeyBtn2">
@@ -2133,7 +2407,7 @@
                 description: '7% de desconto nos produtos',
                 minPurchase: 0,
                 maxDiscount: 100,
-                validUntil: '2027-01-31',
+                validUntil: '2026-01-31',
                 excludesPixDiscount: true,
                 limit: 1,
                 unlimited: false
@@ -2144,7 +2418,7 @@
                 description: '7% de desconto nos produtos',
                 minPurchase: 0,
                 maxDiscount: 100,
-                validUntil: '2027-01-31',
+                validUntil: '2026-01-31',
                 excludesPixDiscount: true,
                 limit: 1,
                 unlimited: false
@@ -2160,7 +2434,7 @@
                 limit: 1,
                 unlimited: false
             },
-            'FRETEGRATISX35A': {
+            'FRETEGRATIS': {
                 type: 'free_shipping',
                 value: 0,
                 description: 'Frete grátis para Belo Horizonte',
@@ -2170,11 +2444,11 @@
                 limit: 1,
                 unlimited: false
             },
-            'DESCONTOFRETE3S20T': {
+            'DESCONTOFRETE20': {
                 type: 'shipping_discount',
                 value: 20,
                 description: 'R$ 20,00 de desconto no frete',
-                validUntil: '2026-12-31',
+                validUntil: '2024-12-31',
                 excludesPixDiscount: false,
                 limit: 1,
                 unlimited: false
@@ -2255,11 +2529,22 @@
         let pixDiscount = 0;
         let orderNumber = '';
         
+        // NOVAS VARIÁVEIS PARA CONFIGURAÇÃO DE FRETE
+        let allowOtherCity = false;
+        let freteTipo = '';
+        let fretePrazo = '';
+        let freteValor = 0;
+        
+        // NOVAS VARIÁVEIS PARA TAXA PERSONALIZADA
+        let addCustomTax = false;
+        let taxaPersonalizadaDescricao = '';
+        let taxaPersonalizadaValor = 0;
+        
         // ============================================
         // SISTEMA DE SALVAMENTO AUTOMÁTICO PARA LINKS
         // ============================================
         let saveTimeout = null;
-        const SAVE_DELAY = 1500; // 1.5 segundos para melhor performance
+        const SAVE_DELAY = 1500;
         
         // Função principal de salvamento para modo link
         function saveLinkFormData() {
@@ -2281,6 +2566,8 @@
                     complement: document.getElementById('complement')?.value || '',
                     neighborhood: document.getElementById('neighborhood')?.value || '',
                     referencePoint: document.getElementById('referencePoint')?.value || '',
+                    otherCityName: document.getElementById('otherCityName')?.value || '',
+                    cep: document.getElementById('cep')?.value || '',
                     selectedDate: selectedDate ? selectedDate.toISOString() : null,
                     selectedTime: selectedTime || '',
                     selectedTimeLabel: selectedTimeLabel || '',
@@ -2295,10 +2582,7 @@
                     timestamp: Date.now()
                 };
                 
-                // Salvar no localStorage com chave baseada no linkId
                 localStorage.setItem(`mundoCarol_link_${linkId}`, JSON.stringify(formData));
-                
-                // Salvar também na sessionStorage para acesso mais rápido
                 sessionStorage.setItem(`link_data_${linkId}`, JSON.stringify(formData));
                 
                 console.log('💾 Dados salvos para link:', linkId);
@@ -2313,10 +2597,8 @@
             if (!isFromLink || !linkId) return;
             
             try {
-                // Tentar primeiro da sessionStorage (mais rápido)
                 let savedData = sessionStorage.getItem(`link_data_${linkId}`);
                 
-                // Se não tiver na sessionStorage, tentar do localStorage
                 if (!savedData) {
                     savedData = localStorage.getItem(`mundoCarol_link_${linkId}`);
                 }
@@ -2328,14 +2610,12 @@
                 
                 const formData = JSON.parse(savedData);
                 
-                // Verificar se os dados são do mesmo link (segurança)
                 if (formData.linkId !== linkId) {
                     console.warn('⚠️ Tentativa de carregar dados de link diferente');
-                    clearLinkFormData(); // Limpar dados inválidos
+                    clearLinkFormData();
                     return;
                 }
                 
-                // Verificar se os dados são recentes (últimas 48 horas)
                 const dataTimestamp = formData.timestamp || 0;
                 const now = Date.now();
                 const hoursDiff = (now - dataTimestamp) / (1000 * 60 * 60);
@@ -2348,7 +2628,6 @@
                 
                 console.log('✅ Dados do link recuperados:', formData.linkId);
                 
-                // Carregar dados básicos
                 if (formData.vendedorNome) {
                     vendedorNome = formData.vendedorNome;
                     updateVendedorDisplayLink();
@@ -2359,7 +2638,6 @@
                     updateAnonimoDisplay();
                 }
                 
-                // Carregar outros campos
                 const fields = [
                     { id: 'buyerName', value: formData.buyerName },
                     { id: 'buyerPhone', value: formData.buyerPhone },
@@ -2371,6 +2649,8 @@
                     { id: 'complement', value: formData.complement },
                     { id: 'neighborhood', value: formData.neighborhood },
                     { id: 'referencePoint', value: formData.referencePoint },
+                    { id: 'otherCityName', value: formData.otherCityName },
+                    { id: 'cep', value: formData.cep },
                     { id: 'cardMessage', value: formData.cardMessage }
                 ];
                 
@@ -2380,7 +2660,6 @@
                     }
                 });
                 
-                // Carregar radio buttons
                 const radioGroups = [
                     { name: 'deliveryType', value: formData.deliveryType },
                     { name: 'sendCard', value: formData.sendCard },
@@ -2395,21 +2674,18 @@
                         const radio = document.querySelector(`input[name="${group.name}"][value="${group.value}"]`);
                         if (radio) radio.checked = true;
                         
-                        // Atualizar seções dependentes
                         if (group.name === 'sendCard' && group.value === 'yes') {
                             document.getElementById('cardMessageSection').classList.remove('hidden');
                         }
                     }
                 });
                 
-                // Carregar datas
                 if (formData.selectedDate) {
                     selectedDate = new Date(formData.selectedDate);
                     selectedTime = formData.selectedTime;
                     selectedTimeLabel = formData.selectedTimeLabel;
                 }
                 
-                // Carregar cupom
                 if (formData.couponCode) {
                     const coupon = coupons[formData.couponCode];
                     if (coupon) {
@@ -2420,26 +2696,29 @@
                     }
                 }
                 
-                // Atualizar cidade
                 if (formData.deliveryCity) {
                     selectedCity = formData.deliveryCity;
                     isOtherCity = formData.deliveryCity === 'other';
                     updateCityDisplay();
+                    
+                    if (isOtherCity) {
+                        const otherCityNameField = document.getElementById('otherCityNameField');
+                        const cepField = document.getElementById('cepField');
+                        if (otherCityNameField) otherCityNameField.classList.remove('hidden');
+                        if (cepField) cepField.classList.remove('hidden');
+                    }
                 }
                 
-                // Atualizar tipo de entrega
                 if (formData.deliveryType) {
                     currentDeliveryType = formData.deliveryType;
                 }
                 
-                // Navegar para a página salva
                 if (formData.currentPage) {
                     setTimeout(() => {
                         navigateToPage(formData.currentPage);
                     }, 100);
                 }
                 
-                // Atualizar resumo
                 updateProductsSummary();
                 
             } catch (error) {
@@ -2467,11 +2746,10 @@
             
             console.log('🔧 Configurando salvamento automático para link:', linkId);
             
-            // Monitorar inputs para salvar automaticamente
             const inputsToWatch = [
                 'buyerName', 'buyerPhone', 'giftedName', 'giftedPhone',
                 'deliveryCity', 'street', 'number', 'complement', 'neighborhood', 'referencePoint',
-                'cardMessage', 'cupomRevisao'
+                'otherCityName', 'cep', 'cardMessage', 'cupomRevisao'
             ];
             
             inputsToWatch.forEach(id => {
@@ -2484,7 +2762,6 @@
                 }
             });
             
-            // Monitorar radio buttons
             const radioGroups = ['deliveryType', 'sendCard', 'signedCard', 'acknowledgeTerms', 'paymentMethod', 'foundUs'];
             radioGroups.forEach(name => {
                 document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
@@ -2495,16 +2772,14 @@
                 });
             });
             
-            // Monitorar mudança de página
             const originalNavigateToPage = window.navigateToPage;
             window.navigateToPage = function(pageNumber) {
                 if (originalNavigateToPage) {
                     originalNavigateToPage(pageNumber);
                 }
-                saveLinkFormData(); // Salvar ao mudar de página
+                saveLinkFormData();
             };
             
-            // Salvar ao selecionar data/horário
             window.addEventListener('dateSelected', () => {
                 clearTimeout(saveTimeout);
                 saveTimeout = setTimeout(saveLinkFormData, SAVE_DELAY);
@@ -2515,16 +2790,12 @@
                 saveTimeout = setTimeout(saveLinkFormData, SAVE_DELAY);
             });
             
-            // Salvar ao aplicar cupom
             window.addEventListener('couponApplied', saveLinkFormData);
             
-            // Salvar antes de fechar a página
             window.addEventListener('beforeunload', saveLinkFormData);
             
-            // Salvar periodicamente a cada 30 segundos (backup)
             setInterval(saveLinkFormData, 30000);
             
-            // Carregar dados ao iniciar
             setTimeout(loadLinkFormData, 500);
         }
         
@@ -2532,7 +2803,7 @@
         // SISTEMA DE SALVAMENTO ORIGINAL (para vendedores)
         // ============================================
         function saveFormData() {
-            if (isFromLink) return; // Não salvar para modo link aqui
+            if (isFromLink) return;
             
             try {
                 const formData = {
@@ -2559,7 +2830,16 @@
                     paymentMethod: document.querySelector('input[name="paymentMethod"]:checked')?.value || '',
                     foundUs: document.querySelector('input[name="foundUs"]:checked')?.value || '',
                     couponCode: appliedCoupon ? Object.keys(coupons).find(key => coupons[key] === appliedCoupon) : '',
-                    currentPage: getCurrentPageNumber()
+                    currentPage: getCurrentPageNumber(),
+                    // NOVOS DADOS DE FRETE
+                    allowOtherCity: allowOtherCity,
+                    freteTipo: freteTipo,
+                    fretePrazo: fretePrazo,
+                    freteValor: freteValor,
+                    // NOVOS DADOS DE TAXA PERSONALIZADA
+                    addCustomTax: addCustomTax,
+                    taxaPersonalizadaDescricao: taxaPersonalizadaDescricao,
+                    taxaPersonalizadaValor: taxaPersonalizadaValor
                 };
                 
                 const products = [];
@@ -2627,6 +2907,47 @@
                     if (anonimoInfoSection) {
                         anonimoInfoSection.classList.add('hidden');
                     }
+                }
+            }
+        }
+        
+        // ============================================
+        // FUNÇÕES DE TAXA PERSONALIZADA
+        // ============================================
+        function updateTaxaPersonalizadaDisplay() {
+            const taxaPersonalizadaDisplay = document.getElementById('taxaPersonalizadaDisplay');
+            const taxaPersonalizadaDescricaoDisplay = document.getElementById('taxaPersonalizadaDescricaoDisplay');
+            const taxaPersonalizadaValorDisplay = document.getElementById('taxaPersonalizadaValorDisplay');
+            
+            if (taxaPersonalizadaDescricao && taxaPersonalizadaValor > 0) {
+                if (taxaPersonalizadaDisplay) taxaPersonalizadaDisplay.classList.remove('hidden');
+                if (taxaPersonalizadaDescricaoDisplay) taxaPersonalizadaDescricaoDisplay.textContent = taxaPersonalizadaDescricao;
+                if (taxaPersonalizadaValorDisplay) taxaPersonalizadaValorDisplay.textContent = `R$ ${taxaPersonalizadaValor.toFixed(2).replace('.', ',')}`;
+            } else {
+                if (taxaPersonalizadaDisplay) taxaPersonalizadaDisplay.classList.add('hidden');
+            }
+        }
+        
+        function updateTaxaPersonalizadaSection() {
+            const taxaPersonalizadaSection = document.getElementById('taxaPersonalizadaSection');
+            const taxaPersonalizadaDetails = document.getElementById('taxaPersonalizadaDetails');
+            
+            if (taxaPersonalizadaSection) {
+                taxaPersonalizadaSection.style.display = 'block';
+                
+                if (addCustomTax) {
+                    if (taxaPersonalizadaDetails) taxaPersonalizadaDetails.classList.remove('hidden');
+                    
+                    // Preencher campos se já houver dados
+                    const taxaPersonalizadaDescricaoInput = document.getElementById('taxaPersonalizadaDescricao');
+                    const taxaPersonalizadaValorInput = document.getElementById('taxaPersonalizadaValor');
+                    
+                    if (taxaPersonalizadaDescricaoInput && taxaPersonalizadaDescricao) taxaPersonalizadaDescricaoInput.value = taxaPersonalizadaDescricao;
+                    if (taxaPersonalizadaValorInput && taxaPersonalizadaValor > 0) taxaPersonalizadaValorInput.value = taxaPersonalizadaValor;
+                    
+                    updateTaxaPersonalizadaDisplay();
+                } else {
+                    if (taxaPersonalizadaDetails) taxaPersonalizadaDetails.classList.add('hidden');
                 }
             }
         }
@@ -2814,6 +3135,9 @@
             linkId = urlParams.get('id');
             const vendedorData = urlParams.get('v');
             const anonimoData = urlParams.get('a');
+            const otherCityData = urlParams.get('oc');
+            const freteData = urlParams.get('f');
+            const taxaData = urlParams.get('t');
             
             if (productsData && linkId) {
                 const usedLinks = JSON.parse(localStorage.getItem('mundoCarol_used_links') || '[]');
@@ -2847,10 +3171,44 @@
                         isPedidoAnonimo = true;
                     }
                     
+                    // Carregar configuração de outras cidades do link
+                    if (otherCityData === '1') {
+                        allowOtherCity = true;
+                        
+                        // Decodificar dados do frete se existirem
+                        if (freteData) {
+                            try {
+                                const freteDecoded = decodeFreteData(freteData);
+                                freteTipo = freteDecoded.tipo;
+                                fretePrazo = freteDecoded.prazo;
+                                freteValor = freteDecoded.valor;
+                            } catch (e) {
+                                console.error('Erro ao decodificar dados do frete:', e);
+                            }
+                        }
+                    }
+                    
+                    // Carregar taxa personalizada do link
+                    if (taxaData) {
+                        try {
+                            const taxaDecoded = decodeTaxaData(taxaData);
+                            if (taxaDecoded.descricao && taxaDecoded.valor > 0) {
+                                addCustomTax = true;
+                                taxaPersonalizadaDescricao = taxaDecoded.descricao;
+                                taxaPersonalizadaValor = taxaDecoded.valor;
+                            }
+                        } catch (e) {
+                            console.error('Erro ao decodificar dados da taxa:', e);
+                        }
+                    }
+                    
                     sessionStorage.setItem('link_products', productsData);
                     sessionStorage.setItem('link_id', linkId);
                     sessionStorage.setItem('link_vendedor', vendedorNome || '');
                     sessionStorage.setItem('link_anonimo', isPedidoAnonimo ? '1' : '0');
+                    sessionStorage.setItem('link_other_city', allowOtherCity ? '1' : '0');
+                    sessionStorage.setItem('link_frete', JSON.stringify({tipo: freteTipo, prazo: fretePrazo, valor: freteValor}));
+                    sessionStorage.setItem('link_taxa', JSON.stringify({descricao: taxaPersonalizadaDescricao, valor: taxaPersonalizadaValor}));
                     setupFromLink();
                     
                 } catch (error) {
@@ -2860,7 +3218,51 @@
                 
             } else {
                 sessionStorage.removeItem('current_session_link');
+                // Carregar dados salvos do vendedor
+                loadVendedorData();
             }
+        }
+        
+        function decodeFreteData(encodedData) {
+            try {
+                const decoded = JSON.parse(decodeURIComponent(encodedData));
+                return {
+                    tipo: decoded.t || '',
+                    prazo: decoded.p || '',
+                    valor: parseFloat(decoded.v) || 0
+                };
+            } catch (e) {
+                return {tipo: '', prazo: '', valor: 0};
+            }
+        }
+        
+        function decodeTaxaData(encodedData) {
+            try {
+                const decoded = JSON.parse(decodeURIComponent(encodedData));
+                return {
+                    descricao: decoded.d || '',
+                    valor: parseFloat(decoded.v) || 0
+                };
+            } catch (e) {
+                return {descricao: '', valor: 0};
+            }
+        }
+        
+        function encodeFreteData() {
+            const data = {
+                t: freteTipo,
+                p: fretePrazo,
+                v: freteValor
+            };
+            return encodeURIComponent(JSON.stringify(data));
+        }
+        
+        function encodeTaxaData() {
+            const data = {
+                d: taxaPersonalizadaDescricao,
+                v: taxaPersonalizadaValor
+            };
+            return encodeURIComponent(JSON.stringify(data));
         }
         
         function decodeProductsFromLink(encodedData) {
@@ -2888,10 +3290,54 @@
             return products;
         }
         
+        function loadVendedorData() {
+            try {
+                const savedData = localStorage.getItem('mundoCarolFormData');
+                if (savedData) {
+                    const formData = JSON.parse(savedData);
+                    
+                    if (formData.vendedorNome) {
+                        vendedorNome = formData.vendedorNome;
+                        updateVendedorDisplay();
+                    }
+                    
+                    if (formData.pedidoAnonimo !== undefined) {
+                        isPedidoAnonimo = formData.pedidoAnonimo;
+                        updateAnonimoDisplay();
+                    }
+                    
+                    // Carregar configuração de frete
+                    if (formData.allowOtherCity !== undefined) {
+                        allowOtherCity = formData.allowOtherCity;
+                        freteTipo = formData.freteTipo || '';
+                        fretePrazo = formData.fretePrazo || '';
+                        freteValor = formData.freteValor || 0;
+                        
+                        updateFreteConfigDisplay();
+                        updateFreteConfigSection();
+                    }
+                    
+                    // Carregar configuração de taxa personalizada
+                    if (formData.addCustomTax !== undefined) {
+                        addCustomTax = formData.addCustomTax;
+                        taxaPersonalizadaDescricao = formData.taxaPersonalizadaDescricao || '';
+                        taxaPersonalizadaValor = formData.taxaPersonalizadaValor || 0;
+                        
+                        updateTaxaPersonalizadaDisplay();
+                        updateTaxaPersonalizadaSection();
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados do vendedor:', error);
+            }
+        }
+        
         function setupFromLink() {
             document.getElementById('productSection').style.display = 'none';
             document.getElementById('linkGeneratorSection').style.display = 'none';
             document.getElementById('clearAllSection').style.display = 'none';
+            document.getElementById('freteConfigSection').style.display = 'none';
+            document.getElementById('taxaPersonalizadaSection').style.display = 'none';
             
             if (vendedorNome) {
                 updateVendedorDisplayLink();
@@ -2905,7 +3351,18 @@
             updateAnonimoDisplay();
             updateProductsSummary();
             
-            // Configurar salvamento automático para este link
+            // Mostrar ou ocultar opção de outras cidades
+            const otherCityOption = document.getElementById('otherCityOption');
+            if (otherCityOption) {
+                if (allowOtherCity) {
+                    // Mostrar informações do frete configurado
+                    updateFreteConfigInfoDisplay();
+                } else {
+                    // Mostrar bloqueio
+                    otherCityOption.style.display = 'none';
+                }
+            }
+            
             setupLinkAutoSave();
         }
         
@@ -2917,6 +3374,203 @@
             document.getElementById('mainHeader').style.display = 'none';
             document.getElementById('productsSummary').style.display = 'none';
             document.getElementById('progressIndicator').style.display = 'none';
+        }
+        
+        // ============================================
+        // FUNÇÕES DE FRETE E OUTRAS CIDADES
+        // ============================================
+        function updateFreteConfigDisplay() {
+            const freteConfigDisplay = document.getElementById('freteConfigDisplay');
+            const freteTipoDisplay = document.getElementById('freteTipoDisplay');
+            const fretePrazoDisplay = document.getElementById('fretePrazoDisplay');
+            const freteValorDisplay = document.getElementById('freteValorDisplay');
+            
+            if (freteTipo && fretePrazo && freteValor > 0) {
+                if (freteConfigDisplay) freteConfigDisplay.classList.remove('hidden');
+                if (freteTipoDisplay) freteTipoDisplay.textContent = freteTipo;
+                if (fretePrazoDisplay) fretePrazoDisplay.textContent = fretePrazo;
+                if (freteValorDisplay) freteValorDisplay.textContent = `R$ ${freteValor.toFixed(2).replace('.', ',')}`;
+            } else {
+                if (freteConfigDisplay) freteConfigDisplay.classList.add('hidden');
+            }
+        }
+        
+        function updateFreteConfigInfoDisplay() {
+            const otherCityFreteInfo = document.getElementById('otherCityFreteInfo');
+            const otherCityFreteDetails = document.getElementById('otherCityFreteDetails');
+            const vendedorFreteConfigInfo = document.getElementById('vendedorFreteConfigInfo');
+            const displayFreteTipo = document.getElementById('displayFreteTipo');
+            const displayFretePrazo = document.getElementById('displayFretePrazo');
+            const displayFreteValor = document.getElementById('displayFreteValor');
+            
+            if (allowOtherCity && freteTipo && fretePrazo && freteValor > 0) {
+                if (otherCityFreteInfo) {
+                    otherCityFreteInfo.classList.remove('hidden');
+                    if (otherCityFreteDetails) {
+                        otherCityFreteDetails.textContent = `${freteTipo} | ${fretePrazo} | R$ ${freteValor.toFixed(2).replace('.', ',')}`;
+                    }
+                }
+                
+                if (vendedorFreteConfigInfo) {
+                    vendedorFreteConfigInfo.classList.remove('hidden');
+                    if (displayFreteTipo) displayFreteTipo.textContent = freteTipo;
+                    if (displayFretePrazo) displayFretePrazo.textContent = fretePrazo;
+                    if (displayFreteValor) displayFreteValor.textContent = `R$ ${freteValor.toFixed(2).replace('.', ',')}`;
+                }
+            } else {
+                if (otherCityFreteInfo) otherCityFreteInfo.classList.add('hidden');
+                if (vendedorFreteConfigInfo) vendedorFreteConfigInfo.classList.add('hidden');
+            }
+        }
+        
+        function updateFreteConfigSection() {
+            const freteConfigSection = document.getElementById('freteConfigSection');
+            const freteConfigDetails = document.getElementById('freteConfigDetails');
+            
+            if (freteConfigSection) {
+                freteConfigSection.style.display = 'block';
+                
+                if (allowOtherCity) {
+                    if (freteConfigDetails) freteConfigDetails.classList.remove('hidden');
+                    
+                    // Preencher campos se já houver dados
+                    const freteTipoInput = document.getElementById('freteTipo');
+                    const fretePrazoInput = document.getElementById('fretePrazo');
+                    const freteValorInput = document.getElementById('freteValor');
+                    
+                    if (freteTipoInput && freteTipo) freteTipoInput.value = freteTipo;
+                    if (fretePrazoInput && fretePrazo) fretePrazoInput.value = fretePrazo;
+                    if (freteValorInput && freteValor > 0) freteValorInput.value = freteValor;
+                    
+                    updateFreteConfigDisplay();
+                } else {
+                    if (freteConfigDetails) freteConfigDetails.classList.add('hidden');
+                }
+            }
+        }
+        
+        function validateFreteConfig() {
+            if (!allowOtherCity) return { valid: true, errors: [] };
+            
+            const errors = [];
+            
+            if (!freteTipo || freteTipo.trim() === '') {
+                errors.push({ field: 'freteTipo', message: 'Tipo de frete obrigatório' });
+            }
+            
+            if (!fretePrazo || fretePrazo.trim() === '') {
+                errors.push({ field: 'fretePrazo', message: 'Prazo do frete obrigatório' });
+            }
+            
+            if (!freteValor || freteValor <= 0) {
+                errors.push({ field: 'freteValor', message: 'Valor do frete obrigatório' });
+            }
+            
+            return {
+                valid: errors.length === 0,
+                errors: errors
+            };
+        }
+        
+        function updateCityDisplay() {
+            const otherCityMessage = document.getElementById('otherCityMessage');
+            const shippingInfo = document.getElementById('shippingInfo');
+            const addressFields = document.getElementById('addressFields');
+            const otherCityNameField = document.getElementById('otherCityNameField');
+            const cepField = document.getElementById('cepField');
+            const otherCityScheduleWarning = document.getElementById('otherCityScheduleWarning');
+            const calendarContainer = document.getElementById('calendarContainer');
+            const timeOptions = document.getElementById('timeOptions');
+            const bloqueioOutraCidade = document.getElementById('bloqueioOutraCidade');
+            const addressSelectionArea = document.getElementById('addressSelectionArea');
+            
+            // Verificar se é modo link e não tem autorização para outras cidades
+            if (isFromLink && !allowOtherCity && selectedCity === 'other') {
+                if (bloqueioOutraCidade) bloqueioOutraCidade.classList.remove('hidden');
+                if (addressSelectionArea) addressSelectionArea.style.display = 'none';
+                
+                const nextPage2 = document.getElementById('nextPage2');
+                if (nextPage2) {
+                    nextPage2.disabled = true;
+                    nextPage2.classList.add('btn-disabled');
+                }
+                return;
+            } else {
+                if (bloqueioOutraCidade) bloqueioOutraCidade.classList.add('hidden');
+                if (addressSelectionArea) addressSelectionArea.style.display = 'block';
+                
+                const nextPage2 = document.getElementById('nextPage2');
+                if (nextPage2) {
+                    nextPage2.disabled = false;
+                    nextPage2.classList.remove('btn-disabled');
+                }
+            }
+            
+            if (isOtherCity) {
+                if (otherCityMessage) otherCityMessage.classList.remove('hidden');
+                if (shippingInfo) shippingInfo.classList.add('hidden');
+                if (addressFields) addressFields.style.display = 'block';
+                if (otherCityNameField) otherCityNameField.classList.remove('hidden');
+                if (cepField) cepField.classList.remove('hidden');
+                
+                calculatedShipping = freteValor || 0;
+                const freteValue = document.getElementById('freteValue');
+                if (freteValue) freteValue.textContent = `R$ ${calculatedShipping.toFixed(2).replace('.', ',')}`;
+                
+                if (shippingInfo) shippingInfo.classList.remove('hidden');
+                
+                // Para outras cidades, ocultar calendário na página 3
+                if (otherCityScheduleWarning) otherCityScheduleWarning.classList.remove('hidden');
+                if (calendarContainer) calendarContainer.style.display = 'none';
+                if (timeOptions) timeOptions.style.display = 'none';
+            } else {
+                if (otherCityMessage) otherCityMessage.classList.add('hidden');
+                if (addressFields) addressFields.style.display = 'block';
+                if (otherCityNameField) otherCityNameField.classList.add('hidden');
+                if (cepField) cepField.classList.add('hidden');
+                
+                if (selectedCity && currentDeliveryType === 'delivery') {
+                    if (shippingInfo) shippingInfo.classList.remove('hidden');
+                    calculateShipping();
+                } else {
+                    if (shippingInfo) shippingInfo.classList.add('hidden');
+                }
+                
+                // Para cidades da lista, mostrar calendário
+                if (otherCityScheduleWarning) otherCityScheduleWarning.classList.add('hidden');
+                if (calendarContainer) calendarContainer.style.display = 'block';
+                if (timeOptions) timeOptions.style.display = 'block';
+            }
+            
+            updateFreteConfigInfoDisplay();
+        }
+        
+        function calculateShipping() {
+            const { total } = getAllProducts();
+            const cityRates = shippingRates[selectedCity];
+            const freteValue = document.getElementById('freteValue');
+            
+            if (!freteValue) return;
+            
+            if (cityRates && total > 0) {
+                for (const rate of cityRates) {
+                    if (total >= rate.min && total <= rate.max) {
+                        calculatedShipping = rate.cost;
+                        freteValue.textContent = `R$ ${rate.cost.toFixed(2).replace('.', ',')}`;
+                        break;
+                    }
+                }
+            } else {
+                calculatedShipping = 0;
+                freteValue.textContent = 'R$ 0,00';
+            }
+            
+            if (appliedCoupon && appliedCoupon.type === 'shipping_discount') {
+                let discountedShipping = calculatedShipping - appliedCoupon.value;
+                if (discountedShipping < 0) discountedShipping = 0;
+                freteValue.textContent = `R$ ${calculatedShipping.toFixed(2).replace('.', ',')} → R$ ${discountedShipping.toFixed(2).replace('.', ',')}`;
+                shippingDiscount = appliedCoupon.value;
+            }
         }
         
         // ============================================
@@ -3338,62 +3992,6 @@
         }
         
         // ============================================
-        // FUNÇÕES DE FRETE
-        // ============================================
-        function updateCityDisplay() {
-            const otherCityMessage = document.getElementById('otherCityMessage');
-            const shippingInfo = document.getElementById('shippingInfo');
-            const addressFields = document.getElementById('addressFields');
-            
-            if (isOtherCity) {
-                otherCityMessage.classList.remove('hidden');
-                shippingInfo.classList.add('hidden');
-                if (addressFields) addressFields.style.display = 'none';
-                calculatedShipping = 0;
-                const freteValue = document.getElementById('freteValue');
-                if (freteValue) freteValue.textContent = 'A combinar';
-            } else {
-                if (otherCityMessage) otherCityMessage.classList.add('hidden');
-                if (addressFields) addressFields.style.display = 'block';
-                
-                if (selectedCity && currentDeliveryType === 'delivery') {
-                    if (shippingInfo) shippingInfo.classList.remove('hidden');
-                    calculateShipping();
-                } else {
-                    if (shippingInfo) shippingInfo.classList.add('hidden');
-                }
-            }
-        }
-        
-        function calculateShipping() {
-            const { total } = getAllProducts();
-            const cityRates = shippingRates[selectedCity];
-            const freteValue = document.getElementById('freteValue');
-            
-            if (!freteValue) return;
-            
-            if (cityRates && total > 0) {
-                for (const rate of cityRates) {
-                    if (total >= rate.min && total <= rate.max) {
-                        calculatedShipping = rate.cost;
-                        freteValue.textContent = `R$ ${rate.cost.toFixed(2).replace('.', ',')}`;
-                        break;
-                    }
-                }
-            } else {
-                calculatedShipping = 0;
-                freteValue.textContent = 'R$ 0,00';
-            }
-            
-            if (appliedCoupon && appliedCoupon.type === 'shipping_discount') {
-                let discountedShipping = calculatedShipping - appliedCoupon.value;
-                if (discountedShipping < 0) discountedShipping = 0;
-                freteValue.textContent = `R$ ${calculatedShipping.toFixed(2).replace('.', ',')} → R$ ${discountedShipping.toFixed(2).replace('.', ',')}`;
-                shippingDiscount = appliedCoupon.value;
-            }
-        }
-        
-        // ============================================
         // FUNÇÕES DE CUPOM
         // ============================================
         async function checkCouponUsageInSpreadsheet(couponCode, clientIdentifier) {
@@ -3679,13 +4277,65 @@
                 return;
             }
             
+            // Validar configuração de frete se permitir outras cidades
+            if (allowOtherCity) {
+                const freteValidation = validateFreteConfig();
+                if (!freteValidation.valid) {
+                    showToast('Preencha todos os campos do frete para outras cidades', 'warning');
+                    
+                    freteValidation.errors.forEach(error => {
+                        const field = document.getElementById(error.field);
+                        if (field) {
+                            field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            field.focus();
+                        }
+                    });
+                    
+                    return;
+                }
+            }
+            
+            // Validar taxa personalizada se adicionada
+            if (addCustomTax) {
+                if (!taxaPersonalizadaDescricao || taxaPersonalizadaDescricao.trim() === '') {
+                    showToast('Preencha a descrição da taxa personalizada', 'warning');
+                    const taxaDescricaoInput = document.getElementById('taxaPersonalizadaDescricao');
+                    if (taxaDescricaoInput) {
+                        taxaDescricaoInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        taxaDescricaoInput.focus();
+                    }
+                    return;
+                }
+                
+                if (!taxaPersonalizadaValor || taxaPersonalizadaValor <= 0) {
+                    showToast('Preencha o valor da taxa personalizada', 'warning');
+                    const taxaValorInput = document.getElementById('taxaPersonalizadaValor');
+                    if (taxaValorInput) {
+                        taxaValorInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        taxaValorInput.focus();
+                    }
+                    return;
+                }
+            }
+            
             linkId = Date.now().toString();
             const encodedProducts = encodeProductsForLink(products);
             const encodedVendedor = encodeURIComponent(vendedorNome);
             const encodedAnonimo = isPedidoAnonimo ? '1' : '0';
+            const encodedOtherCity = allowOtherCity ? '1' : '0';
+            const encodedFrete = allowOtherCity ? encodeFreteData() : '';
+            const encodedTaxa = addCustomTax ? encodeTaxaData() : '';
             
             const baseUrl = window.location.origin + window.location.pathname;
-            const clientLink = `${baseUrl}?p=${encodedProducts}&id=${linkId}&v=${encodedVendedor}&a=${encodedAnonimo}`;
+            let clientLink = `${baseUrl}?p=${encodedProducts}&id=${linkId}&v=${encodedVendedor}&a=${encodedAnonimo}&oc=${encodedOtherCity}`;
+            
+            if (allowOtherCity && encodedFrete) {
+                clientLink += `&f=${encodedFrete}`;
+            }
+            
+            if (addCustomTax && encodedTaxa) {
+                clientLink += `&t=${encodedTaxa}`;
+            }
             
             const generatedLink = document.getElementById('generatedLink');
             if (generatedLink) generatedLink.textContent = clientLink;
@@ -3813,19 +4463,29 @@
                 message += `*Cidade:* ${selectedCity}%0A`;
             } else if (deliveryType === 'delivery' && isOtherCity) {
                 message += `*Cidade:* Outra cidade%0A`;
+                const otherCityName = document.getElementById('otherCityName')?.value;
+                if (otherCityName) {
+                    message += `*Cidade Específica:* ${otherCityName}%0A`;
+                }
             } else if (deliveryType === 'pickup') {
                 message += `*Cidade:* Retirada BH%0A`;
             }
             
-            if (selectedDate && selectedTimeLabel) {
+            if (selectedDate && selectedTimeLabel && !isOtherCity) {
                 const formattedDate = selectedDate.toLocaleDateString('pt-BR');
                 message += `*Data:* ${formattedDate}%0A`;
                 message += `*Horário:* ${selectedTimeLabel}%0A`;
+            } else if (isOtherCity) {
+                message += `*Data:* A combinar (outra cidade)%0A`;
             }
             
             if (appliedCoupon) {
                 const couponCode = Object.keys(coupons).find(key => coupons[key] === appliedCoupon);
                 message += `*Cupom:* ${couponCode}%0A`;
+            }
+            
+            if (addCustomTax && taxaPersonalizadaValor > 0) {
+                message += `*Taxa Personalizada:* ${taxaPersonalizadaDescricao} - R$ ${taxaPersonalizadaValor.toFixed(2)}%0A`;
             }
             
             if (paymentType === 'pix') {
@@ -3903,7 +4563,39 @@
                         errors.push({ field: 'deliveryCity', message: 'Selecione a cidade' });
                     }
                     
-                    if (city && city.value !== 'other') {
+                    if (city && city.value === 'other') {
+                        // Validações específicas para outras cidades
+                        const otherCityName = document.getElementById('otherCityName');
+                        const cep = document.getElementById('cep');
+                        
+                        if (!otherCityName || !otherCityName.value.trim()) {
+                            errors.push({ field: 'otherCityName', message: 'Nome da cidade obrigatório' });
+                        }
+                        
+                        if (!cep || !cep.value.trim()) {
+                            errors.push({ field: 'cep', message: 'CEP obrigatório para outras cidades' });
+                        } else if (!/^\d{8}$/.test(cep.value)) {
+                            errors.push({ field: 'cep', message: 'CEP deve conter exatamente 8 dígitos' });
+                        }
+                        
+                        // Campos comuns ainda são obrigatórios
+                        const street = document.getElementById('street');
+                        const number = document.getElementById('number');
+                        const neighborhood = document.getElementById('neighborhood');
+                        
+                        if (!street || !street.value.trim()) {
+                            errors.push({ field: 'street', message: 'Rua obrigatória' });
+                        }
+                        
+                        if (!number || !number.value.trim()) {
+                            errors.push({ field: 'number', message: 'Número obrigatório' });
+                        }
+                        
+                        if (!neighborhood || !neighborhood.value.trim()) {
+                            errors.push({ field: 'neighborhood', message: 'Bairro obrigatório' });
+                        }
+                    } else if (city && city.value !== 'other') {
+                        // Validações para cidades da lista
                         const street = document.getElementById('street');
                         const number = document.getElementById('number');
                         const neighborhood = document.getElementById('neighborhood');
@@ -3944,6 +4636,7 @@
                             errors.push({ field: 'deliveryTime', message: 'Selecione um horário' });
                         }
                     }
+                    // Para outras cidades (city.value === 'other'), não há validação de data/horário
                 }
                 
             } else if (page === 4) {
@@ -4067,11 +4760,11 @@
             html += '</div>';
             html += '</div>';
             
-            const finalTotal = getTotalWithShipping();
-            
+            // CORREÇÃO CRÍTICA: Valor dos produtos é SEMPRE apenas o total dos produtos, sem taxas
+            const totalProdutos = total;
             totalHtml += '<div class="total-item">';
             totalHtml += '<span>Valor dos Produtos:</span>';
-            totalHtml += `<span>${formatCurrency(total)}</span>`;
+            totalHtml += `<span>${formatCurrency(totalProdutos)}</span>`;
             totalHtml += '</div>';
             
             if (appliedCoupon) {
@@ -4127,29 +4820,54 @@
                 if (cupomReviewSection) cupomReviewSection.classList.add('hidden');
             }
             
-            if (currentDeliveryType === 'delivery' && !isOtherCity && calculatedShipping > 0 && !freeShippingCoupon) {
-                let shippingToShow = calculatedShipping;
-                if (shippingDiscount > 0) {
-                    shippingToShow = calculatedShipping - shippingDiscount;
-                    if (shippingToShow < 0) shippingToShow = 0;
+            if (currentDeliveryType === 'delivery') {
+                if (isOtherCity) {
+                    // Frete para outras cidades
+                    html += '<div class="review-item">';
+                    html += '<div class="review-label">Frete (outra cidade)</div>';
+                    html += `<div class="review-value">${formatCurrency(freteValor)}</div>`;
+                    html += '</div>';
+                    
+                    totalHtml += '<div class="total-item">';
+                    totalHtml += '<span>Frete (outra cidade):</span>';
+                    totalHtml += `<span>${formatCurrency(freteValor)}</span>`;
+                    totalHtml += '</div>';
+                    
+                    // Informações adicionais do frete
+                    html += '<div class="review-item">';
+                    html += '<div class="review-label">Tipo de Frete</div>';
+                    html += `<div class="review-value">${freteTipo}</div>`;
+                    html += '</div>';
+                    
+                    html += '<div class="review-item">';
+                    html += '<div class="review-label">Prazo Estimado</div>';
+                    html += `<div class="review-value">${fretePrazo}</div>`;
+                    html += '</div>';
+                } else if (calculatedShipping > 0 && !freeShippingCoupon) {
+                    let shippingToShow = calculatedShipping;
+                    if (shippingDiscount > 0) {
+                        shippingToShow = calculatedShipping - shippingDiscount;
+                        if (shippingToShow < 0) shippingToShow = 0;
+                    }
+                    
+                    html += '<div class="review-item">';
+                    html += '<div class="review-label">Frete</div>';
+                    html += `<div class="review-value">${formatCurrency(shippingToShow)}</div>`;
+                    html += '</div>';
+                    
+                    totalHtml += '<div class="total-item">';
+                    totalHtml += '<span>Frete:</span>';
+                    totalHtml += `<span>${formatCurrency(shippingToShow)}</span>`;
+                    totalHtml += '</div>';
+                } else if (freeShippingCoupon) {
+                    totalHtml += '<div class="total-item">';
+                    totalHtml += '<span class="desconto-label">Frete:</span>';
+                    totalHtml += `<span class="desconto-item">Grátis (cupom)</span>`;
+                    totalHtml += '</div>';
                 }
-                
-                html += '<div class="review-item">';
-                html += '<div class="review-label">Frete</div>';
-                html += `<div class="review-value">${formatCurrency(shippingToShow)}</div>`;
-                html += '</div>';
-                
-                totalHtml += '<div class="total-item">';
-                totalHtml += '<span>Frete:</span>';
-                totalHtml += `<span>${formatCurrency(shippingToShow)}</span>`;
-                totalHtml += '</div>';
-            } else if (freeShippingCoupon) {
-                totalHtml += '<div class="total-item">';
-                totalHtml += '<span class="desconto-label">Frete:</span>';
-                totalHtml += `<span class="desconto-item">Grátis (cupom)</span>`;
-                totalHtml += '</div>';
             }
             
+            // Taxa noturna/domingo (CORREÇÃO CRÍTICA: Adicionada separadamente, NÃO ao valor dos produtos)
             if (nightFeeAmount > 0) {
                 html += '<div class="review-item">';
                 html += '<div class="review-label taxa-label">Taxa Noturna/Domingo</div>';
@@ -4162,6 +4880,20 @@
                 totalHtml += '</div>';
             }
             
+            // Taxa personalizada do vendedor
+            if (addCustomTax && taxaPersonalizadaValor > 0) {
+                html += '<div class="review-item">';
+                html += '<div class="review-label taxa-label">' + taxaPersonalizadaDescricao + '</div>';
+                html += `<div class="review-value taxa-item">${formatCurrency(taxaPersonalizadaValor)}</div>`;
+                html += '</div>';
+                
+                totalHtml += '<div class="total-item">';
+                totalHtml += '<span class="taxa-label">' + taxaPersonalizadaDescricao + ':</span>';
+                totalHtml += `<span class="taxa-item">${formatCurrency(taxaPersonalizadaValor)}</span>`;
+                totalHtml += '</div>';
+            }
+            
+            // Desconto PIX (CORREÇÃO: Aplicado APÓS todas as taxas)
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
             if (paymentMethod === 'pix' && pixDiscount > 0 && !(appliedCoupon && couponExcludesPixDiscount)) {
                 totalHtml += '<div class="total-item">';
@@ -4198,7 +4930,22 @@
             if (currentDeliveryType === 'pickup') {
                 html += '<div class="review-value">Retirada na loja (São Geraldo - BH)</div>';
             } else if (isOtherCity) {
-                html += '<div class="review-value">Outra cidade (prazo a confirmar)</div>';
+                const otherCityName = document.getElementById('otherCityName')?.value || 'Outra cidade';
+                const street = document.getElementById('street')?.value || '';
+                const number = document.getElementById('number')?.value || '';
+                const neighborhood = document.getElementById('neighborhood')?.value || '';
+                const complement = document.getElementById('complement')?.value || '';
+                const cep = document.getElementById('cep')?.value || '';
+                
+                html += `<div class="review-value">${otherCityName} - CEP: ${cep}`;
+                if (street && number && neighborhood) {
+                    html += `<br>${street}, ${number}`;
+                    if (complement) {
+                        html += ` - ${complement}`;
+                    }
+                    html += ` - ${neighborhood}`;
+                }
+                html += '</div>';
             } else {
                 const street = document.getElementById('street');
                 const number = document.getElementById('number');
@@ -4219,10 +4966,15 @@
             }
             html += '</div>';
             
-            if (selectedDate) {
+            if (selectedDate && !isOtherCity) {
                 html += '<div class="review-item">';
                 html += '<div class="review-label">Data e Horário</div>';
                 html += `<div class="review-value">${formatDate(selectedDate)} - ${selectedTimeLabel || 'A definir'}</div>`;
+                html += '</div>';
+            } else if (isOtherCity) {
+                html += '<div class="review-item">';
+                html += '<div class="review-label">Data de Entrega</div>';
+                html += `<div class="review-value">A combinar (prazo: ${fretePrazo})</div>`;
                 html += '</div>';
             }
             
@@ -4241,34 +4993,48 @@
             
             totalHtml += '<div class="total-item total-final">';
             totalHtml += '<span><strong>TOTAL:</strong></span>';
-            totalHtml += `<span><strong>${formatCurrency(finalTotal)}</strong></span>`;
+            totalHtml += `<span><strong>${formatCurrency(getTotalWithShipping())}</strong></span>`;
             totalHtml += '</div>';
             
             totalDetails.innerHTML = totalHtml;
             if (totalSection) totalSection.classList.remove('hidden');
         }
         
+        // FUNÇÃO CRITICAMENTE REVISADA PARA CALCULAR TOTAL CORRETO
         function getTotalWithShipping() {
             const { total } = getAllProducts();
             let finalTotal = total;
             
+            // 1. Subtrair desconto do cupom dos produtos
             finalTotal -= couponDiscount;
             
-            if (currentDeliveryType === 'delivery' && !isOtherCity) {
-                let shippingCost = calculatedShipping;
-                
-                if (freeShippingCoupon) {
-                    shippingCost = 0;
-                } else if (shippingDiscount > 0) {
-                    shippingCost -= shippingDiscount;
-                    if (shippingCost < 0) shippingCost = 0;
+            // 2. Adicionar frete (se aplicável)
+            if (currentDeliveryType === 'delivery') {
+                if (isOtherCity) {
+                    finalTotal += freteValor;
+                } else if (!isOtherCity) {
+                    let shippingCost = calculatedShipping;
+                    
+                    if (freeShippingCoupon) {
+                        shippingCost = 0;
+                    } else if (shippingDiscount > 0) {
+                        shippingCost -= shippingDiscount;
+                        if (shippingCost < 0) shippingCost = 0;
+                    }
+                    
+                    finalTotal += shippingCost;
                 }
-                
-                finalTotal += shippingCost;
             }
             
+            // 3. Adicionar taxa noturna/domingo (NUNCA ao valor dos produtos)
             finalTotal += (nightFeeAmount || 0);
             
+            // 4. Adicionar taxa personalizada (NUNCA ao valor dos produtos)
+            if (addCustomTax) {
+                finalTotal += (taxaPersonalizadaValor || 0);
+            }
+            
+            // 5. Subtrair desconto PIX (APÓS todas as taxas)
             if (!appliedCoupon || !couponExcludesPixDiscount) {
                 finalTotal -= pixDiscount;
             }
@@ -4276,23 +5042,34 @@
             return finalTotal < 0 ? 0 : finalTotal;
         }
         
-        function getShippingForSpreadsheet() {
-            let totalShipping = 0;
+        // FUNÇÃO CRITICAMENTE REVISADA PARA ENVIAR VALORES CORRETOS À PLANILHA
+        function getShippingAndFeesForSpreadsheet() {
+            let totalShippingAndFees = 0;
             
-            if (currentDeliveryType === 'delivery' && !isOtherCity) {
-                totalShipping += calculatedShipping;
-                
-                if (freeShippingCoupon) {
-                    totalShipping = 0;
-                } else if (shippingDiscount > 0) {
-                    totalShipping -= shippingDiscount;
-                    if (totalShipping < 0) totalShipping = 0;
+            if (currentDeliveryType === 'delivery') {
+                if (isOtherCity) {
+                    totalShippingAndFees += freteValor;
+                } else if (!isOtherCity) {
+                    totalShippingAndFees += calculatedShipping;
+                    
+                    if (freeShippingCoupon) {
+                        totalShippingAndFees = 0;
+                    } else if (shippingDiscount > 0) {
+                        totalShippingAndFees -= shippingDiscount;
+                        if (totalShippingAndFees < 0) totalShippingAndFees = 0;
+                    }
                 }
             }
             
-            totalShipping += (nightFeeAmount || 0);
+            // Adicionar taxa noturna/domingo às taxas (NÃO ao valor dos produtos)
+            totalShippingAndFees += (nightFeeAmount || 0);
             
-            return totalShipping;
+            // Adicionar taxa personalizada às taxas (NÃO ao valor dos produtos)
+            if (addCustomTax) {
+                totalShippingAndFees += (taxaPersonalizadaValor || 0);
+            }
+            
+            return totalShippingAndFees;
         }
         
         // ============================================
@@ -4328,7 +5105,6 @@
                 usedLinks.push(linkId);
                 localStorage.setItem('mundoCarol_used_links', JSON.stringify(usedLinks));
                 
-                // Limpar dados salvos deste link após envio bem-sucedido
                 clearLinkFormData();
             }
             
@@ -4413,8 +5189,16 @@
             const sendCard = document.querySelector('input[name="sendCard"]:checked')?.value;
             const cardMessage = document.getElementById('cardMessage')?.value || '';
             
+            // CORREÇÃO CRÍTICA: Valor dos produtos é SEMPRE apenas o total, sem taxas
+            const totalProdutos = total;
+            
+            // CORREÇÃO CRÍTICA: Valor total com frete e taxas calculado corretamente
+            const totalShippingAndFees = getShippingAndFeesForSpreadsheet();
             const finalTotal = getTotalWithShipping();
+            
+            // Valor formatado para exibição
             const formattedPrice = finalTotal.toFixed(2).replace('.', ',');
+            const formattedShipping = totalShippingAndFees.toFixed(2).replace('.', ',');
             
             let productsDescription = '';
             let kitsCount = 0;
@@ -4429,32 +5213,39 @@
             const productDetailsStr = productDetails.join(' / ');
             productsDescription = `${productSummary} - ${productDetailsStr}`;
             
-            const totalShipping = getShippingForSpreadsheet();
-            const formattedShipping = totalShipping.toFixed(2).replace('.', ',');
-            
             let streetNumber = '';
             let complement = '';
             let neighborhood = '';
             let city = '';
             let reference = '';
+            let cep = '';
             
-            if (deliveryType === 'delivery' && !isOtherCity) {
+            if (deliveryType === 'delivery') {
                 const street = document.getElementById('street').value;
                 const number = document.getElementById('number').value;
                 streetNumber = `${street}, ${number}`;
                 complement = document.getElementById('complement').value || '';
                 neighborhood = document.getElementById('neighborhood').value;
-                city = selectedCity;
+                
+                if (isOtherCity) {
+                    city = document.getElementById('otherCityName').value;
+                    cep = document.getElementById('cep').value;
+                } else {
+                    city = selectedCity;
+                }
+                
                 reference = document.getElementById('referencePoint').value || '';
             }
             
             let deliveryDate = '';
-            if (selectedDate) {
+            if (selectedDate && !isOtherCity) {
                 const days = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
                 const dayName = days[selectedDate.getDay()];
                 deliveryDate = `${selectedDate.getDate().toString().padStart(2, '0')}/` +
                               `${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}/` +
                               `${selectedDate.getFullYear()} - ${dayName}`;
+            } else if (isOtherCity) {
+                deliveryDate = `A combinar (${fretePrazo})`;
             }
             
             const sendCardText = sendCard === 'yes' ? 'Sim' : 'Não';
@@ -4490,6 +5281,21 @@
                 pixDiscountInfo = `DESCONTO PIX: R$ ${pixDiscount.toFixed(2)} (2%)`;
             }
             
+            let otherCityInfo = '';
+            if (isOtherCity) {
+                otherCityInfo = `OUTRA CIDADE: ${city} - CEP: ${cep} - Frete: ${freteTipo} - Prazo: ${fretePrazo} - Valor: R$ ${freteValor.toFixed(2)}`;
+            }
+            
+            let taxaPersonalizadaInfo = '';
+            if (addCustomTax && taxaPersonalizadaValor > 0) {
+                taxaPersonalizadaInfo = `TAXA PERSONALIZADA: ${taxaPersonalizadaDescricao} - R$ ${taxaPersonalizadaValor.toFixed(2)}`;
+            }
+            
+            let taxaNoturnaInfo = '';
+            if (nightFeeAmount > 0) {
+                taxaNoturnaInfo = `TAXA NOTURNA/DOMINGO: R$ ${nightFeeAmount.toFixed(2)}`;
+            }
+            
             orderNumber = generateOrderNumber();
             
             const data = new Array(60).fill('');
@@ -4498,7 +5304,9 @@
             data[1] = buyerName;
             data[2] = buyerPhone;
             data[3] = productsDescription;
-            data[4] = formattedPrice;
+            // CORREÇÃO CRÍTICA: Coluna 4 recebe APENAS valor dos produtos, sem taxas
+            data[4] = totalProdutos.toFixed(2).replace('.', ',');
+            // CORREÇÃO CRÍTICA: Coluna 5 recebe frete + taxas (noturna + personalizada)
             data[5] = formattedShipping;
             data[6] = vendedorNome || 'Vendedor não informado';
             data[8] = giftedName;
@@ -4519,6 +5327,14 @@
             data[51] = pixDiscountInfo;
             data[52] = orderNumber;
             data[53] = linkId || '';
+            data[54] = cep;
+            data[55] = otherCityInfo;
+            data[56] = isOtherCity ? 'SIM' : 'NÃO';
+            data[57] = allowOtherCity ? 'SIM' : 'NÃO';
+            // NOVA COLUNA: Taxa personalizada (coluna 58)
+            data[58] = taxaPersonalizadaInfo;
+            // NOVA COLUNA: Taxa noturna/domingo (coluna 59)
+            data[59] = taxaNoturnaInfo;
             
             return data;
         }
@@ -4610,7 +5426,8 @@
             html += '</div>';
             html += '</div>';
             
-            const totalShipping = getShippingForSpreadsheet();
+            // CORREÇÃO: Exibir valores corretamente
+            const totalShippingAndFees = getShippingAndFeesForSpreadsheet();
             const finalTotal = getTotalWithShipping();
             
             html += '<div class="review-item">';
@@ -4625,10 +5442,10 @@
                 html += '</div>';
             }
             
-            if (totalShipping > 0 && !freeShippingCoupon) {
+            if (totalShippingAndFees > 0) {
                 html += '<div class="review-item">';
                 html += '<div class="review-label">Frete + Taxas</div>';
-                html += `<div class="review-value">${formatCurrency(totalShipping)}</div>`;
+                html += `<div class="review-value">${formatCurrency(totalShippingAndFees)}</div>`;
                 html += '</div>';
             } else if (freeShippingCoupon) {
                 html += '<div class="review-item">';
@@ -4656,7 +5473,7 @@
         // INICIALIZAÇÃO
         // ============================================
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Sistema de Agendamento - Mundo Carol (Versão com Salvamento Automático para Links)');
+            console.log('🚀 Sistema de Agendamento - Mundo Carol (Versão Corrigida com Taxas)');
             
             checkIfFromLink();
             renderCalendar(currentMonth, currentYear);
@@ -4817,6 +5634,92 @@
                     });
                 }
                 
+                // Configuração de frete para outras cidades
+                const allowOtherCityYes = document.getElementById('allowOtherCityYes');
+                const allowOtherCityNo = document.getElementById('allowOtherCityNo');
+                const freteTipoInput = document.getElementById('freteTipo');
+                const fretePrazoInput = document.getElementById('fretePrazo');
+                const freteValorInput = document.getElementById('freteValor');
+                
+                if (allowOtherCityYes && allowOtherCityNo && !isFromLink) {
+                    allowOtherCityYes.addEventListener('change', function() {
+                        if (this.checked) {
+                            allowOtherCity = true;
+                            const freteConfigDetails = document.getElementById('freteConfigDetails');
+                            if (freteConfigDetails) freteConfigDetails.classList.remove('hidden');
+                        }
+                    });
+                    
+                    allowOtherCityNo.addEventListener('change', function() {
+                        if (this.checked) {
+                            allowOtherCity = false;
+                            const freteConfigDetails = document.getElementById('freteConfigDetails');
+                            if (freteConfigDetails) freteConfigDetails.classList.add('hidden');
+                        }
+                    });
+                }
+                
+                // Atualizar dados do frete
+                if (freteTipoInput && !isFromLink) {
+                    freteTipoInput.addEventListener('input', function() {
+                        freteTipo = this.value.trim();
+                        updateFreteConfigDisplay();
+                    });
+                }
+                
+                if (fretePrazoInput && !isFromLink) {
+                    fretePrazoInput.addEventListener('input', function() {
+                        fretePrazo = this.value.trim();
+                        updateFreteConfigDisplay();
+                    });
+                }
+                
+                if (freteValorInput && !isFromLink) {
+                    freteValorInput.addEventListener('input', function() {
+                        freteValor = parseFloat(this.value) || 0;
+                        updateFreteConfigDisplay();
+                    });
+                }
+                
+                // Configuração de taxa personalizada
+                const addCustomTaxYes = document.getElementById('addCustomTaxYes');
+                const addCustomTaxNo = document.getElementById('addCustomTaxNo');
+                const taxaPersonalizadaDescricaoInput = document.getElementById('taxaPersonalizadaDescricao');
+                const taxaPersonalizadaValorInput = document.getElementById('taxaPersonalizadaValor');
+                
+                if (addCustomTaxYes && addCustomTaxNo && !isFromLink) {
+                    addCustomTaxYes.addEventListener('change', function() {
+                        if (this.checked) {
+                            addCustomTax = true;
+                            const taxaPersonalizadaDetails = document.getElementById('taxaPersonalizadaDetails');
+                            if (taxaPersonalizadaDetails) taxaPersonalizadaDetails.classList.remove('hidden');
+                        }
+                    });
+                    
+                    addCustomTaxNo.addEventListener('change', function() {
+                        if (this.checked) {
+                            addCustomTax = false;
+                            const taxaPersonalizadaDetails = document.getElementById('taxaPersonalizadaDetails');
+                            if (taxaPersonalizadaDetails) taxaPersonalizadaDetails.classList.add('hidden');
+                        }
+                    });
+                }
+                
+                // Atualizar dados da taxa personalizada
+                if (taxaPersonalizadaDescricaoInput && !isFromLink) {
+                    taxaPersonalizadaDescricaoInput.addEventListener('input', function() {
+                        taxaPersonalizadaDescricao = this.value.trim();
+                        updateTaxaPersonalizadaDisplay();
+                    });
+                }
+                
+                if (taxaPersonalizadaValorInput && !isFromLink) {
+                    taxaPersonalizadaValorInput.addEventListener('input', function() {
+                        taxaPersonalizadaValor = parseFloat(this.value) || 0;
+                        updateTaxaPersonalizadaDisplay();
+                    });
+                }
+                
                 // Adicionar produto
                 const addProductBtn = document.getElementById('addProductBtn');
                 if (addProductBtn) {
@@ -4931,13 +5834,27 @@
                         updateProductsSummary();
                     }
                 });
+                
+                // Mostrar seções para vendedor
+                if (!isFromLink) {
+                    updateFreteConfigSection();
+                    updateTaxaPersonalizadaSection();
+                }
             };
             
             setupNavigation();
             setupOtherListeners();
             
             console.log('✅ Sistema carregado. Modo:', isFromLink ? `LINK (${linkId})` : 'FLUXO NORMAL');
+            if (isFromLink && allowOtherCity) {
+                console.log('🌍 Link autorizado para outras cidades');
+            }
+            if (isFromLink && addCustomTax) {
+                console.log('💰 Taxa personalizada configurada no link');
+            }
         });
     </script>
 </body>
 </html>
+
+
