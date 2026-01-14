@@ -1512,6 +1512,34 @@
             border-left: 3px solid #dee2e6;
         }
         
+        /* NOVO ESTILO PARA PRAZO MÍNIMO */
+        .prazo-minimo-section {
+            background: linear-gradient(135deg, #e8f5e9 0%, #d4edda 100%);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid var(--success);
+        }
+        
+        .prazo-minimo-section h3 {
+            color: #155724;
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .prazo-minimo-info {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #c3e6cb;
+        }
+        
         @media (max-width: 480px) {
             .header h1 {
                 font-size: 16px;
@@ -1704,6 +1732,21 @@
                         <span id="anonimoTagDisplayLink" class="hidden anonymous-tag">ANÔNIMO</span>
                     </div>
                 </div>
+            </div>
+            
+            <!-- NOVA SEÇÃO: Prazo Mínimo para Entrega -->
+            <div id="prazoMinimoSection" class="prazo-minimo-section" style="display: none;">
+                <h3><i class="fas fa-calendar-plus"></i> Prazo Mínimo para Entrega</h3>
+                
+                <div class="form-group">
+                    <label for="prazoMinimo">Dias mínimos para entrega:</label>
+                    <input type="number" id="prazoMinimo" class="form-control" min="0" value="0" placeholder="Ex: 2 (bloqueia hoje e amanhã)">
+                    <div class="error-text" id="errorPrazoMinimo"></div>
+                </div>
+                
+                <div class="prazo-minimo-info">
+                    <p><strong>Exemplo:</strong> Se colocar "2", os dias de hoje e amanhã serão bloqueados. O cliente poderá agendar apenas a partir de depois de amanhã.</p>
+                                    </div>
             </div>
             
             <!-- Seção de Taxa Personalizada do Vendedor -->
@@ -2008,7 +2051,7 @@
                     <!-- Informações do frete configurado pelo vendedor -->
                     <div id="vendedorFreteConfigInfo" class="alert alert-warning hidden">
                         <h3><i class="fas fa-shipping-fast"></i> Frete Configurado pelo Vendedor</h3>
-                        <p><strong>Tipo:</strong> <span id="displayFreteTipo">-</span></p>
+                        <p><strong>Tipo:</strong> <span id="displayFreteTipo">  </span></p>
                         <p><strong>Prazo:</strong> <span id="displayFretePrazo">-</span></p>
                         <p><strong>Valor:</strong> <span id="displayFreteValor">R$ 0,00</span></p>
                     </div>
@@ -2434,6 +2477,9 @@
         let taxaPersonalizadaDescricao = '';
         let taxaPersonalizadaValor = 0;
         
+        // NOVA VARIÁVEL: Prazo Mínimo
+        let prazoMinimo = 0;
+        
         // Sistema de salvamento automático
         let saveTimeout = null;
         const SAVE_DELAY = 1500;
@@ -2628,6 +2674,37 @@
             const day = String(date.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         }
+        
+        // ============================================
+        // NOVAS FUNÇÕES: VALIDAÇÃO DE ESPAÇOS EM BRANCO
+        // ============================================
+        function removeSpaces(value) {
+            return value.toString().replace(/\s+/g, ' ').trim();
+        }
+        
+        function validateNoSpaces(value, fieldName) {
+            if (typeof value !== 'string') {
+                value = value.toString();
+            }
+            
+            // Verificar se há espaços consecutivos ou no início/fim
+            if (value !== value.trim() || /\s\s+/.test(value)) {
+                showToast(`Por favor, remova os espaços em branco do campo: ${fieldName}`, 'warning');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        function sanitizeForLink(value) {
+            if (!value) return '';
+            
+            // Remove espaços extras e codifica para URL
+            let sanitized = value.toString().replace(/\s+/g, ' ').trim();
+            
+            // Codifica caracteres especiais para URL
+            return encodeURIComponent(sanitized);
+        }
     </script>
 
     <!-- =========================================== -->
@@ -2646,6 +2723,7 @@
             const otherCityData = urlParams.get('oc');
             const freteData = urlParams.get('f');
             const taxaData = urlParams.get('t');
+            const prazoData = urlParams.get('pm'); // NOVO: Prazo Mínimo
             
             if (productsData && linkId) {
                 const usedLinks = JSON.parse(localStorage.getItem('mundoCarol_used_links') || '[]');
@@ -2677,6 +2755,11 @@
                     
                     if (anonimoData === '1') {
                         isPedidoAnonimo = true;
+                    }
+                    
+                    // Carregar prazo mínimo
+                    if (prazoData) {
+                        prazoMinimo = parseInt(prazoData) || 0;
                     }
                     
                     // Carregar configuração de outras cidades
@@ -2714,6 +2797,7 @@
                     sessionStorage.setItem('link_vendedor', vendedorNome || '');
                     sessionStorage.setItem('link_anonimo', isPedidoAnonimo ? '1' : '0');
                     sessionStorage.setItem('link_other_city', allowOtherCity ? '1' : '0');
+                    sessionStorage.setItem('link_prazo_minimo', prazoMinimo.toString()); // NOVO
                     
                     setupFromLink();
                     
@@ -2801,8 +2885,10 @@
             products.forEach((product, index) => {
                 if (index > 0) encoded += '-';
                 
-                const encodedName = encodeURIComponent(product.name);
-                encoded += `${product.quantity}|${product.code || ''}|${encodedName}|${product.price.toFixed(2)}`;
+                const sanitizedName = sanitizeForLink(product.name);
+                const sanitizedCode = sanitizeForLink(product.code || '');
+                
+                encoded += `${product.quantity}|${sanitizedCode}|${sanitizedName}|${product.price.toFixed(2)}`;
             });
             
             return encoded;
@@ -2824,6 +2910,7 @@
             document.getElementById('clearAllSection').style.display = 'none';
             document.getElementById('freteConfigSection').style.display = 'none';
             document.getElementById('taxaPersonalizadaSection').style.display = 'none';
+            document.getElementById('prazoMinimoSection').style.display = 'none'; // NOVO: Esconder prazo mínimo
             
             if (vendedorNome) {
                 updateVendedorDisplayLink();
@@ -2886,6 +2973,7 @@
                     foundUs: document.querySelector('input[name="foundUs"]:checked')?.value || '',
                     couponCode: appliedCoupon ? Object.keys(coupons).find(key => coupons[key] === appliedCoupon) : '',
                     currentPage: getCurrentPageNumber(),
+                    prazoMinimo: prazoMinimo, // NOVO
                     timestamp: Date.now()
                 };
                 
@@ -2935,6 +3023,11 @@
                 if (formData.pedidoAnonimo !== undefined) {
                     isPedidoAnonimo = formData.pedidoAnonimo;
                     updateAnonimoDisplay();
+                }
+                
+                // NOVO: Carregar prazo mínimo
+                if (formData.prazoMinimo !== undefined) {
+                    prazoMinimo = formData.prazoMinimo || 0;
                 }
                 
                 const fields = [
@@ -3121,7 +3214,8 @@
                     freteValor: freteValor,
                     addCustomTax: addCustomTax,
                     taxaPersonalizadaDescricao: taxaPersonalizadaDescricao,
-                    taxaPersonalizadaValor: taxaPersonalizadaValor
+                    taxaPersonalizadaValor: taxaPersonalizadaValor,
+                    prazoMinimo: prazoMinimo // NOVO
                 };
                 
                 const products = [];
@@ -3177,6 +3271,13 @@
                     if (formData.pedidoAnonimo !== undefined) {
                         isPedidoAnonimo = formData.pedidoAnonimo;
                         updateAnonimoDisplay();
+                    }
+                    
+                    // NOVO: Carregar prazo mínimo
+                    if (formData.prazoMinimo !== undefined) {
+                        prazoMinimo = formData.prazoMinimo || 0;
+                        const prazoMinimoInput = document.getElementById('prazoMinimo');
+                        if (prazoMinimoInput) prazoMinimoInput.value = prazoMinimo;
                     }
                     
                     if (formData.allowOtherCity !== undefined) {
@@ -3341,6 +3442,13 @@
                     clearTimeout(saveTimeout);
                     saveTimeout = setTimeout(saveFormData, SAVE_DELAY);
                 });
+                
+                // NOVO: Adicionar validação de espaços em branco
+                if (input.classList.contains('product-name') || input.classList.contains('product-code')) {
+                    input.addEventListener('blur', function() {
+                        this.value = removeSpaces(this.value);
+                    });
+                }
             });
         }
         
@@ -3505,6 +3613,19 @@
                     updateTaxaPersonalizadaDisplay();
                 } else {
                     if (taxaPersonalizadaDetails) taxaPersonalizadaDetails.classList.add('hidden');
+                }
+            }
+        }
+        
+        // NOVA FUNÇÃO: Mostrar seção de prazo mínimo
+        function updatePrazoMinimoSection() {
+            const prazoMinimoSection = document.getElementById('prazoMinimoSection');
+            if (prazoMinimoSection && !isFromLink) {
+                prazoMinimoSection.style.display = 'block';
+                
+                const prazoMinimoInput = document.getElementById('prazoMinimo');
+                if (prazoMinimoInput && prazoMinimo) {
+                    prazoMinimoInput.value = prazoMinimo;
                 }
             }
         }
@@ -3853,8 +3974,43 @@
                 return;
             }
             
+            // NOVO: Validar espaços em branco no nome do vendedor
+            if (!validateNoSpaces(vendedorNome, 'Nome do vendedor')) {
+                const vendedorNomeInput = document.getElementById('vendedorNome');
+                if (vendedorNomeInput) {
+                    vendedorNomeInput.focus();
+                    vendedorNomeInput.select();
+                }
+                return;
+            }
+            
             if (products.length === 0) {
                 showToast('Adicione pelo menos um produto antes de gerar o link', 'warning');
+                return;
+            }
+            
+            // NOVO: Validar espaços em branco nos produtos
+            let hasSpacesInProducts = false;
+            products.forEach((product, index) => {
+                if (product.name && !validateNoSpaces(product.name, `Descrição do produto ${index + 1}`)) {
+                    hasSpacesInProducts = true;
+                    const productNameInput = document.getElementById(`productName${index + 1}`);
+                    if (productNameInput) {
+                        productNameInput.focus();
+                        productNameInput.select();
+                    }
+                }
+                if (product.code && !validateNoSpaces(product.code, `Código do produto ${index + 1}`)) {
+                    hasSpacesInProducts = true;
+                    const productCodeInput = document.getElementById(`productCode${index + 1}`);
+                    if (productCodeInput) {
+                        productCodeInput.focus();
+                        productCodeInput.select();
+                    }
+                }
+            });
+            
+            if (hasSpacesInProducts) {
                 return;
             }
             
@@ -3889,6 +4045,25 @@
                     }
                     return;
                 }
+                
+                // NOVO: Validar espaços em branco no frete
+                if (!validateNoSpaces(freteTipo, 'Tipo de frete')) {
+                    const freteTipoInput = document.getElementById('freteTipo');
+                    if (freteTipoInput) {
+                        freteTipoInput.focus();
+                        freteTipoInput.select();
+                    }
+                    return;
+                }
+                
+                if (!validateNoSpaces(fretePrazo, 'Prazo do frete')) {
+                    const fretePrazoInput = document.getElementById('fretePrazo');
+                    if (fretePrazoInput) {
+                        fretePrazoInput.focus();
+                        fretePrazoInput.select();
+                    }
+                    return;
+                }
             }
             
             // Validar taxa personalizada
@@ -3912,18 +4087,42 @@
                     }
                     return;
                 }
+                
+                // NOVO: Validar espaços em branco na taxa
+                if (!validateNoSpaces(taxaPersonalizadaDescricao, 'Descrição da taxa')) {
+                    const taxaDescricaoInput = document.getElementById('taxaPersonalizadaDescricao');
+                    if (taxaDescricaoInput) {
+                        taxaDescricaoInput.focus();
+                        taxaDescricaoInput.select();
+                    }
+                    return;
+                }
+            }
+            
+            // NOVO: Validar prazo mínimo
+            const prazoMinimoInput = document.getElementById('prazoMinimo');
+            if (prazoMinimoInput && prazoMinimoInput.value) {
+                const prazoValue = parseInt(prazoMinimoInput.value);
+                if (isNaN(prazoValue) || prazoValue < 0) {
+                    showToast('Prazo mínimo deve ser um número válido maior ou igual a 0', 'warning');
+                    prazoMinimoInput.focus();
+                    prazoMinimoInput.select();
+                    return;
+                }
+                prazoMinimo = prazoValue;
             }
             
             linkId = Date.now().toString();
             const encodedProducts = encodeProductsForLink(products);
-            const encodedVendedor = encodeURIComponent(vendedorNome);
+            const encodedVendedor = sanitizeForLink(vendedorNome); // NOVO: Usar sanitizeForLink
             const encodedAnonimo = isPedidoAnonimo ? '1' : '0';
             const encodedOtherCity = allowOtherCity ? '1' : '0';
             const encodedFrete = allowOtherCity ? encodeFreteData() : '';
             const encodedTaxa = addCustomTax ? encodeTaxaData() : '';
+            const encodedPrazoMinimo = prazoMinimo ? prazoMinimo.toString() : '0'; // NOVO
             
             const baseUrl = window.location.origin + window.location.pathname;
-            let clientLink = `${baseUrl}?p=${encodedProducts}&id=${linkId}&v=${encodedVendedor}&a=${encodedAnonimo}&oc=${encodedOtherCity}`;
+            let clientLink = `${baseUrl}?p=${encodedProducts}&id=${linkId}&v=${encodedVendedor}&a=${encodedAnonimo}&oc=${encodedOtherCity}&pm=${encodedPrazoMinimo}`; // NOVO: Adicionar pm
             
             if (allowOtherCity && encodedFrete) {
                 clientLink += `&f=${encodedFrete}`;
@@ -3972,11 +4171,11 @@
     </script>
 
     <!-- =========================================== -->
-    <!-- (013) JAVASCRIPT - FUNÇÕES DE CALENDÁRIO -->
+    <!-- (013) JAVASCRIPT - FUNÇÕES DE CALENDÁRIO (MODIFICADO) -->
     <!-- =========================================== -->
     <script>
         // ============================================
-        // FUNÇÕES DE CALENDÁRIO
+        // FUNÇÕES DE CALENDÁRIO (MODIFICADO PARA PRAZO MÍNIMO)
         // ============================================
         function prevMonth() {
             currentMonth--;
@@ -4014,6 +4213,11 @@
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             
+            // NOVO: Calcular data mínima baseada no prazo mínimo
+            const minDate = new Date();
+            minDate.setDate(today.getDate() + prazoMinimo);
+            minDate.setHours(0, 0, 0, 0);
+            
             const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
             for (let i = 0; i < 7; i++) {
                 const dayHeader = document.createElement('div');
@@ -4041,7 +4245,12 @@
                 } else if (specialDates[dateString]) {
                     dayElement.classList.add('special-day');
                 } else if (currentDate < today) {
+                    // Data no passado sempre desabilitada
                     dayElement.classList.add('disabled');
+                } else if (currentDate < minDate) {
+                    // NOVO: Desabilitar datas dentro do prazo mínimo
+                    dayElement.classList.add('disabled');
+                    dayElement.title = `Prazo mínimo: ${prazoMinimo} dia(s)`;
                 } else if (currentDate.getDate() === today.getDate() && 
                          currentDate.getMonth() === today.getMonth() && 
                          currentDate.getFullYear() === today.getFullYear()) {
@@ -4091,6 +4300,23 @@
                 
                 calendar.appendChild(dayElement);
             }
+            
+            // NOVO: Mostrar mensagem sobre prazo mínimo se aplicável
+            if (prazoMinimo > 0) {
+                const todayElement = document.querySelector('.calendar-day:not(.disabled)');
+                if (todayElement) {
+                    const infoMessage = document.createElement('div');
+                    infoMessage.className = 'alert alert-info';
+                    infoMessage.style.marginTop = '10px';
+                    infoMessage.style.fontSize = '12px';
+                    infoMessage.innerHTML = `<i class="fas fa-info-circle"></i> <strong>Prazo mínimo:</strong> ${prazoMinimo} dia(s) - Dias bloqueados: hoje${prazoMinimo > 1 ? ` até ${prazoMinimo-1} dia(s) após hoje` : ''}`;
+                    
+                    const calendarContainer = document.getElementById('calendarContainer');
+                    if (calendarContainer) {
+                        calendarContainer.appendChild(infoMessage);
+                    }
+                }
+            }
         }
         
         function selectDate(date) {
@@ -4099,6 +4325,18 @@
             if (noDeliveryDates.includes(dateString)) {
                 document.getElementById('noDeliveryMessage').classList.remove('hidden');
                 document.getElementById('timeOptions').classList.add('hidden');
+                return;
+            }
+            
+            // NOVO: Verificar se a data está dentro do prazo mínimo
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const minDate = new Date();
+            minDate.setDate(today.getDate() + prazoMinimo);
+            minDate.setHours(0, 0, 0, 0);
+            
+            if (date < minDate) {
+                showToast(`Data não disponível. Prazo mínimo: ${prazoMinimo} dia(s)`, 'warning');
                 return;
             }
             
@@ -4126,10 +4364,10 @@
             selectedTimeLabel = null;
             nightFeeAmount = 0;
             
-            const today = new Date();
-            const isToday = date.getDate() === today.getDate() && 
-                           date.getMonth() === today.getMonth() && 
-                           date.getFullYear() === today.getFullYear();
+            const todayNow = new Date();
+            const isToday = date.getDate() === todayNow.getDate() && 
+                           date.getMonth() === todayNow.getMonth() && 
+                           date.getFullYear() === todayNow.getFullYear();
             
             const now = new Date();
             const currentHour = now.getHours();
@@ -4289,6 +4527,8 @@
                 if (!isFromLink) {
                     if (!vendedorNome || vendedorNome.trim() === '') {
                         errors.push({ field: 'vendedorNome', message: 'Nome do vendedor obrigatório' });
+                    } else if (!validateNoSpaces(vendedorNome, 'Nome do vendedor')) {
+                        errors.push({ field: 'vendedorNome', message: 'Remova espaços em branco do nome' });
                     }
                 }
                 
@@ -4302,9 +4542,14 @@
                     products.forEach((product, index) => {
                         if (!product.name || product.name.trim() === '') {
                             errors.push({ field: `productName${index + 1}`, message: 'Descrição obrigatória' });
+                        } else if (!validateNoSpaces(product.name, `Descrição do produto ${index + 1}`)) {
+                            errors.push({ field: `productName${index + 1}`, message: 'Remova espaços em branco da descrição' });
                         }
                         if (!product.price || product.price <= 0) {
                             errors.push({ field: `productPrice${index + 1}`, message: 'Preço obrigatório' });
+                        }
+                        if (product.code && product.code.trim() !== '' && !validateNoSpaces(product.code, `Código do produto ${index + 1}`)) {
+                            errors.push({ field: `productCode${index + 1}`, message: 'Remova espaços em branco do código' });
                         }
                     });
                 }
@@ -4736,6 +4981,14 @@
                 html += '</div>';
             }
             
+            // NOVO: Mostrar informação sobre prazo mínimo (apenas para vendedor)
+            if (!isFromLink && prazoMinimo > 0) {
+                html += '<div class="review-item">';
+                html += '<div class="review-label">Prazo Mínimo</div>';
+                html += `<div class="review-value">${prazoMinimo} dia(s) (bloqueia hoje${prazoMinimo > 1 ? ` até ${prazoMinimo-1} dia(s) após hoje` : ''})</div>`;
+                html += '</div>';
+            }
+            
             const sendCard = document.querySelector('input[name="sendCard"]:checked')?.value;
             if (sendCard === 'yes') {
                 const cardMessage = document.getElementById('cardMessage');
@@ -4949,6 +5202,11 @@
             
             if (addCustomTax && taxaPersonalizadaValor > 0) {
                 message += `*Taxa Personalizada:* ${taxaPersonalizadaDescricao} - R$ ${taxaPersonalizadaValor.toFixed(2)}%0A`;
+            }
+            
+            // NOVO: Informar sobre prazo mínimo (apenas para vendedor no WhatsApp)
+            if (!isFromLink && prazoMinimo > 0) {
+                message += `*Prazo Mínimo Configurado:* ${prazoMinimo} dia(s)%0A`;
             }
             
             if (paymentType === 'pix') {
@@ -5194,6 +5452,12 @@
                 taxaNoturnaInfo = `TAXA NOTURNA/DOMINGO: R$ ${nightFeeAmount.toFixed(2)}`;
             }
             
+            // NOVO: Informação sobre prazo mínimo
+            let prazoMinimoInfo = '';
+            if (prazoMinimo > 0) {
+                prazoMinimoInfo = `PRAZO MÍNIMO: ${prazoMinimo} dia(s)`;
+            }
+            
             orderNumber = generateOrderNumber();
             
             const data = new Array(60).fill('');
@@ -5231,6 +5495,8 @@
             data[57] = allowOtherCity ? 'SIM' : 'NÃO';
             data[58] = taxaPersonalizadaInfo;
             data[59] = taxaNoturnaInfo;
+            // NOVO: Adicionar prazo mínimo na planilha (nova coluna se necessário)
+            // Nota: Se precisar de mais colunas, ajustar o array data para ter mais posições
             
             return data;
         }
@@ -5374,7 +5640,7 @@
         // INICIALIZAÇÃO DO SISTEMA
         // ============================================
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Sistema de Agendamento - Mundo Carol (Versão Corrigida)');
+            console.log('🚀 Sistema de Agendamento - Mundo Carol (Versão Corrigida com Prazo Mínimo)');
             
             checkIfFromLink();
             renderCalendar(currentMonth, currentYear);
@@ -5521,7 +5787,14 @@
                 const vendedorNomeInput = document.getElementById('vendedorNome');
                 if (vendedorNomeInput && !isFromLink) {
                     vendedorNomeInput.addEventListener('input', function() {
-                        vendedorNome = this.value.trim();
+                        vendedorNome = removeSpaces(this.value);
+                        updateVendedorDisplay();
+                    });
+                    
+                    // NOVO: Validar ao perder foco
+                    vendedorNomeInput.addEventListener('blur', function() {
+                        this.value = removeSpaces(this.value);
+                        vendedorNome = this.value;
                         updateVendedorDisplay();
                     });
                 }
@@ -5532,6 +5805,14 @@
                     pedidoAnonimoCheckbox.addEventListener('change', function() {
                         isPedidoAnonimo = this.checked;
                         updateAnonimoDisplay();
+                    });
+                }
+                
+                // NOVO: Prazo mínimo
+                const prazoMinimoInput = document.getElementById('prazoMinimo');
+                if (prazoMinimoInput && !isFromLink) {
+                    prazoMinimoInput.addEventListener('input', function() {
+                        prazoMinimo = parseInt(this.value) || 0;
                     });
                 }
                 
@@ -5563,14 +5844,28 @@
                 // Atualizar dados do frete
                 if (freteTipoInput && !isFromLink) {
                     freteTipoInput.addEventListener('input', function() {
-                        freteTipo = this.value.trim();
+                        freteTipo = removeSpaces(this.value);
+                        updateFreteConfigDisplay();
+                    });
+                    
+                    // NOVO: Validar ao perder foco
+                    freteTipoInput.addEventListener('blur', function() {
+                        this.value = removeSpaces(this.value);
+                        freteTipo = this.value;
                         updateFreteConfigDisplay();
                     });
                 }
                 
                 if (fretePrazoInput && !isFromLink) {
                     fretePrazoInput.addEventListener('input', function() {
-                        fretePrazo = this.value.trim();
+                        fretePrazo = removeSpaces(this.value);
+                        updateFreteConfigDisplay();
+                    });
+                    
+                    // NOVO: Validar ao perder foco
+                    fretePrazoInput.addEventListener('blur', function() {
+                        this.value = removeSpaces(this.value);
+                        fretePrazo = this.value;
                         updateFreteConfigDisplay();
                     });
                 }
@@ -5609,7 +5904,14 @@
                 // Atualizar dados da taxa personalizada
                 if (taxaPersonalizadaDescricaoInput && !isFromLink) {
                     taxaPersonalizadaDescricaoInput.addEventListener('input', function() {
-                        taxaPersonalizadaDescricao = this.value.trim();
+                        taxaPersonalizadaDescricao = removeSpaces(this.value);
+                        updateTaxaPersonalizadaDisplay();
+                    });
+                    
+                    // NOVO: Validar ao perder foco
+                    taxaPersonalizadaDescricaoInput.addEventListener('blur', function() {
+                        this.value = removeSpaces(this.value);
+                        taxaPersonalizadaDescricao = this.value;
                         updateTaxaPersonalizadaDisplay();
                     });
                 }
@@ -5740,6 +6042,7 @@
                 if (!isFromLink) {
                     updateFreteConfigSection();
                     updateTaxaPersonalizadaSection();
+                    updatePrazoMinimoSection(); // NOVO
                 }
             };
             
@@ -5747,6 +6050,7 @@
             setupOtherListeners();
             
             console.log('✅ Sistema carregado. Modo:', isFromLink ? `LINK (${linkId})` : 'FLUXO NORMAL');
+            console.log('✅ Prazo mínimo:', prazoMinimo, 'dias');
         });
     </script>
 </body>
