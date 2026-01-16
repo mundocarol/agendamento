@@ -6,22 +6,6 @@
     <title>Agendamento - Mundo Carol</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Script do EmailJS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    // NOVA VERSÃO
-<script type="text/javascript">
-    (function() {
-        emailjs.init({
-            publicKey: "vyC9S0NouMR6WcLPm",
-            blockHeadless: true,
-            limitRate: {
-                id: 'app',
-                throttle: 10000 // 10 segundos entre envios
-            }
-        });
-    })();
-</script>
-    
     <!-- =========================================== -->
     <!-- (001) CSS PRINCIPAL - ESTILOS GERAIS -->
     <!-- =========================================== -->
@@ -868,7 +852,6 @@
         .expired-message p {
             color: #721c24;
             margin-bottom: 15px;
-            text-align: left;
         }
         
         .error-message {
@@ -5239,526 +5222,11 @@
     </script>
 
     <!-- =========================================== -->
-    <!-- (018) JAVASCRIPT - ENVIO PARA PLANILHA E EMAIL -->
+    <!-- (018) JAVASCRIPT - FUNÇÕES DE ENVIO PARA PLANILHA - CORRIGIDO -->
     <!-- =========================================== -->
     <script>
         // ============================================
-       // ============================================
-// FUNÇÃO COMPLETA DE ENVIO DE EMAIL (REVISADA)
-// ============================================
-async function enviarEmailBackupAutomatico() {
-    console.log("📧 Iniciando envio de email completo...");
-    
-    try {
-        // Obter todas as informações do formulário
-        const dadosFormulario = coletarTodosOsDadosDoFormulario();
-        
-        // Preparar template parameters
-        const templateParams = prepararParametrosEmail(dadosFormulario);
-        
-        console.log("📨 Enviando email com todos os dados:", templateParams);
-        
-        // Enviar email
-        const response = await emailjs.send(
-            'service_a6ry34s',      // Service ID
-            'template_luh9f0z',     // Template ID
-            templateParams
-        );
-        
-        console.log('✅ Email enviado com sucesso!', response.status, response.text);
-        return true;
-        
-    } catch (error) {
-        console.error('❌ Erro ao enviar email:', error);
-        return false;
-    }
-}
-
-// ============================================
-// FUNÇÃO PARA COLETAR TODOS OS DADOS DO FORMULÁRIO
-// ============================================
-function coletarTodosOsDadosDoFormulario() {
-    const dados = {};
-    
-    // Data e hora atual
-    const now = new Date();
-    dados.data_hora = `${now.getDate().toString().padStart(2, '0')}/` +
-                     `${(now.getMonth() + 1).toString().padStart(2, '0')}/` +
-                     `${now.getFullYear()} ` +
-                     `${now.getHours().toString().padStart(2, '0')}:` +
-                     `${now.getMinutes().toString().padStart(2, '0')}`;
-    
-    // Informações do pedido
-    dados.order_number = orderNumber || 'N/A';
-    dados.link_id = linkId || 'N/A';
-    dados.tipo_fluxo = isFromLink ? 'Link do Cliente' : 'Fluxo do Vendedor';
-    
-    // Informações do vendedor
-    dados.vendedor_nome = vendedorNome || 'Não informado';
-    dados.pedido_anonimo = isPedidoAnonimo ? 'SIM' : 'NÃO';
-    dados.prazo_minimo = prazoMinimo > 0 ? `${prazoMinimo} dia(s)` : 'Nenhum';
-    
-    // Configurações do vendedor
-    dados.config_outra_cidade = allowOtherCity ? 'SIM' : 'NÃO';
-    dados.config_taxa_personalizada = addCustomTax ? 'SIM' : 'NÃO';
-    
-    // Informações do comprador
-    dados.cliente_nome = document.getElementById('buyerName')?.value || 'Não informado';
-    dados.cliente_telefone = document.getElementById('buyerPhone')?.value || 'Não informado';
-    
-    // Informações do presenteado
-    dados.presenteado_nome = document.getElementById('giftedName')?.value || 'Não informado';
-    dados.presenteado_telefone = document.getElementById('giftedPhone')?.value || 'Não informado';
-    
-    // Tipo de entrega
-    const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
-    dados.tipo_entrega = deliveryType === 'pickup' ? 'RETIRADA NA LOJA' : 'ENTREGA NO ENDEREÇO';
-    
-    // Cidade de entrega
-    dados.cidade_entrega = selectedCity || 'Não selecionada';
-    dados.outra_cidade = isOtherCity ? 'SIM' : 'NÃO';
-    dados.outra_cidade_nome = document.getElementById('otherCityName')?.value || 'Não informado';
-    dados.cep = document.getElementById('cep')?.value || 'Não informado';
-    
-    // Endereço completo
-    dados.endereco_rua = document.getElementById('street')?.value || 'Não informado';
-    dados.endereco_numero = document.getElementById('number')?.value || 'Não informado';
-    dados.endereco_complemento = document.getElementById('complement')?.value || 'Não informado';
-    dados.endereco_bairro = document.getElementById('neighborhood')?.value || 'Não informado';
-    dados.endereco_referencia = document.getElementById('referencePoint')?.value || 'Não informado';
-    
-    // Construir endereço completo
-    let enderecoCompleto = '';
-    if (dados.endereco_rua !== 'Não informado' && dados.endereco_numero !== 'Não informado') {
-        enderecoCompleto = `${dados.endereco_rua}, ${dados.endereco_numero}`;
-        if (dados.endereco_complemento !== 'Não informado') {
-            enderecoCompleto += ` - ${dados.endereco_complemento}`;
-        }
-        if (dados.endereco_bairro !== 'Não informado') {
-            enderecoCompleto += ` - ${dados.endereco_bairro}`;
-        }
-        if (dados.cidade_entrega !== 'Não selecionada') {
-            enderecoCompleto += ` - ${dados.cidade_entrega}`;
-        }
-    } else {
-        enderecoCompleto = 'Endereço não informado';
-    }
-    dados.endereco_entrega = enderecoCompleto;
-    
-    // Data e horário de agendamento
-    if (selectedDate && !isOtherCity) {
-        const days = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-        const dayName = days[selectedDate.getDay()];
-        dados.data_agendamento = `${selectedDate.getDate().toString().padStart(2, '0')}/` +
-                                `${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}/` +
-                                `${selectedDate.getFullYear()} - ${dayName}`;
-        dados.horario_agendamento = selectedTimeLabel || 'A definir';
-    } else if (isOtherCity) {
-        dados.data_agendamento = `A combinar (outra cidade)`;
-        dados.horario_agendamento = fretePrazo ? `Prazo: ${fretePrazo}` : 'Prazo a combinar';
-    } else {
-        dados.data_agendamento = 'Não agendado';
-        dados.horario_agendamento = 'A definir';
-    }
-    
-    // Informações de frete
-    if (isOtherCity) {
-        dados.frete_tipo = freteTipo || 'Não informado';
-        dados.frete_prazo = fretePrazo || 'Não informado';
-        dados.frete_valor = freteValor > 0 ? `R$ ${freteValor.toFixed(2).replace('.', ',')}` : 'R$ 0,00';
-        dados.frete_outra_cidade_info = `${dados.frete_tipo} | ${dados.frete_prazo} | ${dados.frete_valor}`;
-    } else {
-        dados.frete_tipo = 'Frete padrão';
-        dados.frete_prazo = 'Entrega local';
-        dados.frete_valor = calculatedShipping > 0 ? `R$ ${calculatedShipping.toFixed(2).replace('.', ',')}` : 'R$ 0,00';
-        dados.frete_outra_cidade_info = 'N/A';
-    }
-    
-    // Produtos
-    const { products, total } = getAllProducts();
-    dados.quantidade_produtos = products.length.toString();
-    dados.lista_produtos_html = gerarListaProdutosHTML(products);
-    dados.valor_produtos_sem_desconto = `R$ ${total.toFixed(2).replace('.', ',')}`;
-    
-    // Detalhes dos produtos para texto simples
-    let produtosTexto = '';
-    products.forEach((produto, index) => {
-        produtosTexto += `${produto.quantity}x ${produto.code || ''} ${produto.name || 'Produto sem nome'}`;
-        if (index < products.length - 1) produtosTexto += ' / ';
-    });
-    dados.produtos_texto_simples = produtosTexto || 'Nenhum produto';
-    
-    // Cupom e descontos
-    if (appliedCoupon) {
-        const couponCode = Object.keys(coupons).find(key => coupons[key] === appliedCoupon);
-        dados.cupom_aplicado = `${couponCode} - ${appliedCoupon.description}`;
-        dados.cupom_valor_desconto = couponDiscount > 0 ? `R$ ${couponDiscount.toFixed(2).replace('.', ',')}` : 'R$ 0,00';
-        dados.cupom_frete_gratis = freeShippingCoupon ? 'SIM' : 'NÃO';
-        dados.cupom_desconto_frete = shippingDiscount > 0 ? `R$ ${shippingDiscount.toFixed(2).replace('.', ',')}` : 'R$ 0,00';
-    } else {
-        dados.cupom_aplicado = 'Nenhum';
-        dados.cupom_valor_desconto = 'R$ 0,00';
-        dados.cupom_frete_gratis = 'NÃO';
-        dados.cupom_desconto_frete = 'R$ 0,00';
-    }
-    
-    // Desconto PIX
-    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
-    dados.metodo_pagamento = paymentMethod === 'pix' ? 'PIX direto para nosso CNPJ' : 'Link de Cartão de Crédito online';
-    
-    dados.desconto_pix_valor = pixDiscount > 0 ? `R$ ${pixDiscount.toFixed(2).replace('.', ',')}` : 'R$ 0,00';
-    dados.desconto_pix_aplicado = (paymentMethod === 'pix' && pixDiscount > 0 && !(appliedCoupon && couponExcludesPixDiscount)) ? 'SIM' : 'NÃO';
-    
-    // Taxas
-    dados.taxa_noturna_valor = nightFeeAmount > 0 ? `R$ ${nightFeeAmount.toFixed(2).replace('.', ',')}` : 'R$ 0,00';
-    dados.taxa_noturna_aplicada = nightFeeAmount > 0 ? 'SIM' : 'NÃO';
-    
-    dados.taxa_personalizada_descricao = taxaPersonalizadaDescricao || 'Nenhuma';
-    dados.taxa_personalizada_valor = taxaPersonalizadaValor > 0 ? `R$ ${taxaPersonalizadaValor.toFixed(2).replace('.', ',')}` : 'R$ 0,00';
-    dados.taxa_personalizada_aplicada = (addCustomTax && taxaPersonalizadaValor > 0) ? 'SIM' : 'NÃO';
-    
-    // Cartão de mensagem
-    const sendCard = document.querySelector('input[name="sendCard"]:checked')?.value;
-    dados.cartao_enviado = sendCard === 'yes' ? 'SIM' : 'NÃO';
-    dados.cartao_mensagem = document.getElementById('cardMessage')?.value || 'Nenhuma mensagem';
-    dados.cartao_assinado = document.querySelector('input[name="signedCard"]:checked')?.value || 'NÃO VERIFICADO';
-    
-    // Como nos encontrou
-    const foundUs = document.querySelector('input[name="foundUs"]:checked')?.value;
-    dados.como_conheceu = foundUs || 'Não informado';
-    
-    // Valores totais
-    const productTotalWithDiscount = getProductTotalForSpreadsheet();
-    const totalShippingAndFees = getShippingAndFeesForSpreadsheet();
-    const finalTotal = getTotalWithShipping();
-    
-    dados.valor_produtos_com_desconto = `R$ ${productTotalWithDiscount.toFixed(2).replace('.', ',')}`;
-    dados.valor_frete_taxas = `R$ ${totalShippingAndFees.toFixed(2).replace('.', ',')}`;
-    dados.valor_total = `R$ ${finalTotal.toFixed(2).replace('.', ',')}`;
-    
-    // Resumo financeiro detalhado
-    dados.resumo_financeiro_html = gerarResumoFinanceiroHTML(
-        total,
-        couponDiscount,
-        freeShippingCoupon,
-        shippingDiscount,
-        calculatedShipping,
-        nightFeeAmount,
-        taxaPersonalizadaValor,
-        pixDiscount,
-        productTotalWithDiscount,
-        totalShippingAndFees,
-        finalTotal
-    );
-    
-    return dados;
-}
-
-// ============================================
-// FUNÇÃO AUXILIAR: GERAR LISTA DE PRODUTOS HTML
-// ============================================
-function gerarListaProdutosHTML(products) {
-    if (products.length === 0) {
-        return '<table style="width: 100%; border-collapse: collapse; margin: 15px 0;">' +
-               '<tr style="background: #f8f9fa;">' +
-               '<td colspan="5" style="padding: 10px; text-align: center; color: #666;">Nenhum produto registrado</td>' +
-               '</tr></table>';
-    }
-    
-    let html = '<table style="width: 100%; border-collapse: collapse; margin: 15px 0; border: 1px solid #ddd;">' +
-               '<thead style="background: #d63384; color: white;">' +
-               '<tr>' +
-               '<th style="padding: 10px; text-align: left; width: 10%;">Qtde</th>' +
-               '<th style="padding: 10px; text-align: left; width: 15%;">Código</th>' +
-               '<th style="padding: 10px; text-align: left; width: 40%;">Produto</th>' +
-               '<th style="padding: 10px; text-align: left; width: 15%;">Preço Unit.</th>' +
-               '<th style="padding: 10px; text-align: left; width: 20%;">Subtotal</th>' +
-               '</tr>' +
-               '</thead>' +
-               '<tbody>';
-    
-    let totalGeral = 0;
-    
-    products.forEach((produto) => {
-        const produtoTotal = produto.quantity * produto.price;
-        totalGeral += produtoTotal;
-        
-        html += '<tr style="border-bottom: 1px solid #eee;">' +
-                `<td style="padding: 8px 10px;">${produto.quantity}</td>` +
-                `<td style="padding: 8px 10px;">${produto.code || '-'}</td>` +
-                `<td style="padding: 8px 10px;">${produto.name || 'Produto sem nome'}</td>` +
-                `<td style="padding: 8px 10px;">R$ ${produto.price.toFixed(2).replace('.', ',')}</td>` +
-                `<td style="padding: 8px 10px; font-weight: bold;">R$ ${produtoTotal.toFixed(2).replace('.', ',')}</td>` +
-                '</tr>';
-    });
-    
-    html += '<tr style="background: #f8f9fa; font-weight: bold; border-top: 2px solid #d63384;">' +
-            '<td colspan="4" style="padding: 10px; text-align: right;">TOTAL PRODUTOS:</td>' +
-            `<td style="padding: 10px;">R$ ${totalGeral.toFixed(2).replace('.', ',')}</td>` +
-            '</tr>' +
-            '</tbody></table>';
-    
-    return html;
-}
-
-// ============================================
-// FUNÇÃO AUXILIAR: GERAR RESUMO FINANCEIRO HTML
-// ============================================
-function gerarResumoFinanceiroHTML(totalProdutos, descontoCupom, freteGratis, descontoFrete, freteCalculado, taxaNoturna, taxaPersonalizada, descontoPix, totalProdutosComDesconto, totalFreteTaxas, totalFinal) {
-    let html = '<table style="width: 100%; border-collapse: collapse; margin: 15px 0; border: 1px solid #ddd;">' +
-               '<tbody>';
-    
-    // Valor dos produtos
-    html += '<tr>' +
-            '<td style="padding: 8px 10px; width: 70%;">Valor dos Produtos:</td>' +
-            `<td style="padding: 8px 10px; text-align: right; width: 30%;">R$ ${totalProdutos.toFixed(2).replace('.', ',')}</td>` +
-            '</tr>';
-    
-    // Desconto do cupom
-    if (descontoCupom > 0) {
-        html += '<tr style="color: #28a745;">' +
-                '<td style="padding: 8px 10px;">↳ Desconto Cupom:</td>' +
-                `<td style="padding: 8px 10px; text-align: right;">- R$ ${descontoCupom.toFixed(2).replace('.', ',')}</td>` +
-                '</tr>';
-    }
-    
-    // Subtotal produtos com desconto
-    html += '<tr style="border-bottom: 1px dashed #ddd;">' +
-            '<td style="padding: 8px 10px; font-weight: bold;">Subtotal Produtos:</td>' +
-            `<td style="padding: 8px 10px; text-align: right; font-weight: bold;">R$ ${totalProdutosComDesconto.toFixed(2).replace('.', ',')}</td>` +
-            '</tr>';
-    
-    // Frete
-    if (!freteGratis && freteCalculado > 0) {
-        let valorFrete = freteCalculado;
-        if (descontoFrete > 0) {
-            valorFrete -= descontoFrete;
-            if (valorFrete < 0) valorFrete = 0;
-            html += '<tr>' +
-                    '<td style="padding: 8px 10px;">Frete:</td>' +
-                    `<td style="padding: 8px 10px; text-align: right;">R$ ${freteCalculado.toFixed(2).replace('.', ',')}</td>` +
-                    '</tr>';
-            html += '<tr style="color: #28a745;">' +
-                    '<td style="padding: 8px 10px;">↳ Desconto Frete:</td>' +
-                    `<td style="padding: 8px 10px; text-align: right;">- R$ ${descontoFrete.toFixed(2).replace('.', ',')}</td>` +
-                    '</tr>';
-            html += '<tr>' +
-                    '<td style="padding: 8px 10px; font-weight: bold;">Frete Final:</td>' +
-                    `<td style="padding: 8px 10px; text-align: right; font-weight: bold;">R$ ${valorFrete.toFixed(2).replace('.', ',')}</td>` +
-                    '</tr>';
-        } else {
-            html += '<tr>' +
-                    '<td style="padding: 8px 10px;">Frete:</td>' +
-                    `<td style="padding: 8px 10px; text-align: right;">R$ ${freteCalculado.toFixed(2).replace('.', ',')}</td>` +
-                    '</tr>';
-        }
-    } else if (freteGratis) {
-        html += '<tr style="color: #28a745;">' +
-                '<td style="padding: 8px 10px;">Frete:</td>' +
-                '<td style="padding: 8px 10px; text-align: right;">Grátis (cupom)</td>' +
-                '</tr>';
-    }
-    
-    // Taxa noturna
-    if (taxaNoturna > 0) {
-        html += '<tr>' +
-                '<td style="padding: 8px 10px;">Taxa Noturna/Domingo:</td>' +
-                `<td style="padding: 8px 10px; text-align: right;">R$ ${taxaNoturna.toFixed(2).replace('.', ',')}</td>` +
-                '</tr>';
-    }
-    
-    // Taxa personalizada
-    if (taxaPersonalizada > 0) {
-        html += '<tr>' +
-                '<td style="padding: 8px 10px;">Taxa Personalizada:</td>' +
-                `<td style="padding: 8px 10px; text-align: right;">R$ ${taxaPersonalizada.toFixed(2).replace('.', ',')}</td>` +
-                '</tr>';
-    }
-    
-    // Subtotal frete e taxas
-    html += '<tr style="border-bottom: 1px dashed #ddd;">' +
-            '<td style="padding: 8px 10px; font-weight: bold;">Subtotal Frete/Taxas:</td>' +
-            `<td style="padding: 8px 10px; text-align: right; font-weight: bold;">R$ ${totalFreteTaxas.toFixed(2).replace('.', ',')}</td>` +
-            '</tr>';
-    
-    // Desconto PIX
-    if (descontoPix > 0) {
-        html += '<tr style="color: #28a745;">' +
-                '<td style="padding: 8px 10px;">Desconto PIX (2%):</td>' +
-                `<td style="padding: 8px 10px; text-align: right;">- R$ ${descontoPix.toFixed(2).replace('.', ',')}</td>` +
-                '</tr>';
-    }
-    
-    // TOTAL FINAL
-    html += '<tr style="background: #d63384; color: white; font-size: 16px;">' +
-            '<td style="padding: 12px 10px; font-weight: bold;">TOTAL FINAL:</td>' +
-            `<td style="padding: 12px 10px; text-align: right; font-weight: bold;">R$ ${totalFinal.toFixed(2).replace('.', ',')}</td>` +
-            '</tr>';
-    
-    html += '</tbody></table>';
-    
-    return html;
-}
-
-// ============================================
-// FUNÇÃO PARA PREPARAR PARÂMETROS DO EMAIL
-// ============================================
-function prepararParametrosEmail(dados) {
-    return {
-        // Informações básicas
-        order_number: dados.order_number,
-        data_hora: dados.data_hora,
-        link_id: dados.link_id,
-        tipo_fluxo: dados.tipo_fluxo,
-        
-        // Informações do vendedor
-        vendedor_nome: dados.vendedor_nome,
-        pedido_anonimo: dados.pedido_anonimo,
-        prazo_minimo: dados.prazo_minimo,
-        config_outra_cidade: dados.config_outra_cidade,
-        config_taxa_personalizada: dados.config_taxa_personalizada,
-        
-        // Informações do cliente
-        cliente_nome: dados.cliente_nome,
-        cliente_telefone: dados.cliente_telefone,
-        presenteado_nome: dados.presenteado_nome,
-        presenteado_telefone: dados.presenteado_telefone,
-        
-        // Informações de entrega
-        tipo_entrega: dados.tipo_entrega,
-        cidade_entrega: dados.cidade_entrega,
-        outra_cidade: dados.outra_cidade,
-        outra_cidade_nome: dados.outra_cidade_nome,
-        cep: dados.cep,
-        
-        // Endereço completo
-        endereco_entrega: dados.endereco_entrega,
-        endereco_detalhado: `Rua: ${dados.endereco_rua}, Nº: ${dados.endereco_numero}, Complemento: ${dados.endereco_complemento}, Bairro: ${dados.endereco_bairro}, Referência: ${dados.endereco_referencia}`,
-        
-        // Data e horário
-        data_agendamento: dados.data_agendamento,
-        horario_agendamento: dados.horario_agendamento,
-        
-        // Frete
-        frete_tipo: dados.frete_tipo,
-        frete_prazo: dados.frete_prazo,
-        frete_valor: dados.frete_valor,
-        frete_outra_cidade_info: dados.frete_outra_cidade_info,
-        
-        // Produtos
-        quantidade_produtos: dados.quantidade_produtos,
-        lista_produtos_html: dados.lista_produtos_html,
-        produtos_texto_simples: dados.produtos_texto_simples,
-        valor_produtos_sem_desconto: dados.valor_produtos_sem_desconto,
-        
-        // Cupom
-        cupom_aplicado: dados.cupom_aplicado,
-        cupom_valor_desconto: dados.cupom_valor_desconto,
-        cupom_frete_gratis: dados.cupom_frete_gratis,
-        cupom_desconto_frete: dados.cupom_desconto_frete,
-        
-        // Pagamento
-        metodo_pagamento: dados.metodo_pagamento,
-        desconto_pix_aplicado: dados.desconto_pix_aplicado,
-        desconto_pix_valor: dados.desconto_pix_valor,
-        
-        // Taxas
-        taxa_noturna_aplicada: dados.taxa_noturna_aplicada,
-        taxa_noturna_valor: dados.taxa_noturna_valor,
-        taxa_personalizada_aplicada: dados.taxa_personalizada_aplicada,
-        taxa_personalizada_descricao: dados.taxa_personalizada_descricao,
-        taxa_personalizada_valor: dados.taxa_personalizada_valor,
-        
-        // Cartão
-        cartao_enviado: dados.cartao_enviado,
-        cartao_mensagem: dados.cartao_mensagem,
-        cartao_assinado: dados.cartao_assinado,
-        
-        // Como conheceu
-        como_conheceu: dados.como_conheceu,
-        
-        // Valores totais
-        valor_produtos_com_desconto: dados.valor_produtos_com_desconto,
-        valor_frete_taxas: dados.valor_frete_taxas,
-        valor_total: dados.valor_total,
-        
-        // Resumo financeiro
-        resumo_financeiro_html: dados.resumo_financeiro_html,
-        
-        // Informações completas para texto
-        todas_informacoes_texto: `
-PEDIDO: ${dados.order_number}
-DATA/HORA: ${dados.data_hora}
-LINK: ${dados.link_id}
-FLUXO: ${dados.tipo_fluxo}
-
---- VENDEDOR ---
-Nome: ${dados.vendedor_nome}
-Anônimo: ${dados.pedido_anonimo}
-Prazo Mínimo: ${dados.prazo_minimo}
-Outra Cidade: ${dados.config_outra_cidade}
-Taxa Personalizada: ${dados.config_taxa_personalizada}
-
---- CLIENTE ---
-Nome: ${dados.cliente_nome}
-Telefone: ${dados.cliente_telefone}
-Presenteado: ${dados.presenteado_nome}
-Tel. Presenteado: ${dados.presenteado_telefone}
-
---- ENTREGA ---
-Tipo: ${dados.tipo_entrega}
-Cidade: ${dados.cidade_entrega}
-Outra Cidade: ${dados.outra_cidade}
-Nome Cidade: ${dados.outra_cidade_nome}
-CEP: ${dados.cep}
-Endereço: ${dados.endereco_entrega}
-Data: ${dados.data_agendamento}
-Horário: ${dados.horario_agendamento}
-
---- FRETE ---
-Tipo: ${dados.frete_tipo}
-Prazo: ${dados.frete_prazo}
-Valor: ${dados.frete_valor}
-Info Outra Cidade: ${dados.frete_outra_cidade_info}
-
---- PRODUTOS ---
-Quantidade: ${dados.quantidade_produtos}
-Produtos: ${dados.produtos_texto_simples}
-Valor Produtos: ${dados.valor_produtos_sem_desconto}
-
---- CUPOM ---
-Cupom: ${dados.cupom_aplicado}
-Valor Desconto: ${dados.cupom_valor_desconto}
-Frete Grátis: ${dados.cupom_frete_gratis}
-Desconto Frete: ${dados.cupom_desconto_frete}
-
---- PAGAMENTO ---
-Método: ${dados.metodo_pagamento}
-Desconto PIX: ${dados.desconto_pix_aplicado}
-Valor Desconto PIX: ${dados.desconto_pix_valor}
-
---- TAXAS ---
-Taxa Noturna: ${dados.taxa_noturna_aplicada} - ${dados.taxa_noturna_valor}
-Taxa Personalizada: ${dados.taxa_personalizada_aplicada} - ${dados.taxa_personalizada_descricao} - ${dados.taxa_personalizada_valor}
-
---- CARTÃO ---
-Enviar Cartão: ${dados.cartao_enviado}
-Mensagem: ${dados.cartao_mensagem}
-Assinado: ${dados.cartao_assinado}
-
---- OUTROS ---
-Como Conheceu: ${dados.como_conheceu}
-
---- VALORES ---
-Valor Produtos c/ Desconto: ${dados.valor_produtos_com_desconto}
-Valor Frete/Taxas: ${dados.valor_frete_taxas}
-TOTAL FINAL: ${dados.valor_total}
-        `.trim()
-    };
-}
-        
-        // ============================================
-        // FUNÇÕES DE ENVIO PARA PLANILHA
+        // FUNÇÕES DE ENVIO PARA PLANILHA - CORRIGIDO
         // ============================================
         function generateOrderNumber() {
             const buyerPhone = document.getElementById('buyerPhone');
@@ -5809,31 +5277,10 @@ TOTAL FINAL: ${dados.valor_total}
             if (loadingSection) loadingSection.style.display = 'block';
             
             try {
-                // PASSO 1: ENVIAR EMAIL DE BACKUP (EM PARALELO - NÃO BLOQUEIA)
-                console.log("🚀 Iniciando processo de envio...");
-                
-                // Enviar email de backup ASSÍNCRONO (não esperar)
-                enviarEmailBackupAutomatico()
-                    .then(success => {
-                        if (success) {
-                            console.log("✅ Email de backup processado (em paralelo)");
-                        } else {
-                            console.log("⚠️ Email de backup não enviado, mas continuando fluxo...");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("⚠️ Erro no email de backup (ignorado):", error);
-                    });
-                
-                // PASSO 2: ENVIAR PARA GOOGLE SHEETS (FLUXO PRINCIPAL)
-                console.log("📊 Enviando para Google Sheets...");
                 const excelData = prepareExcelData();
                 const result = await enviarDadosParaPlanilha(excelData);
                 
                 if (result.success) {
-                    // SUCESSO COMPLETO
-                    console.log("✅ Sucesso completo - Sheets e Email");
-                    
                     if (submitBtn) {
                         submitBtn.innerHTML = '✅ ENVIADO';
                         submitBtn.classList.add('btn-success');
@@ -5852,10 +5299,6 @@ TOTAL FINAL: ${dados.valor_total}
                         }
                         
                         window.scrollTo({ top: 0, behavior: 'smooth' });
-                        
-                        // Mostrar mensagem de sucesso
-                        showToast('✅ Pedido enviado com sucesso! Dados recebidos pela equipe.', 'success');
-                        
                     }, 1000);
                     
                     setTimeout(() => {
@@ -5867,74 +5310,14 @@ TOTAL FINAL: ${dados.valor_total}
                     }, 5000);
                     
                 } else {
-                    // GOOGLE SHEETS FALHOU, MAS EMAIL FOI ENVIADO
-                    console.log("⚠️ Google Sheets falhou, mas email foi enviado");
-                    
-                    // AINDA MOSTRAR SUCESSO PARA O USUÁRIO
-                    if (submitBtn) {
-                        submitBtn.innerHTML = '✅ DADOS RECEBIDOS';
-                        submitBtn.classList.add('btn-success');
-                    }
-                    
-                    setTimeout(() => {
-                        document.getElementById('page6').classList.remove('active');
-                        
-                        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
-                        if (paymentMethod === 'pix') {
-                            document.getElementById('thankYouPagePix').classList.add('active');
-                            showPaymentConfirmation('pix');
-                        } else {
-                            document.getElementById('thankYouPageCard').classList.add('active');
-                            showPaymentConfirmation('card');
-                        }
-                        
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        
-                        // Mensagem alternativa informando que os dados foram recebidos
-                        showToast('✅ Dados recebidos! Em caso de dúvidas, entre em contato conosco.', 'success');
-                        
-                    }, 1000);
-                    
-                    // Limpar dados locais
-                    setTimeout(() => {
-                        if (!isFromLink) {
-                            localStorage.removeItem('mundoCarolFormData');
-                            localStorage.removeItem('mundoCarolLastSave');
-                            sessionStorage.removeItem('mundoCarolTempData');
-                        }
-                    }, 5000);
+                    throw new Error(result.message || 'Erro desconhecido');
                 }
                 
             } catch (error) {
-                console.error('❌ Erro no processo de envio:', error);
-                
-                // SE CHEGOU AQUI, TENTAR MOSTRAR MENSAGEM POSITIVA DE QUALQUER FORMA
-                // (O EMAIL JÁ FOI TENTADO EM PARALELO)
-                
+                console.error('Erro no envio:', error);
+                showToast(`Erro: ${error.message || 'Falha na conexão'}`, 'warning');
                 if (submitBtn) submitBtn.disabled = false;
                 isSubmitting = false;
-                
-                // Tentar mostrar página de sucesso mesmo com erro
-                try {
-                    document.getElementById('page6').classList.remove('active');
-                    
-                    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
-                    if (paymentMethod === 'pix') {
-                        document.getElementById('thankYouPagePix').classList.add('active');
-                        showPaymentConfirmation('pix');
-                    } else {
-                        document.getElementById('thankYouPageCard').classList.add('active');
-                        showPaymentConfirmation('card');
-                    }
-                    
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    
-                    showToast('✅ Seus dados foram registrados! Entre em contato se precisar de ajuda.', 'success');
-                    
-                } catch (fallbackError) {
-                    // Último recurso: mostrar mensagem de erro amigável
-                    showToast('⚠️ Houve um problema técnico. Por favor, entre em contato pelo WhatsApp: (31) 98323-8087', 'warning');
-                }
             } finally {
                 if (loadingSection) loadingSection.style.display = 'none';
             }
@@ -6028,7 +5411,7 @@ TOTAL FINAL: ${dados.valor_total}
             if (paymentMethod === 'pix') {
                 paymentText = 'PIX direto para nosso CNPJ? (Vamos te enviar o link)';
             } else if (paymentMethod === 'creditCard') {
-                paymentText = 'Link de Cartão de Crédito online (vamos te enviar o link)';
+                paymentText = 'Link de Cartão Crédito online (vamos te enviar o link)';
             }
             
             let cupomInfo = '';
@@ -6257,8 +5640,7 @@ TOTAL FINAL: ${dados.valor_total}
         // INICIALIZAÇÃO DO SISTEMA
         // ============================================
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Sistema de Agendamento - Mundo Carol (Versão Completa com Backup por Email)');
-            console.log('📧 EmailJS Configurado - Service: service_a6ry34s, Template: template_luh9f0z');
+            console.log('🚀 Sistema de Agendamento - Mundo Carol (Versão Corrigida com Prazo Mínimo)');
             
             checkIfFromLink();
             renderCalendar(currentMonth, currentYear);
@@ -6669,7 +6051,6 @@ TOTAL FINAL: ${dados.valor_total}
             
             console.log('✅ Sistema carregado. Modo:', isFromLink ? `LINK (${linkId})` : 'FLUXO NORMAL');
             console.log('✅ Prazo mínimo:', prazoMinimo, 'dias');
-            console.log('✅ Backup por Email: ATIVO (Service: service_a6ry34s)');
         });
     </script>
 </body>
