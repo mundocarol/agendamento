@@ -234,9 +234,6 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.6;c
 .whatsapp-fallback-info{background:#e8f5e9;padding:15px;border-radius:8px;margin:20px 0;border-left:4px solid var(--success);font-size:14px;color:#155724;}
 .tentativa-info{font-size:13px;color:#666;margin-top:10px;padding:8px;background:#f8f9fa;border-radius:6px;border:1px solid #dee2e6;}
 .tentativa-numero{font-weight:700;color:var(--primary);}
-.rota-lotada-badge{background:#dc3545;color:white;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600;margin-left:8px;display:inline-block;}
-.rota-automatica-info{background:#e3f2fd;padding:12px;border-radius:8px;margin:12px 0;border-left:4px solid #2196f3;font-size:12px;color:#0d47a1;text-align:center;}
-.rota-automatica-info strong{color:#0d47a1;}
 @media(max-width:480px){
 .header h1{font-size:16px;}
 .form-page{padding:15px;}
@@ -449,13 +446,6 @@ Marcar como Pedido Anônimo
 </button>
 </div>
 <div id="linkGeneratorSection">
-<div id="linkPreview" class="link-preview hidden">
-<strong>Preview do Link:</strong><br>
-<span id="linkPreviewText"></span>
-<div class="link-warning">
-<small>O link contém todas as configurações de forma compacta e segura.</small>
-</div>
-</div>
 <button type="button" class="btn btn-primary" id="generateLinkBtn">Gerar Link para Cliente</button>
 <div id="generatedLinkContainer" class="generated-link-container hidden">
 <h3 class="section-title">Link Gerado:</h3>
@@ -487,7 +477,7 @@ Marcar como Pedido Anônimo
 <p>Atenção: Preencha nome e telefone da pessoa presenteada apenas se a entrega do presente for para ela. Se a entrega do presente for para você (comprador), repita seus dados. Não queremos estragar surpresas!</p>
 </div>
 <div class="form-group">
-<label for="giftedName">Nome da Pessoa Presenteada:</label>
+<label for="giftedName">Nome da Pessoa Presenteado:</label>
 <input type="text" id="giftedName" class="form-control" required>
 <div class="error-text" id="errorGiftedName"></div>
 </div>
@@ -593,7 +583,7 @@ Marcar como Pedido Anônimo
 <div id="vendedorFreteConfigInfo" class="alert alert-warning hidden">
 <h3><i class="fas fa-shipping-fast"></i> Frete Configurado pelo Vendedor</h3>
 <p><strong>Tipo:</strong> <span id="displayFreteTipo">  </span></p>
-<p><strong>Prazo:</strong> <span id="displayFretePrazo">  </span></p>
+<p><strong>Prazo:</strong> <span id="displayFretePrazo">-</span></p>
 <p><strong>Valor:</strong> <span id="displayFreteValor">R$ 0,00</span></p>
 </div>
 </div>
@@ -908,7 +898,6 @@ const PIX_KEY='10648303000179';
 const WHATSAPP_NUMBER='5531983238087';
 const PIX_DISCOUNT_PERCENTAGE=2;
 const PLANILHA_COLUNA_PEDIDO=53;
-const HORA_LIMITE_OCULTAR_ROTA=18; // 18 horas (6PM)
 const coupons={
 'ATIVAR1301':{type:'percentage',value:7,description:'7% de desconto nos produtos',minPurchase:0,maxDiscount:100,validUntil:'2026-01-31',excludesPixDiscount:true,limit:1,unlimited:false},
 'ATIVAR1302':{type:'percentage',value:7,description:'7% de desconto nos produtos',minPurchase:0,maxDiscount:100,validUntil:'2026-01-31',excludesPixDiscount:true,limit:1,unlimited:false},
@@ -932,16 +921,10 @@ const shippingRates={
 const noDeliveryDates=['2024-12-25','2024-12-31','2025-01-01','2025-04-21','2025-05-01','2025-09-07','2025-10-12','2025-11-02','2025-11-15'];
 const specialDates={'2024-12-24':{tipo:'feriado',descricao:'Véspera de Natal',horarios:[{start:'07:30',end:'10:30',label:'07:30 às 10:30'},{start:'09:30',end:'11:30',label:'09:30 às 11:30'},{start:'13:30',end:'15:30',label:'13:30 às 15:30'},{start:'15:30',end:'17:30',label:'15:30 às 17:30'},{start:'18:30',end:'20:30',label:'18:30 às 20:30'}]}};
 const routeTimes={
-weekday:[{id:'r1',start:'07:30',end:'09:30',label:'07:30 às 09:30'},{id:'r2',start:'09:30',end:'11:30',label:'09:30 às 11:30'},{id:'r3',start:'13:30',end:'15:30',label:'13:30 às 15:30'},{id:'r4',start:'15:30',end:'17:30',label:'15:30 às 17:30'},{id:'r5',start:'19:30',end:'21:30',label:'19:30 às 21:30 (taxa noturna adicional 19,90)',nightFee:true,fee:19.90}],
-saturday:[{id:'r6',start:'07:30',end:'10:30',label:'07:30 às 10:30'},{id:'r7',start:'10:30',end:'12:30',label:'10:30 às 12:30'},{id:'r8',start:'12:30',end:'16:30',label:'12:30 às 16:30'}],
-sunday:[{id:'r9',start:'08:00',end:'10:00',label:'08:00 às 10:00 (taxa adicional 19,90)',sundayFee:true,fee:19.90}]
+weekday:[{start:'07:30',end:'09:30',label:'07:30 às 09:30'},{start:'09:30',end:'11:30',label:'09:30 às 11:30'},{start:'13:30',end:'15:30',label:'13:30 às 15:30'},{start:'15:30',end:'17:30',label:'15:30 às 17:30'},{start:'19:30',end:'21:30',label:'19:30 às 21:30 (taxa noturna adicional 19,90)',nightFee:true,fee:19.90}],
+saturday:[{start:'07:30',end:'10:30',label:'07:30 às 10:30'},{start:'10:30',end:'12:30',label:'10:30 às 12:30'},{start:'12:30',end:'16:30',label:'12:30 às 16:30'}],
+sunday:[{start:'08:00',end:'10:00',label:'08:00 às 10:00 (taxa adicional 19,90)',sundayFee:true,fee:19.90}]
 };
-const routeDaysMap={
-'r1':'weekday','r2':'weekday','r3':'weekday','r4':'weekday','r5':'weekday',
-'r6':'saturday','r7':'saturday','r8':'saturday',
-'r9':'sunday'
-};
-const dayNames=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
 let selectedDate=null,selectedTime=null,selectedTimeLabel=null,currentMonth=new Date().getMonth(),currentYear=new Date().getFullYear(),nightFeeAmount=0,isOtherCity=false,calculatedShipping=0,selectedCity='',isSubmitting=false,currentDeliveryType='';
 let isFromLink=false,lockedProducts=[],linkId=null,isPedidoAnonimo=false;
 let productRows=1,vendedorNome='';
@@ -952,6 +935,7 @@ let addCustomTax=false,taxaPersonalizadaDescricao='',taxaPersonalizadaValor=0;
 let prazoMinimo=0;
 let saveTimeout=null;const SAVE_DELAY=1500;
 let contadorInterval=null,tempoRestante=30,tentativaAtual=1,maxTentativas=2,pedidoConfirmado=false,dadosEnviados=false,enviandoTimeout=null,verificandoTimeout=null,dadosParaEnvio=null;
+let isPedidoEnviado=false; // NOVA VARIÁVEL PARA CONTROLAR DUPLICAÇÃO
 
 function showToast(message,type='warning'){
  const toast=document.getElementById('toastNotification');
@@ -2299,17 +2283,9 @@ function generateClientLink(){
   clientLink+=`&t=${encodedTaxa}`;
  }
  
- const linkPreview=document.getElementById('linkPreview');
- const linkPreviewText=document.getElementById('linkPreviewText');
  const generatedLink=document.getElementById('generatedLink');
- const generatedLinkContainer=document.getElementById('generatedLinkContainer');
- 
- if(linkPreview){
-  linkPreviewText.textContent=clientLink.substring(0,80)+'...';
-  linkPreview.classList.remove('hidden');
- }
- 
  if(generatedLink)generatedLink.textContent=clientLink;
+ const generatedLinkContainer=document.getElementById('generatedLinkContainer');
  if(generatedLinkContainer)generatedLinkContainer.classList.remove('hidden');
  
  copyToClipboard(clientLink,'link');
@@ -2358,6 +2334,47 @@ function nextMonth(){
  renderCalendar(currentMonth,currentYear);
 }
 
+// NOVA FUNÇÃO: CONTROLE DE ROTAS PARA OCULTAR PRIMEIRA ROTA APÓS 18H
+function aplicarControleRotas(dataSelecionada) {
+    const agora = new Date();
+    const horaAtual = agora.getHours();
+    const diaAtual = agora.getDay();
+    const dataAmanha = new Date();
+    dataAmanha.setDate(agora.getDate() + 1);
+    
+    // Verifica se a data selecionada é amanhã
+    const isAmanha = dataSelecionada.getDate() === dataAmanha.getDate() && 
+                     dataSelecionada.getMonth() === dataAmanha.getMonth() && 
+                     dataSelecionada.getFullYear() === dataAmanha.getFullYear();
+    
+    // Verifica se é domingo (dia 0)
+    const isDomingo = dataSelecionada.getDay() === 0;
+    
+    // Verifica se é sábado após 12h
+    const isSabadoPos12h = diaAtual === 6 && horaAtual >= 12;
+    
+    // REGRA PRINCIPAL: Se for após 18h e a data selecionada for amanhã, oculta primeira rota
+    if (horaAtual >= 18 && isAmanha) {
+        return true;
+    }
+    
+    // REGRA ESPECIAL: Domingo - oculta todas as rotas do próprio domingo
+    if (isDomingo && dataSelecionada.getDate() === agora.getDate()) {
+        return 'fechar_todas';
+    }
+    
+    // REGRA ESPECIAL: Sábado após 12h - oculta primeira rota da segunda-feira
+    if (isSabadoPos12h && dataSelecionada.getDay() === 1) {
+        const segundaFeira = new Date(agora);
+        segundaFeira.setDate(agora.getDate() + 2);
+        if (dataSelecionada.getDate() === segundaFeira.getDate()) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 function renderCalendar(month,year){
  const calendar=document.getElementById('calendar');
  const monthYearDisplay=document.getElementById('currentMonthYear');
@@ -2397,7 +2414,6 @@ function renderCalendar(month,year){
   dayElement.textContent=day;
   const currentDate=new Date(year,month,day);
   const dateString=formatDateForComparison(currentDate);
-  const dayOfWeek=currentDate.getDay();
   
   if(noDeliveryDates.includes(dateString)){
    dayElement.classList.add('no-delivery','disabled');
@@ -2513,7 +2529,6 @@ function selectDate(date){
  const now=new Date();
  const currentHour=now.getHours();
  const currentMinutes=now.getMinutes();
- const currentTimeInMinutes=currentHour*60+currentMinutes;
  
  let routes=[];
  if(specialDates[dateString]){
@@ -2531,73 +2546,58 @@ function selectDate(date){
   routes=routeTimes.weekday;
  }
  
- const tomorrow=new Date(todayNow);
- tomorrow.setDate(tomorrow.getDate()+1);
- const isTomorrow=date.getDate()===tomorrow.getDate()&&date.getMonth()===tomorrow.getMonth()&&date.getFullYear()===tomorrow.getFullYear();
+ // APLICA CONTROLE DE ROTAS (OCULTAR PRIMEIRA ROTA APÓS 18H)
+ const controleRotas = aplicarControleRotas(date);
+ let ocultarPrimeiraRota = false;
+ let ocultarTodasRotas = false;
  
- const horaAtual=new Date().getHours();
- const ocultarPrimeiraRota=isTomorrow&&horaAtual>=HORA_LIMITE_OCULTAR_ROTA;
- 
- if(ocultarPrimeiraRota){
-  const rotaInfo=document.createElement('div');
-  rotaInfo.className='rota-automatica-info';
-  rotaInfo.innerHTML=`<i class="fas fa-info-circle"></i> <strong>Sistema Automático:</strong> Após ${HORA_LIMITE_OCULTAR_ROTA}h, a primeira rota do próximo dia fica indisponível.`;
-  optionsContainer.appendChild(rotaInfo);
+ if (controleRotas === true) {
+    ocultarPrimeiraRota = true;
+ } else if (controleRotas === 'fechar_todas') {
+    ocultarTodasRotas = true;
  }
  
- routes.forEach((route,index)=>{
-  const routeId=`time${index+1}`;
-  const routeElement=document.createElement('div');
-  
-  const isFirstRouteTomorrow=isTomorrow&&index===0&&ocultarPrimeiraRota;
-  
-  if(isFirstRouteTomorrow){
-   routeElement.classList.add('time-option','disabled');
-   
-   const container=document.createElement('div');
-   container.style.display='flex';
-   container.style.alignItems='center';
-   container.style.justifyContent='space-between';
-   container.style.width='100%';
-   
-   const labelContainer=document.createElement('div');
-   labelContainer.style.display='flex';
-   labelContainer.style.alignItems='center';
-   labelContainer.style.flex='1';
-   
-   const input=document.createElement('input');
-   input.type='radio';
-   input.disabled=true;
-   input.style.marginRight='10px';
-   
-   const label=document.createElement('span');
-   label.textContent=`${route.label} `;
-   label.style.cursor='not-allowed';
-   label.style.color='#666';
-   
-   const lotadaBadge=document.createElement('span');
-   lotadaBadge.className='rota-lotada-badge';
-   lotadaBadge.textContent='LOTADA';
-   
-   labelContainer.appendChild(input);
-   labelContainer.appendChild(label);
-   labelContainer.appendChild(lotadaBadge);
-   
-   const infoIcon=document.createElement('i');
-   infoIcon.className='fas fa-info-circle';
-   infoIcon.style.color='#dc3545';
-   infoIcon.style.marginLeft='10px';
-   infoIcon.title='Esta rota está indisponível após 18h do dia anterior';
-   
-   container.appendChild(labelContainer);
-   container.appendChild(infoIcon);
-   routeElement.appendChild(container);
+ routes=routes.filter(route=>{
+  if(isToday){
+   const [startHour,startMinute]=route.start.split(':').map(Number);
+   const startTimeInMinutes=startHour*60+startMinute;
+   const currentTimeInMinutes=currentHour*60+currentMinutes;
+   const timeUntilStart=startTimeInMinutes-currentTimeInMinutes;
+   if(timeUntilStart<30){
+    return false;
+   }
+  }
+  return true;
+ });
+ 
+ if(ocultarTodasRotas && routes.length > 0){
+  const noTimesMessage=document.createElement('div');
+  noTimesMessage.className='alert alert-warning';
+  noTimesMessage.textContent='Não há horários disponíveis para este dia. Selecione outra data.';
+  optionsContainer.appendChild(noTimesMessage);
+  document.getElementById('timeOptions').classList.remove('hidden');
+  return;
+ }
+ 
+ if(routes.length===0){
+  const noTimesMessage=document.createElement('div');
+  noTimesMessage.className='alert alert-warning';
+  if(isToday){
+   noTimesMessage.textContent='Não há mais horários disponíveis para hoje. Selecione outra data.';
   }else{
-   routeElement.classList.add('time-option');
+   noTimesMessage.textContent='Não há horários disponíveis para esta data.';
+  }
+  optionsContainer.appendChild(noTimesMessage);
+ }else{
+  routes.forEach((route,index)=>{
+   // Oculta primeira rota se necessário
+   if(ocultarPrimeiraRota && index === 0){
+    return;
+   }
    
-   const container=document.createElement('div');
-   container.style.display='flex';
-   container.style.alignItems='center';
+   const routeId=`time${index+1}`;
+   const routeElement=document.createElement('div');
+   routeElement.classList.add('time-option');
    
    const input=document.createElement('input');
    input.type='radio';
@@ -2616,21 +2616,12 @@ function selectDate(date){
    label.style.marginLeft='10px';
    label.style.flex='1';
    
+   const container=document.createElement('div');
+   container.style.display='flex';
+   container.style.alignItems='center';
    container.appendChild(input);
    container.appendChild(label);
    routeElement.appendChild(container);
-   
-   if(isToday){
-    const [startHour,startMinute]=route.start.split(':').map(Number);
-    const startTimeInMinutes=startHour*60+startMinute;
-    const timeUntilStart=startTimeInMinutes-currentTimeInMinutes;
-    if(timeUntilStart<30){
-     routeElement.classList.add('disabled');
-     input.disabled=true;
-     label.style.cursor='not-allowed';
-     label.style.color='#adb5bd';
-    }
-   }
    
    input.addEventListener('change',function(){
     selectedTime=this.value;
@@ -2644,33 +2635,9 @@ function selectDate(date){
     }
     window.dispatchEvent(new CustomEvent('timeSelected'));
    });
-  }
-  
-  optionsContainer.appendChild(routeElement);
- });
- 
- const availableRoutes=routes.filter((route,index)=>{
-  if(isTomorrow&&index===0&&ocultarPrimeiraRota)return false;
-  if(isToday){
-   const [startHour,startMinute]=route.start.split(':').map(Number);
-   const startTimeInMinutes=startHour*60+startMinute;
-   const timeUntilStart=startTimeInMinutes-currentTimeInMinutes;
-   return timeUntilStart>=30;
-  }
-  return true;
- });
- 
- if(availableRoutes.length===0){
-  const noTimesMessage=document.createElement('div');
-  noTimesMessage.className='alert alert-warning';
-  if(isToday){
-   noTimesMessage.textContent='Não há mais horários disponíveis para hoje. Selecione outra data.';
-  }else if(ocultarPrimeiraRota&&routes.length===1){
-   noTimesMessage.textContent='Não há horários disponíveis para esta data. A primeira rota está indisponível após 18h do dia anterior.';
-  }else{
-   noTimesMessage.textContent='Não há horários disponíveis para esta data.';
-  }
-  optionsContainer.appendChild(noTimesMessage);
+   
+   optionsContainer.appendChild(routeElement);
+  });
  }
  
  document.getElementById('timeOptions').classList.remove('hidden');
@@ -3129,22 +3096,6 @@ function updateReviewData(){
   html+='</div>';
  }
  
- const horaAtual=new Date().getHours();
- const ocultarPrimeiraRota=horaAtual>=HORA_LIMITE_OCULTAR_ROTA;
- if(selectedDate&&!isOtherCity){
-  const today=new Date();
-  const tomorrow=new Date(today);
-  tomorrow.setDate(tomorrow.getDate()+1);
-  const isTomorrow=selectedDate.getDate()===tomorrow.getDate()&&selectedDate.getMonth()===tomorrow.getMonth()&&selectedDate.getFullYear()===tomorrow.getFullYear();
-  
-  if(isTomorrow&&ocultarPrimeiraRota){
-   html+='<div class="review-item">';
-   html+='<div class="review-label">Observação:</div>';
-   html+=`<div class="review-value"><span class="rota-lotada-badge">Atenção:</span> A primeira rota (07:30-09:30) está indisponível após ${HORA_LIMITE_OCULTAR_ROTA}h do dia anterior</div>`;
-   html+='</div>';
-  }
- }
- 
  const sendCard=document.querySelector('input[name="sendCard"]:checked')?.value;
  if(sendCard==='yes'){
   const cardMessage=document.getElementById('cardMessage');
@@ -3329,19 +3280,6 @@ function sendWhatsAppMessage(paymentType){
   message+=`*Prazo Mínimo Configurado:* ${prazoMinimo} dia(s)%0A`;
  }
  
- const horaAtual=new Date().getHours();
- const ocultarPrimeiraRota=horaAtual>=HORA_LIMITE_OCULTAR_ROTA;
- if(selectedDate&&!isOtherCity){
-  const today=new Date();
-  const tomorrow=new Date(today);
-  tomorrow.setDate(tomorrow.getDate()+1);
-  const isTomorrow=selectedDate.getDate()===tomorrow.getDate()&&selectedDate.getMonth()===tomorrow.getMonth()&&selectedDate.getFullYear()===tomorrow.getFullYear();
-  
-  if(isTomorrow&&ocultarPrimeiraRota){
-   message+=`*Sistema Automático:* Primeira rota do dia seguinte oculta após ${HORA_LIMITE_OCULTAR_ROTA}h%0A`;
-  }
- }
- 
  if(paymentType==='pix'){
   message+=`*Pagamento:* PIX%0A`;
  }else if(paymentType==='card'){
@@ -3412,7 +3350,15 @@ function showPaymentConfirmation(type){
  }
 }
 
+// MODIFICAÇÃO: EVITAR DUPLICAÇÃO DE EMAIL
+let emailEnviado = false;
+
 async function enviarEmailBackupAutomatico(){
+ if (emailEnviado) {
+  console.log("📧 Email já foi enviado, evitando duplicação");
+  return true;
+ }
+ 
  console.log("📧 Iniciando envio de email de backup...");
  try{
   const dadosFormulario=coletarTodosOsDadosDoFormulario();
@@ -3420,6 +3366,7 @@ async function enviarEmailBackupAutomatico(){
   console.log("📨 Enviando email de backup:",templateParams);
   const response=await emailjs.send('service_a6ry34s','template_luh9f0z',templateParams);
   console.log('✅ Email de backup enviado com sucesso!',response.status,response.text);
+  emailEnviado = true; // Marca como enviado
   return true;
  }catch(error){
   console.error('❌ Erro ao enviar email de backup:',error);
@@ -3478,16 +3425,6 @@ function coletarTodosOsDadosDoFormulario(){
   const dayName=days[selectedDate.getDay()];
   dados.data_agendamento=`${selectedDate.getDate().toString().padStart(2,'0')}/`+`${(selectedDate.getMonth()+1).toString().padStart(2,'0')}/`+`${selectedDate.getFullYear()} - ${dayName}`;
   dados.horario_agendamento=selectedTimeLabel||'A definir';
-  
-  const horaAtual=now.getHours();
-  const ocultarPrimeiraRota=horaAtual>=HORA_LIMITE_OCULTAR_ROTA;
-  const tomorrow=new Date(now);
-  tomorrow.setDate(tomorrow.getDate()+1);
-  const isTomorrow=selectedDate.getDate()===tomorrow.getDate()&&selectedDate.getMonth()===tomorrow.getMonth()&&selectedDate.getFullYear()===tomorrow.getFullYear();
-  
-  if(isTomorrow&&ocultarPrimeiraRota){
-   dados.sistema_automatico=`Primeira rota (07:30-09:30) oculta após ${HORA_LIMITE_OCULTAR_ROTA}h do dia anterior`;
-  }
  }else if(isOtherCity){
   dados.data_agendamento=`A combinar (outra cidade)`;
   dados.horario_agendamento=fretePrazo?`Prazo: ${fretePrazo}`:'Prazo a combinar';
@@ -3703,7 +3640,6 @@ function prepararParametrosEmail(dados){
   endereco_detalhado:`Rua: ${dados.endereco_rua}, Nº: ${dados.endereco_numero}, Complemento: ${dados.endereco_complemento}, Bairro: ${dados.endereco_bairro}, Referência: ${dados.endereco_referencia}`,
   data_agendamento:dados.data_agendamento,
   horario_agendamento:dados.horario_agendamento,
-  sistema_automatico:dados.sistema_automatico||'N/A',
   frete_tipo:dados.frete_tipo,
   frete_prazo:dados.frete_prazo,
   frete_valor:dados.frete_valor,
@@ -3866,19 +3802,6 @@ function prepareExcelData(){
   prazoMinimoInfo=`PRAZO MÍNIMO: ${prazoMinimo} dia(s)`;
  }
  
- let sistemaAutomaticoInfo='';
- const horaAtual=now.getHours();
- const ocultarPrimeiraRota=horaAtual>=HORA_LIMITE_OCULTAR_ROTA;
- if(selectedDate&&!isOtherCity){
-  const tomorrow=new Date(now);
-  tomorrow.setDate(tomorrow.getDate()+1);
-  const isTomorrow=selectedDate.getDate()===tomorrow.getDate()&&selectedDate.getMonth()===tomorrow.getMonth()&&selectedDate.getFullYear()===tomorrow.getFullYear();
-  
-  if(isTomorrow&&ocultarPrimeiraRota){
-   sistemaAutomaticoInfo=`SISTEMA AUTOMÁTICO: Primeira rota (07:30-09:30) oculta após ${HORA_LIMITE_OCULTAR_ROTA}h`;
-  }
- }
- 
  orderNumber=generateOrderNumber();
  const data=new Array(60).fill('');
  data[0]=formattedDateTime;
@@ -3916,8 +3839,19 @@ function prepareExcelData(){
  return data;
 }
 
+// MODIFICAÇÃO: EVITAR DUPLICAÇÃO DE ENVIO PARA PLANILHA
 async function enviarDadosParaPlanilha(dados){
+ // Verifica se já está enviando
+ if (isPedidoEnviado) {
+  console.log("⚠️ Pedido já está sendo enviado, evitando duplicação");
+  return { success: false, message: 'Pedido já está sendo processado' };
+ }
+ 
+ // Marca como enviando
+ isPedidoEnviado = true;
+ 
  try{
+  console.log("🚀 Enviando dados para planilha...");
   const proxyUrl=`https://corsproxy.io/?${encodeURIComponent(WEB_APP_URL)}`;
   const response=await fetch(proxyUrl,{
    method:'POST',
@@ -3937,18 +3871,24 @@ async function enviarDadosParaPlanilha(dados){
   }
   
   const data=await response.json();
+  console.log("✅ Dados enviados com sucesso para planilha");
   return{
    success:data.status==='sucesso',
    message:data.message||'Dados enviados com sucesso!'
   };
  }catch(error){
-  console.error('Erro ao enviar para planilha:',error);
+  console.error('❌ Erro ao enviar para planilha:',error);
   try{
    const resultAlt=await enviarDadosAlternativo(dados);
    return resultAlt;
   }catch(altError){
    throw altError;
   }
+ } finally {
+  // Reseta após um tempo para permitir novo envio se necessário
+  setTimeout(() => {
+   isPedidoEnviado = false;
+  }, 10000);
  }
 }
 
@@ -3963,8 +3903,15 @@ async function enviarDadosAlternativo(dados){
  });
 }
 
+// MODIFICAÇÃO: ADICIONAR VERIFICAÇÃO DE DUPLICAÇÃO NO INÍCIO DO PROCESSO
 async function iniciarProcessoEnvio(){
  if(isSubmitting)return;
+ 
+ // Verifica se já está sendo processado
+ if (isPedidoEnviado) {
+  showToast('Seu pedido já está sendo processado. Aguarde a confirmação.', 'warning');
+  return;
+ }
  
  const validation=validatePage(6);
  if(!validation.valid){
@@ -4035,44 +3982,29 @@ async function realizarTentativaEnvio(){
  console.log(`🚀 Tentativa ${tentativaAtual} de envio iniciada...`);
  document.getElementById('statusTexto').textContent='Enviando dados para a planilha...';
  
- // Variável para controlar se já foi enviado
- let envioPlanilhaRealizado = false;
- let envioEmailRealizado = false;
- 
  try{
-  // ENVIAR PARA PLANILHA (apenas uma vez)
-  if(!dadosEnviados){
-   const result = await enviarDadosParaPlanilha(dadosParaEnvio);
-   if(result.success){
-    console.log("✅ Dados enviados para planilha");
-    dadosEnviados = true;
-    envioPlanilhaRealizado = true;
-    document.getElementById('statusTexto').textContent='Dados enviados! Verificando confirmação...';
-   }else{
-    console.log("⚠️ Falha ao enviar para planilha");
-    document.getElementById('statusTexto').textContent='Falha ao enviar. Tentando verificar se chegou...';
-   }
-  }else{
-   console.log("ℹ️ Dados já enviados anteriormente, pulando envio para planilha");
-  }
-  
-  // ENVIAR EMAIL (apenas uma vez, e apenas se o envio para planilha foi bem-sucedido)
-  if(envioPlanilhaRealizado && !envioEmailRealizado){
-   console.log("📧 Iniciando envio de email de backup...");
-   try{
-    const emailSuccess = await enviarEmailBackupAutomatico();
-    envioEmailRealizado = true;
-    if(emailSuccess){
-     console.log("✅ Email de backup enviado com sucesso!");
-    }else{
-     console.log("⚠️ Falha ao enviar email de backup");
+  const result=await enviarDadosParaPlanilha(dadosParaEnvio);
+  if(result.success){
+   console.log("✅ Dados enviados para planilha");
+   dadosEnviados=true;
+   document.getElementById('statusTexto').textContent='Dados enviados! Verificando confirmação...';
+   
+   // ENVIA EMAIL APENAS SE OS DADOS FORAM ENVIADOS COM SUCESSO
+   enviarEmailBackupAutomatico().then(success=>{
+    if(success){
+     console.log("✅ Email de backup processado");
     }
-   }catch(emailError){
-    console.error('❌ Erro ao enviar email:',emailError);
-   }
+   }).catch(error=>{
+    console.error("⚠️ Erro no email de backup:",error);
+   });
+   
+   iniciarVerificacaoConfirmacao();
+  }else{
+   console.log("⚠️ Falha ao enviar para planilha");
+   dadosEnviados=false;
+   document.getElementById('statusTexto').textContent='Falha ao enviar. Tentando verificar se chegou...';
+   iniciarVerificacaoConfirmacao();
   }
-  
-  iniciarVerificacaoConfirmacao();
  }catch(error){
   console.error('❌ Erro na tentativa de envio:',error);
   dadosEnviados=false;
@@ -4310,17 +4242,6 @@ function enviarPedidoViaWhatsApp(){
   const formattedDate=selectedDate.toLocaleDateString('pt-BR');
   message+=`*Data:* ${formattedDate}%0A`;
   message+=`*Horário:* ${selectedTimeLabel}%0A`;
-  
-  const horaAtual=new Date().getHours();
-  const ocultarPrimeiraRota=horaAtual>=HORA_LIMITE_OCULTAR_ROTA;
-  const today=new Date();
-  const tomorrow=new Date(today);
-  tomorrow.setDate(tomorrow.getDate()+1);
-  const isTomorrow=selectedDate.getDate()===tomorrow.getDate()&&selectedDate.getMonth()===tomorrow.getMonth()&&selectedDate.getFullYear()===tomorrow.getFullYear();
-  
-  if(isTomorrow&&ocultarPrimeiraRota){
-   message+=`*Sistema Automático:* Primeira rota (07:30-09:30) oculta após ${HORA_LIMITE_OCULTAR_ROTA}h%0A`;
-  }
  }else if(isOtherCity){
   message+=`*Prazo de Entrega:* ${fretePrazo}%0A`;
  }
@@ -4363,14 +4284,17 @@ function limparProcessoEnvio(){
   enviandoTimeout=null;
  }
  isSubmitting=false;
+ // Reseta a flag de email enviado
+ emailEnviado = false;
 }
 
 document.addEventListener('DOMContentLoaded',function(){
- console.log('🚀 Sistema de Agendamento - Mundo Carol (Versão Otimizada)');
+ console.log('🚀 Sistema de Agendamento - Mundo Carol (Versão Corrigida)');
+ console.log('✅ Sistema de Controle de Rotas: ATIVO (oculta primeira rota após 18h)');
+ console.log('✅ Sistema Anti-Duplicação: ATIVO');
  console.log('📧 EmailJS Configurado - Service: service_a6ry34s, Template: template_luh9f0z');
  console.log('🔄 Sistema de Envio Otimizado - Verificação via JSONP');
  console.log('✅ Página de pedido confirmado persistente: ATIVO');
- console.log(`✅ Sistema automático de rotas: ATIVO (oculta primeira rota após ${HORA_LIMITE_OCULTAR_ROTA}h)`);
  
  checkIfFromLink();
  renderCalendar(currentMonth,currentYear);
@@ -4720,8 +4644,8 @@ document.addEventListener('DOMContentLoaded',function(){
  
  console.log('✅ Sistema carregado. Modo:',isFromLink?`LINK (${linkId})`:'FLUXO NORMAL');
  console.log('✅ Prazo mínimo:',prazoMinimo,'dias');
- console.log('✅ Sistema de envio otimizado: ATIVO');
- console.log(`✅ Sistema automático de rotas: PRIMEIRA ROTA OCULTA APÓS ${HORA_LIMITE_OCULTAR_ROTA}h`);
+ console.log('✅ Sistema anti-duplicação: ATIVO');
+ console.log('✅ Controle de rotas após 18h: ATIVO');
 });
 </script>
 </body>
