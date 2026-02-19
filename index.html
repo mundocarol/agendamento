@@ -2573,13 +2573,13 @@ let ocultarTodasRotas = false;
 
 if (controleRotas === true) {
     ocultarPrimeiraRota = true;
-    console.log("🟡 Modo: Ocultar primeira rota ativado");
+    console.log("🟡 Modo: Ocultar primeira rota ativado para", date.toLocaleDateString('pt-BR'));
 } else if (controleRotas === 'fechar_todas') {
     ocultarTodasRotas = true;
     console.log("🟡 Modo: Ocultar todas as rotas ativado (domingo)");
 }
 
-// Filtrar rotas disponíveis
+// Filtrar rotas disponíveis (considerando horário atual)
 let rotasDisponiveis = routes.filter(route => {
     // Se for hoje, verificar horário atual
     if (isToday) {
@@ -2596,6 +2596,13 @@ let rotasDisponiveis = routes.filter(route => {
     return true;
 });
 
+// APLICAR O CONTROLE DE ROTAS - OCULTAR PRIMEIRA ROTA SE NECESSÁRIO
+if (ocultarPrimeiraRota && rotasDisponiveis.length > 0) {
+    console.log("🟡 Ocultando primeira rota:", rotasDisponiveis[0].label);
+    // Remove a primeira rota do array
+    rotasDisponiveis = rotasDisponiveis.slice(1);
+}
+
 // Se for para ocultar todas as rotas
 if (ocultarTodasRotas) {
     rotasDisponiveis = []; // Nenhuma rota disponível
@@ -2607,31 +2614,25 @@ if (ocultarTodasRotas) {
     return;
 }
 
-// Se não há rotas disponíveis após filtro inicial
+// Se não há rotas disponíveis após filtro inicial e remoção da primeira rota
 if (rotasDisponiveis.length === 0) {
     const noTimesMessage = document.createElement('div');
     noTimesMessage.className = 'alert alert-warning';
     if (isToday) {
         noTimesMessage.textContent = 'Não há mais horários disponíveis para hoje. Selecione outra data.';
+    } else if (ocultarPrimeiraRota) {
+        noTimesMessage.innerHTML = '<i class="fas fa-info-circle"></i> A primeira rota não está mais disponível para este dia. Selecione outro horário ou data.';
     } else {
         noTimesMessage.textContent = 'Não há horários disponíveis para esta data.';
     }
     optionsContainer.appendChild(noTimesMessage);
 } else {
-    // Renderizar rotas disponíveis
+    // Renderizar rotas disponíveis (já com a primeira removida se necessário)
     rotasDisponiveis.forEach((route, index) => {
-        // Oculta primeira rota se necessário (e se não for a única rota)
-        if (ocultarPrimeiraRota && index === 0 && rotasDisponiveis.length > 1) {
-            console.log("🟡 Ocultando primeira rota:", route.label);
-            return; // Pula esta iteração (não renderiza a primeira rota)
-        }
-        
         // Renderizar rota normalmente
         const routeId = `time${index + 1}`;
         const routeElement = document.createElement('div');
         routeElement.classList.add('time-option');
-        
-        // ... resto do código de renderização permanece igual ...
         
         const input = document.createElement('input');
         input.type = 'radio';
@@ -2674,18 +2675,6 @@ if (rotasDisponiveis.length === 0) {
         
         optionsContainer.appendChild(routeElement);
     });
-    
-    // Se após filtrar não sobrou nenhuma rota
-    if (optionsContainer.children.length === 0) {
-        const noTimesMessage = document.createElement('div');
-        noTimesMessage.className = 'alert alert-warning';
-        if (ocultarPrimeiraRota) {
-            noTimesMessage.innerHTML = '<i class="fas fa-info-circle"></i> A primeira rota não está mais disponível para este dia. Selecione outro horário ou data.';
-        } else {
-            noTimesMessage.textContent = 'Não há horários disponíveis para esta data.';
-        }
-        optionsContainer.appendChild(noTimesMessage);
-    }
 }
 
 function resetCalendar(){
