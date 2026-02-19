@@ -2334,67 +2334,47 @@ function nextMonth(){
  renderCalendar(currentMonth,currentYear);
 }
 
-// NOVA FUNÇÃO: CONTROLE DE ROTAS PARA OCULTAR PRIMEIRA ROTA APÓS 18H - VERSÃO CORRIGIDA
+// NOVA FUNÇÃO: CONTROLE DE ROTAS PARA OCULTAR PRIMEIRA ROTA APÓS 18H
 function aplicarControleRotas(dataSelecionada) {
     const agora = new Date();
     const horaAtual = agora.getHours();
-    const minutoAtual = agora.getMinutes();
-    const diaAtual = agora.getDay(); // 0 = Domingo, 6 = Sábado
+    const diaAtual = agora.getDay();
+    const dataAmanha = new Date();
+    dataAmanha.setDate(agora.getDate() + 1);
     
-    // Criar objetos de data sem considerar horas/minutos/segundos para comparação
-    const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
-    const amanha = new Date(hoje);
-    amanha.setDate(hoje.getDate() + 1);
+    // Verifica se a data selecionada é amanhã
+    const isAmanha = dataSelecionada.getDate() === dataAmanha.getDate() && 
+                     dataSelecionada.getMonth() === dataAmanha.getMonth() && 
+                     dataSelecionada.getFullYear() === dataAmanha.getFullYear();
     
-    // Criar data selecionada sem considerar horas
-    const dataSelecionadaObj = new Date(
-        dataSelecionada.getFullYear(), 
-        dataSelecionada.getMonth(), 
-        dataSelecionada.getDate()
-    );
-    
-    // Verificar se a data selecionada é amanhã
-    const isAmanha = dataSelecionadaObj.getTime() === amanha.getTime();
-    
-    // Verificar se a data selecionada é hoje
-    const isHoje = dataSelecionadaObj.getTime() === hoje.getTime();
-    
-    // Verificar se é domingo (dia 0)
+    // Verifica se é domingo (dia 0)
     const isDomingo = dataSelecionada.getDay() === 0;
     
-    // Verificar se é sábado após 12h
+    // Verifica se é sábado após 12h
     const isSabadoPos12h = diaAtual === 6 && horaAtual >= 12;
     
-    // REGRA 1: Domingo - se for domingo, ocultar TODAS as rotas do próprio domingo
-    if (isDomingo && isHoje) {
-        console.log("🔴 Domingo detectado - ocultando TODAS as rotas de hoje (domingo)");
+    // REGRA PRINCIPAL: Se for após 18h e a data selecionada for amanhã, oculta primeira rota
+    if (horaAtual >= 18 && isAmanha) {
+        return true;
+    }
+    
+    // REGRA ESPECIAL: Domingo - oculta todas as rotas do próprio domingo
+    if (isDomingo && dataSelecionada.getDate() === agora.getDate()) {
         return 'fechar_todas';
     }
     
-    // REGRA 2: Sábado após 12h - ocultar primeira rota da segunda-feira
+    // REGRA ESPECIAL: Sábado após 12h - oculta primeira rota da segunda-feira
     if (isSabadoPos12h && dataSelecionada.getDay() === 1) {
-        // Calcular a próxima segunda-feira
-        const proximaSegunda = new Date(hoje);
-        const diasAteSegunda = (8 - hoje.getDay()) % 7;
-        if (diasAteSegunda === 0) diasAteSegunda = 7; // Se hoje for domingo, segunda é amanhã
-        proximaSegunda.setDate(hoje.getDate() + diasAteSegunda);
-        
-        const isProximaSegunda = dataSelecionadaObj.getTime() === proximaSegunda.getTime();
-        
-        if (isProximaSegunda) {
-            console.log("🔴 Sábado após 12h - ocultando primeira rota da segunda-feira");
+        const segundaFeira = new Date(agora);
+        segundaFeira.setDate(agora.getDate() + 2);
+        if (dataSelecionada.getDate() === segundaFeira.getDate()) {
             return true;
         }
     }
     
-    // REGRA PRINCIPAL: Se for após 18h (ou horário configurado) e a data selecionada for amanhã, oculta primeira rota
-    if (horaAtual >= 18 && isAmanha) {
-        console.log("🔴 Após 18h - ocultando primeira rota de amanhã");
-        return true;
-    }
-    
     return false;
 }
+
 function renderCalendar(month,year){
  const calendar=document.getElementById('calendar');
  const monthYearDisplay=document.getElementById('currentMonthYear');
@@ -2566,115 +2546,102 @@ function selectDate(date){
   routes=routeTimes.weekday;
  }
  
-// APLICA CONTROLE DE ROTAS (OCULTAR PRIMEIRA ROTA APÓS 18H) - VERSÃO CORRIGIDA
-const controleRotas = aplicarControleRotas(date);
-let ocultarPrimeiraRota = false;
-let ocultarTodasRotas = false;
-
-if (controleRotas === true) {
+ // APLICA CONTROLE DE ROTAS (OCULTAR PRIMEIRA ROTA APÓS 18H)
+ const controleRotas = aplicarControleRotas(date);
+ let ocultarPrimeiraRota = false;
+ let ocultarTodasRotas = false;
+ 
+ if (controleRotas === true) {
     ocultarPrimeiraRota = true;
-    console.log("🟡 Modo: Ocultar primeira rota ativado para", date.toLocaleDateString('pt-BR'));
-} else if (controleRotas === 'fechar_todas') {
+ } else if (controleRotas === 'fechar_todas') {
     ocultarTodasRotas = true;
-    console.log("🟡 Modo: Ocultar todas as rotas ativado (domingo)");
-}
-
-// Filtrar rotas disponíveis (considerando horário atual)
-let rotasDisponiveis = routes.filter(route => {
-    // Se for hoje, verificar horário atual
-    if (isToday) {
-        const [startHour, startMinute] = route.start.split(':').map(Number);
-        const startTimeInMinutes = startHour * 60 + startMinute;
-        const currentTimeInMinutes = currentHour * 60 + currentMinutes;
-        const timeUntilStart = startTimeInMinutes - currentTimeInMinutes;
-        
-        // Só mostrar rotas que começam em pelo menos 30 minutos
-        if (timeUntilStart < 30) {
-            return false;
-        }
-    }
-    return true;
-});
-
-// APLICAR O CONTROLE DE ROTAS - OCULTAR PRIMEIRA ROTA SE NECESSÁRIO
-if (ocultarPrimeiraRota && rotasDisponiveis.length > 0) {
-    console.log("🟡 Ocultando primeira rota:", rotasDisponiveis[0].label);
-    // Remove a primeira rota do array
-    rotasDisponiveis = rotasDisponiveis.slice(1);
-}
-
-// Se for para ocultar todas as rotas
-if (ocultarTodasRotas) {
-    rotasDisponiveis = []; // Nenhuma rota disponível
-    const noTimesMessage = document.createElement('div');
-    noTimesMessage.className = 'alert alert-warning';
-    noTimesMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Não há entregas disponíveis para domingo. Selecione outra data.';
-    optionsContainer.appendChild(noTimesMessage);
-    document.getElementById('timeOptions').classList.remove('hidden');
+ }
+ 
+ routes=routes.filter(route=>{
+  if(isToday){
+   const [startHour,startMinute]=route.start.split(':').map(Number);
+   const startTimeInMinutes=startHour*60+startMinute;
+   const currentTimeInMinutes=currentHour*60+currentMinutes;
+   const timeUntilStart=startTimeInMinutes-currentTimeInMinutes;
+   if(timeUntilStart<30){
+    return false;
+   }
+  }
+  return true;
+ });
+ 
+ if(ocultarTodasRotas && routes.length > 0){
+  const noTimesMessage=document.createElement('div');
+  noTimesMessage.className='alert alert-warning';
+  noTimesMessage.textContent='Não há horários disponíveis para este dia. Selecione outra data.';
+  optionsContainer.appendChild(noTimesMessage);
+  document.getElementById('timeOptions').classList.remove('hidden');
+  return;
+ }
+ 
+ if(routes.length===0){
+  const noTimesMessage=document.createElement('div');
+  noTimesMessage.className='alert alert-warning';
+  if(isToday){
+   noTimesMessage.textContent='Não há mais horários disponíveis para hoje. Selecione outra data.';
+  }else{
+   noTimesMessage.textContent='Não há horários disponíveis para esta data.';
+  }
+  optionsContainer.appendChild(noTimesMessage);
+ }else{
+  routes.forEach((route,index)=>{
+   // Oculta primeira rota se necessário
+   if(ocultarPrimeiraRota && index === 0){
     return;
-}
-
-// Se não há rotas disponíveis após filtro inicial e remoção da primeira rota
-if (rotasDisponiveis.length === 0) {
-    const noTimesMessage = document.createElement('div');
-    noTimesMessage.className = 'alert alert-warning';
-    if (isToday) {
-        noTimesMessage.textContent = 'Não há mais horários disponíveis para hoje. Selecione outra data.';
-    } else if (ocultarPrimeiraRota) {
-        noTimesMessage.innerHTML = '<i class="fas fa-info-circle"></i> A primeira rota não está mais disponível para este dia. Selecione outro horário ou data.';
-    } else {
-        noTimesMessage.textContent = 'Não há horários disponíveis para esta data.';
+   }
+   
+   const routeId=`time${index+1}`;
+   const routeElement=document.createElement('div');
+   routeElement.classList.add('time-option');
+   
+   const input=document.createElement('input');
+   input.type='radio';
+   input.name='deliveryTime';
+   input.id=routeId;
+   input.value=`${route.start}-${route.end}`;
+   input.dataset.label=route.label;
+   input.dataset.nightfee=route.nightFee||false;
+   input.dataset.fee=route.fee||0;
+   input.dataset.sundayfee=route.sundayFee||false;
+   
+   const label=document.createElement('label');
+   label.htmlFor=routeId;
+   label.textContent=route.label;
+   label.style.cursor='pointer';
+   label.style.marginLeft='10px';
+   label.style.flex='1';
+   
+   const container=document.createElement('div');
+   container.style.display='flex';
+   container.style.alignItems='center';
+   container.appendChild(input);
+   container.appendChild(label);
+   routeElement.appendChild(container);
+   
+   input.addEventListener('change',function(){
+    selectedTime=this.value;
+    selectedTimeLabel=this.getAttribute('data-label');
+    const hasNightFee=this.getAttribute('data-nightfee')==='true';
+    const hasSundayFee=this.getAttribute('data-sundayfee')==='true';
+    const feeAmount=parseFloat(this.getAttribute('data-fee'))||0;
+    nightFeeAmount=0;
+    if(hasNightFee||hasSundayFee){
+     nightFeeAmount=feeAmount;
     }
-    optionsContainer.appendChild(noTimesMessage);
-} else {
-    // Renderizar rotas disponíveis (já com a primeira removida se necessário)
-    rotasDisponiveis.forEach((route, index) => {
-        // Renderizar rota normalmente
-        const routeId = `time${index + 1}`;
-        const routeElement = document.createElement('div');
-        routeElement.classList.add('time-option');
-        
-        const input = document.createElement('input');
-        input.type = 'radio';
-        input.name = 'deliveryTime';
-        input.id = routeId;
-        input.value = `${route.start}-${route.end}`;
-        input.dataset.label = route.label;
-        input.dataset.nightfee = route.nightFee || false;
-        input.dataset.fee = route.fee || 0;
-        input.dataset.sundayfee = route.sundayFee || false;
-        
-        const label = document.createElement('label');
-        label.htmlFor = routeId;
-        label.textContent = route.label;
-        label.style.cursor = 'pointer';
-        label.style.marginLeft = '10px';
-        label.style.flex = '1';
-        
-        const container = document.createElement('div');
-        container.style.display = 'flex';
-        container.style.alignItems = 'center';
-        container.appendChild(input);
-        container.appendChild(label);
-        routeElement.appendChild(container);
-        
-        input.addEventListener('change', function() {
-            selectedTime = this.value;
-            selectedTimeLabel = this.getAttribute('data-label');
-            const hasNightFee = this.getAttribute('data-nightfee') === 'true';
-            const hasSundayFee = this.getAttribute('data-sundayfee') === 'true';
-            const feeAmount = parseFloat(this.getAttribute('data-fee')) || 0;
-            nightFeeAmount = 0;
-            
-            if (hasNightFee || hasSundayFee) {
-                nightFeeAmount = feeAmount;
-            }
-            
-            window.dispatchEvent(new CustomEvent('timeSelected'));
-        });
-        
-        optionsContainer.appendChild(routeElement);
-    });
+    window.dispatchEvent(new CustomEvent('timeSelected'));
+   });
+   
+   optionsContainer.appendChild(routeElement);
+  });
+ }
+ 
+ document.getElementById('timeOptions').classList.remove('hidden');
+ window.dispatchEvent(new CustomEvent('dateSelected'));
 }
 
 function resetCalendar(){
