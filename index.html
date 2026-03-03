@@ -2504,41 +2504,41 @@ function renderCalendar(month,year){
 }
 
 function selectDate(date){
- const dateString=formatDateForComparison(date);
+ const dateString = formatDateForComparison(date);
  if(noDeliveryDates.includes(dateString)){
   document.getElementById('noDeliveryMessage').classList.remove('hidden');
   document.getElementById('timeOptions').classList.add('hidden');
   return;
  }
  
- const today=new Date();
+ const today = new Date();
  today.setHours(0,0,0,0);
- const minDate=new Date();
- minDate.setDate(today.getDate()+prazoMinimo);
+ const minDate = new Date();
+ minDate.setDate(today.getDate() + prazoMinimo);
  minDate.setHours(0,0,0,0);
  
- if(date<minDate){
+ if(date < minDate){
   showToast(`Data não disponível. Prazo mínimo: ${prazoMinimo} dia(s)`,'warning');
   return;
  }
  
- selectedDate=date;
+ selectedDate = date;
  document.getElementById('noDeliveryMessage').classList.add('hidden');
  
- document.querySelectorAll('.calendar-day').forEach(day=>{
+ document.querySelectorAll('.calendar-day').forEach(day => {
   day.classList.remove('selected');
  });
  
- const days=document.querySelectorAll('.calendar-day');
- days.forEach(day=>{
-  if(parseInt(day.textContent)===date.getDate()&&!isNaN(parseInt(day.textContent))){
+ const days = document.querySelectorAll('.calendar-day');
+ days.forEach(day => {
+  if(parseInt(day.textContent) === date.getDate() && !isNaN(parseInt(day.textContent))) {
    day.classList.add('selected');
   }
  });
  
  const dayOfWeek = date.getDay();
  const optionsContainer = document.getElementById('deliveryOptionsContainer');
- if(!optionsContainer)return;
+ if(!optionsContainer) return;
  optionsContainer.innerHTML = '';
  selectedTime = null;
  selectedTimeLabel = null;
@@ -2552,21 +2552,21 @@ function selectDate(date){
  
  let routes = [];
  
- // PRIMEIRO verifica se é data especial
- if(specialDates[dateString]){
+ // VERIFICA PRIMEIRO SE É DATA ESPECIAL
+ const isSpecialDate = specialDates[dateString];
+ 
+ if(isSpecialDate){
    const specialDay = specialDates[dateString];
    routes = specialDay.horarios;
    
-   // Verifica se é domingo para não mostrar aviso de taxa
-   const isSunday = dayOfWeek === 0;
-   const avisoTaxa = isSunday ? ' (Sem taxa de domingo)' : '';
-   
    const specialHeader = document.createElement('div');
    specialHeader.className = 'alert alert-info';
-   specialHeader.innerHTML = `<p><strong>${specialDay.descricao}:</strong> Horários especiais para este dia.${avisoTaxa}</p>`;
+   specialHeader.innerHTML = `<p><strong>${specialDay.descricao}:</strong> Horários especiais para este dia.</p>`;
    optionsContainer.appendChild(specialHeader);
+   
+   console.log('DATA ESPECIAL DETECTADA:', dateString, routes); // Para debug
  } 
- // DEPOIS verifica o dia da semana (se NÃO for data especial)
+ // SE NÃO FOR DATA ESPECIAL, USA HORÁRIOS NORMAIS
  else if(dayOfWeek === 0){
    routes = routeTimes.sunday;
  } else if(dayOfWeek === 6){
@@ -2586,13 +2586,13 @@ function selectDate(date){
     ocultarTodasRotas = true;
  }
  
- routes=routes.filter(route=>{
+ routes = routes.filter(route => {
   if(isToday){
-   const [startHour,startMinute]=route.start.split(':').map(Number);
-   const startTimeInMinutes=startHour*60+startMinute;
-   const currentTimeInMinutes=currentHour*60+currentMinutes;
-   const timeUntilStart=startTimeInMinutes-currentTimeInMinutes;
-   if(timeUntilStart<30){
+   const [startHour, startMinute] = route.start.split(':').map(Number);
+   const startTimeInMinutes = startHour * 60 + startMinute;
+   const currentTimeInMinutes = currentHour * 60 + currentMinutes;
+   const timeUntilStart = startTimeInMinutes - currentTimeInMinutes;
+   if(timeUntilStart < 30){
     return false;
    }
   }
@@ -2600,78 +2600,78 @@ function selectDate(date){
  });
  
  if(ocultarTodasRotas && routes.length > 0){
-  const noTimesMessage=document.createElement('div');
-  noTimesMessage.className='alert alert-warning';
-  noTimesMessage.textContent='Não há horários disponíveis para este dia. Selecione outra data.';
+  const noTimesMessage = document.createElement('div');
+  noTimesMessage.className = 'alert alert-warning';
+  noTimesMessage.textContent = 'Não há horários disponíveis para este dia. Selecione outra data.';
   optionsContainer.appendChild(noTimesMessage);
   document.getElementById('timeOptions').classList.remove('hidden');
   return;
  }
  
- if(routes.length===0){
-  const noTimesMessage=document.createElement('div');
-  noTimesMessage.className='alert alert-warning';
+ if(routes.length === 0){
+  const noTimesMessage = document.createElement('div');
+  noTimesMessage.className = 'alert alert-warning';
   if(isToday){
-   noTimesMessage.textContent='Não há mais horários disponíveis para hoje. Selecione outra data.';
+   noTimesMessage.textContent = 'Não há mais horários disponíveis para hoje. Selecione outra data.';
   }else{
-   noTimesMessage.textContent='Não há horários disponíveis para esta data.';
+   noTimesMessage.textContent = 'Não há horários disponíveis para esta data.';
   }
   optionsContainer.appendChild(noTimesMessage);
  }else{
-  routes.forEach((route,index)=>{
+  routes.forEach((route, index) => {
    // Oculta primeira rota se necessário
    if(ocultarPrimeiraRota && index === 0){
     return;
    }
    
-   const routeId=`time${index+1}`;
-   const routeElement=document.createElement('div');
+   const routeId = `time${index + 1}`;
+   const routeElement = document.createElement('div');
    routeElement.classList.add('time-option');
    
-   const input=document.createElement('input');
-   input.type='radio';
-   input.name='deliveryTime';
-   input.id=routeId;
-   input.value=`${route.start}-${route.end}`;
-   input.dataset.label=route.label;
-   input.dataset.nightfee=route.nightFee||false;
-   input.dataset.fee=route.fee||0;
-   input.dataset.sundayfee=route.sundayFee||false;
+   const input = document.createElement('input');
+   input.type = 'radio';
+   input.name = 'deliveryTime';
+   input.id = routeId;
+   input.value = `${route.start}-${route.end}`;
+   input.dataset.label = route.label;
+   input.dataset.nightfee = route.nightFee || false;
+   input.dataset.fee = route.fee || 0;
+   input.dataset.sundayfee = route.sundayFee || false;
    
-   const label=document.createElement('label');
-   label.htmlFor=routeId;
-   label.textContent=route.label;
-   label.style.cursor='pointer';
-   label.style.marginLeft='10px';
-   label.style.flex='1';
+   const label = document.createElement('label');
+   label.htmlFor = routeId;
+   label.textContent = route.label;
+   label.style.cursor = 'pointer';
+   label.style.marginLeft = '10px';
+   label.style.flex = '1';
    
-   const container=document.createElement('div');
-   container.style.display='flex';
-   container.style.alignItems='center';
+   const container = document.createElement('div');
+   container.style.display = 'flex';
+   container.style.alignItems = 'center';
    container.appendChild(input);
    container.appendChild(label);
    routeElement.appendChild(container);
    
-  input.addEventListener('change',function(){
-   selectedTime = this.value;
-   selectedTimeLabel = this.getAttribute('data-label');
-   const hasNightFee = this.getAttribute('data-nightfee') === 'true';
-   const hasSundayFee = this.getAttribute('data-sundayfee') === 'true';
-   const feeAmount = parseFloat(this.getAttribute('data-fee')) || 0;
-   
-   // VERIFICA SE É DATA ESPECIAL PARA NÃO COBRAR TAXA DE DOMINGO
-   const isSpecialDate = specialDates[dateString];
-   const isSunday = dayOfWeek === 0;
-   
-   nightFeeAmount = 0;
-   
-   // Só cobra taxa se não for data especial em domingo
-   if((hasNightFee || hasSundayFee) && !(isSunday && isSpecialDate)) {
-     nightFeeAmount = feeAmount;
-   }
-   
-   window.dispatchEvent(new CustomEvent('timeSelected'));
- });
+   // MODIFICADO: Verifica se é data especial para não cobrar taxa
+   input.addEventListener('change', function() {
+    selectedTime = this.value;
+    selectedTimeLabel = this.getAttribute('data-label');
+    const hasNightFee = this.getAttribute('data-nightfee') === 'true';
+    const hasSundayFee = this.getAttribute('data-sundayfee') === 'true';
+    const feeAmount = parseFloat(this.getAttribute('data-fee')) || 0;
+    
+    // Verifica se é data especial
+    const isSpecialDate = specialDates[dateString];
+    
+    nightFeeAmount = 0;
+    
+    // Só cobra taxa se NÃO for data especial
+    if((hasNightFee || hasSundayFee) && !isSpecialDate) {
+      nightFeeAmount = feeAmount;
+    }
+    
+    window.dispatchEvent(new CustomEvent('timeSelected'));
+   });
    
    optionsContainer.appendChild(routeElement);
   });
