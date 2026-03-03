@@ -2512,7 +2512,11 @@ function renderCalendar(month,year){
 }
 
 function selectDate(date){
- const dateString = formatDateForComparison(date);
+ 
+    // ALERTA PARA TESTE
+ alert('3 - Data selecionada: ' + date + ' - Formato: ' + formatDateForComparison(date));
+    
+    const dateString = formatDateForComparison(date);
  if(noDeliveryDates.includes(dateString)){
   document.getElementById('noDeliveryMessage').classList.remove('hidden');
   document.getElementById('timeOptions').classList.add('hidden');
